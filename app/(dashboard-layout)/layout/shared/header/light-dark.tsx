@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+import { useLanguage } from "@/app/context/language-context";
 
 const LightDark = () => {
+  const { t } = useLanguage();
   const { theme: activeMode, setTheme: setActiveMode } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -52,6 +54,7 @@ const LightDark = () => {
           variant="ghost"
           className=" h-10 w-10  hover:bg-primary/5  rounded-full cursor-pointer"
           onClick={toggleTheme}
+          aria-label={t("Toggle theme")}
         >
           <Moon className="size-5" />
         </Button>
@@ -61,6 +64,7 @@ const LightDark = () => {
           variant="ghost"
           className=" h-10 w-10  hover:bg-primary/5  rounded-full cursor-pointer"
           onClick={toggleTheme}
+          aria-label={t("Toggle theme")}
         >
           <Sun className="size-5" />
         </Button>

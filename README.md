@@ -32,6 +32,9 @@ Shadcn Dashboard is built with Next.js (App Router), offering a production-ready
 
 ## Key Features ✨
 
+- **English / Vietnamese UI** - Use the VI/EN control in the dashboard header. The selected language is saved in browser storage; navigation, profile, and Notes support both languages. Other template pages still contain English copy.
+- **Personal profile** - The header and profile page display bin (Vo Dinh Quan), Full-stack Engineer, with a local profile image and portfolio link. This is a static dashboard identity, not an authentication account.
+
 - **Modern Dashboard** - Ready-to-use dashboard layout with statistics, charts, and widgets
 - **Apps** - Blog, Notes, and Tickets apps out of the box
 - **Authentication Pages** - Login, Register, Forgot Password, OTP Verification, Reset Password, Two-Factor Auth

@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Check } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { NotesContext } from "@/app/context/notes-context/index";
+import { useLanguage } from "@/app/context/language-context";
 
 interface colorsType {
   lineColor: string;
@@ -15,6 +16,7 @@ interface Props {
 }
 const NoteContent = () => {
   const { notes, updateNote, selectedNoteId } = useContext(NotesContext);
+  const { t } = useLanguage();
   const noteDetails = notes.find((note) => note.id === selectedNoteId);
 
   // Initialize state for updatedTitle, initialTitle, and isEditing status
@@ -71,7 +73,7 @@ const NoteContent = () => {
           <div className="w-full">
             <Textarea
               id="outlined-multiline-static"
-              placeholder="Edit Note"
+              placeholder={t("Edit Note")}
               rows={5}
               value={isEditing ? updatedTitle : initialTitle}
               onChange={handleTitleChange}
@@ -79,7 +81,7 @@ const NoteContent = () => {
               onBlur={handleBlur}
             />
             <br />
-            <h6 className="text-base mb-3">Change Note Color</h6>
+            <h6 className="text-base mb-3">{t("Change Note Color")}</h6>
 
             <div className="flex gap-2 items-center">
               {colorvariation.map((color1) => (
@@ -96,7 +98,7 @@ const NoteContent = () => {
             </div>
           </div>
         ) : (
-          <div className="text-center w-full py-6 text-2xl ">Select a Note</div>
+          <div className="text-center w-full py-6 text-2xl ">{t("Select a Note")}</div>
         )}
       </div>
     </>

@@ -10,8 +10,11 @@ import { cn } from "@/lib/utils";
 import LightDark from "../../shared/header/light-dark";
 import { PanelLeft } from 'lucide-react';
 import { Separator } from "@/components/ui/separator";
+import LanguageSwitcher from "../../shared/header/language-switcher";
+import { useLanguage } from "@/app/context/language-context";
 const Header = () => {
   const { toggleSidebar } = useSidebar();
+  const { t } = useLanguage();
 
   return (
     <>
@@ -28,6 +31,7 @@ const Header = () => {
                 size="icon"
                 className="p-2 hover:bg-primary/5 rounded-full transition cursor-pointer"
                 onClick={toggleSidebar}
+                aria-label={t("Toggle sidebar")}
               >
                 <PanelLeft size={21}
                 />
@@ -48,6 +52,7 @@ const Header = () => {
             </div>
 
             <div className="flex sm:gap-1 gap-0 items-center">
+              <LanguageSwitcher />
               {/* Theme Toggle */}
               <LightDark />
               {/* Notifications Dropdown */}

@@ -8,8 +8,10 @@ import SidebarContent from "../../vertical/sidebar/sidebaritems";
 
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/app/context/language-context";
 
 function Search() {
+  const { t } = useLanguage();
   const [query, setQuery] = useState("");
 
   // 🔍 Recursive search through menu
@@ -25,7 +27,7 @@ function Search() {
       if (
         item.name &&
         item.url &&
-        item.name.toLowerCase().includes(q.toLowerCase())
+          (item.name.toLowerCase().includes(q.toLowerCase()) || t(item.name).toLowerCase().includes(q.toLowerCase()))
       ) {
         results.push({
           name: item.name,
@@ -48,7 +50,7 @@ function Search() {
   const results = useMemo(() => {
     if (!query.trim()) return [];
     return searchItems(SidebarContent, query);
-  }, [query]);
+  }, [query, t]);
 
   return (
     <div className="relative w-full">
@@ -57,7 +59,7 @@ function Search() {
           className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
         />
         <Input
-          placeholder="Search...."
+          placeholder={t("Search....")}
           className="rounded-lg pl-10!"
           required
           value={query}
@@ -81,7 +83,7 @@ function Search() {
                   <Component width={18} height={18} />
                   <div className="ps-3">
                     <h5 className="mb-1 text-sm group-hover/link:text-primary">
-                      {item.name}
+                      {t(item.name)}
                     </h5>
                     <span className="text-xs block  truncate max-w-60">
                       {item.url}
@@ -93,7 +95,7 @@ function Search() {
           ) : (
             <div className="flex items-center justify-center h-full">
               <h1 className="text-medium font-medium ">
-                No Components Found!
+                {t("No Components Found!")}
               </h1>
             </div>
           )}

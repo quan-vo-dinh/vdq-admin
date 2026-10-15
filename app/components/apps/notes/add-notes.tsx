@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { NotesContext } from "@/app/context/notes-context/index";
+import { useLanguage } from "@/app/context/language-context";
 
 interface ColorOption {
   lineColor: string;
@@ -26,6 +27,7 @@ interface Props {
 
 const AddNotes = ({ colors }: Props) => {
   const { addNote } = useContext(NotesContext);
+  const { t } = useLanguage();
 
   const [openNoteModal, setOpenNoteModal] = useState(false);
   const [scolor, setScolor] = useState<string>("primary");
@@ -49,11 +51,11 @@ const AddNotes = ({ colors }: Props) => {
   return (
     <Dialog open={openNoteModal} onOpenChange={setOpenNoteModal}>
       <DialogTrigger>
-        <Button>Add Note</Button>
+        <Button>{t("Add Note")}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg rtl:[&_[data-slot=dialog-close]]:left-2 rtl:[&_[data-slot=dialog-close]]:right-auto">
         <DialogHeader>
-          <DialogTitle>Add New Note</DialogTitle>
+          <DialogTitle>{t("Add New Note")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-2">
@@ -62,9 +64,9 @@ const AddNotes = ({ colors }: Props) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full"
-            placeholder="Write your note here..."
+            placeholder={t("Write your note here...")}
           />
-          <h6 className="text-base pt-4">Change Note Color</h6>
+          <h6 className="text-base pt-4">{t("Change Note Color")}</h6>
           <div className="flex gap-2 items-center">
             {colors?.map((color) => (
               <div
@@ -82,14 +84,14 @@ const AddNotes = ({ colors }: Props) => {
 
         <DialogFooter className="pt-4">
           <Button disabled={!title} onClick={handleSave} >
-            Save
+            {t("Save")}
           </Button>
           <Button
             variant="destructive"
 
             onClick={() => setOpenNoteModal(false)}
           >
-            Close
+            {t("Close")}
           </Button>
         </DialogFooter>
       </DialogContent>

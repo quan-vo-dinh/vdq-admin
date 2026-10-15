@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "@/components/ui/sidebar";
 import { MenuItem, ChildItem } from "../sidebaritems";
+import { useLanguage } from "@/app/context/language-context";
 
 interface NavCollapseProps {
   menu: MenuItem[];
@@ -14,6 +15,7 @@ interface NavCollapseProps {
 
 export default function NavCollapse({ menu, className }: NavCollapseProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const { state } = useSidebar();
   const isCollapse = state === "collapsed";
 
@@ -38,10 +40,10 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
             {isCollapse ? (
               <>
                 <span className="group-hover:hidden group-data-[state=expanded]:hidden">...</span>
-                <span className="hidden group-hover:inline group-data-[state=expanded]:inline">{section.heading ?? ""}</span>
+                <span className="hidden group-hover:inline group-data-[state=expanded]:inline">{t(section.heading ?? "")}</span>
               </>
             ) : (
-              section.heading ?? ""
+              t(section.heading ?? "")
             )}
           </span>
 

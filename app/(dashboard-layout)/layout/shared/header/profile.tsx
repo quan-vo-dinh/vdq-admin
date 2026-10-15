@@ -12,18 +12,20 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { profileDD } from "@/app/(dashboard-layout)/layout/shared/header/data";
 import { cn } from "@/lib/utils";
-import { Mailbox, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import { currentUser } from "@/lib/profile";
+import { useLanguage } from "@/app/context/language-context";
 export default function ProfileSheet() {
-
+  const { t } = useLanguage();
 
   return (
     <Sheet>
       {/* Trigger Button */}
-      <SheetTrigger className="cursor-pointer hover:bg-primary/5 flex items-center justify-center rounded-full h-10 w-10">
+      <SheetTrigger aria-label={t("Open profile")} className="cursor-pointer hover:bg-primary/5 flex items-center justify-center rounded-full h-10 w-10">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={"/images/profile/avtar.webp"} alt="profile" />
+          <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
           <AvatarFallback className="bg-primary text-primary-foreground">
-            "U"
+            B
           </AvatarFallback>
         </Avatar>
       </SheetTrigger>
@@ -42,26 +44,23 @@ export default function ProfileSheet() {
           <div className="flex flex-col gap-4 justify-center items-center pt-10">
             <Avatar className="h-16 w-16">
               <AvatarImage
-                src={"/images/profile/avtar.webp"}
-                alt="Profile"
+                src={currentUser.avatar}
+                alt={currentUser.name}
                 width={30}
                 height={30}
               />
               <AvatarFallback className="bg-primary text-primary-foreground">
-                "U"
+                B
               </AvatarFallback>
             </Avatar>
 
             <div className="text-center">
               <h6 className="text-lg font-semibold">
-                Cameron
+                {currentUser.name}
               </h6>
               <div className="flex items-center gap-2 justify-center">
-                <Mailbox
-                  size={18} className="text-muted-foreground"
-                />
                 <span className="text-sm font-normal text-muted-foreground">
-                  info@shadcndashboard.com
+                  {t(currentUser.role)}
                 </span>
               </div>
             </div>
@@ -89,7 +88,7 @@ export default function ProfileSheet() {
 
                     <div className="flex gap-3 items-center">
                       <h6 className="text-sm group-hover:text-primary">
-                        {item.title}
+                        {t(item.title)}
                       </h6>
 
                       {item.badge && (
@@ -109,19 +108,12 @@ export default function ProfileSheet() {
         <SheetFooter className="px-0 pb-6">
           <div className="border-t border-dashed border-border w-full">
             <div className="rounded-sm pt-6 flex flex-col justify-center items-center gap-3">
-              <div>
-                <img
-                  src="/images/backgrounds/sidebarbuynow.svg"
-                  alt="login-bg"
-                />
-              </div>
-
               <div className="text-center">
                 <h5 className="text-xl font-semibold">
-                  Grab ShadcnDashboard Admin
+                  {t("Hi, I'm bin")}
                 </h5>
                 <p className="text-sm text-muted-foreground">
-                  Customize your dashboard
+                  {t(currentUser.bio)}
                 </p>
               </div>
 
@@ -129,7 +121,7 @@ export default function ProfileSheet() {
                 variant="secondary"
                 className="text-primary"
               >
-                <Link href={"/auth/auth2/login"}> Log Out</Link>
+                <Link href={currentUser.website} target="_blank" rel="noopener noreferrer">{t("View portfolio")}</Link>
               </Button>
             </div>
           </div>

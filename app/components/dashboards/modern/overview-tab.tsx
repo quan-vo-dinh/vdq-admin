@@ -9,9 +9,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { CalendarDays, RefreshCcw, Download, Sun, Moon } from 'lucide-react';
+import { useLanguage } from '@/app/context/language-context';
+import { currentUser } from '@/lib/profile';
 
 
 export default function OverviewTab() {
+  const { t } = useLanguage();
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
@@ -44,9 +47,9 @@ export default function OverviewTab() {
       <div className="flex items-center flex-wrap lg:flex-nowrap lg:gap-0 gap-4 justify-between">
         <div className='flex flex-col items-start'>
           <h2 className="text-xl flex item-center gap-2">
-            {greeting}, Cameron <span className="flex items-center">{getGreetingIcon()}</span>
+            {t(greeting)}, {currentUser.nickname} <span className="flex items-center">{getGreetingIcon()}</span>
           </h2>
-          <p className='text-sm font-normal text-muted-foreground'>Stay informed with today’s analytics</p>
+          <p className='text-sm font-normal text-muted-foreground'>{t('Stay informed with today’s analytics')}</p>
         </div>
         <div className="flex items-center lg:flex-nowrap flex-wrap gap-2">
           <Button variant="outline" className={"p-2.5 h-auto outline rounded-lg cursor-pointer"}>
@@ -63,7 +66,7 @@ export default function OverviewTab() {
               <SelectContent>
                 {dropdownItems.map((item, index) => (
                   <SelectItem className={"cursor-pointer"} key={index} value={item}>
-                    {item}
+                    {t(item)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -71,7 +74,7 @@ export default function OverviewTab() {
           </div>
           <Button className="flex items-center gap-1.5 h-auto px-4 py-2 rounded-lg cursor-pointer">
             <Download size={16} />
-            <span className="text-sm font-medium">Export</span>
+            <span className="text-sm font-medium">{t('Export')}</span>
           </Button>
         </div>
       </div>

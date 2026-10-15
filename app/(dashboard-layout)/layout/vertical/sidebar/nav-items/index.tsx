@@ -6,6 +6,7 @@ import { ChildItem } from "../sidebaritems";
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/app/context/language-context";
 
 interface NavItemProps {
   item: ChildItem;
@@ -21,6 +22,7 @@ export default function NavItem({
   isActive,
 }: NavItemProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useLanguage();
 
   return (
 
@@ -50,7 +52,7 @@ export default function NavItem({
         )}
 
         {/* Name */}
-        <span className="font-medium hide-menu">{item.name}</span>
+        <span className="font-medium hide-menu">{t(item.name)}</span>
 
         {/* Badge */}
         {item.badge && (

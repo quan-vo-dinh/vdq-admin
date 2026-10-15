@@ -15,9 +15,11 @@ import AnimatedItem from "../../animated-components/list-animation";
 import PlaceholdersInput from "@/app/components/animated-components/animatedinput-placeholder";
 import { Button } from "@/components/ui/button";
 import { SearchIcon } from "lucide-react";
+import { useLanguage } from "@/app/context/language-context";
 
 const Notelist = () => {
   const { notes, selectNote, deleteNote } = useContext(NotesContext);
+  const { language, t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [activeNoteId, setActiveNoteId] = useState<any | null>(null);
 
@@ -79,13 +81,13 @@ const Notelist = () => {
             className="pl-8!"
             onChange={setSearchTerm}
             placeholders={[
-              "Search Notes...",
-              "Find Your Notes...",
-              "Look up Notes...",
+              t("Search Notes..."),
+              t("Find Your Notes..."),
+              t("Look up Notes..."),
             ]}
           />
         </div>
-        <h6 className="text-base mt-6">All Notes</h6>
+        <h6 className="text-base mt-6">{t("All Notes")}</h6>
         <div className="flex flex-col gap-3 mt-4">
           {filteredNotes && filteredNotes.length ? (
             filteredNotes.map((note, index) => (
@@ -104,7 +106,7 @@ const Notelist = () => {
                     </h6>
                     <div className="flex items-center justify-between">
                       <p className="text-xs">
-                        {new Date(note.datef ?? "").toLocaleDateString()}
+                        {new Date(note.datef ?? "").toLocaleDateString(language === "vi" ? "vi-VN" : "en-US")}
                       </p>
                       <div>
                         <TooltipProvider>
@@ -117,12 +119,12 @@ const Notelist = () => {
                                 }
                                 size="icon"
                                 onClick={() => deleteNote(note.id)}
-                                aria-label="Delete note"
+                                aria-label={t("Delete note")}
                               >
                                 <Trash2 size={18} />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent>Delete</TooltipContent>
+                            <TooltipContent>{t("Delete")}</TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
                       </div>
@@ -133,7 +135,7 @@ const Notelist = () => {
             ))
           ) : (
             <Alert variant="destructive">
-              <AlertTitle>No Notes Found!</AlertTitle>
+              <AlertTitle>{t("No Notes Found!")}</AlertTitle>
             </Alert>
           )}
         </div>

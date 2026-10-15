@@ -6,6 +6,7 @@ import "./globals.css"
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/Themeprovider";
 import { OfflineBanner } from "@/app/components/shared/offline-banner";
+import { LanguageProvider } from "@/app/context/language-context";
 
 
 const geist = Geist({
@@ -15,11 +16,11 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "ShadcnDashboard - Tailwind + Shadcn Nextjs",
-  description: "Modern admin dashboard built with Next.js, Tailwind, and Shadcn.",
+  title: "bin | Vo Dinh Quan",
+  description: "Full-stack Engineer working with ASP.NET Core and React.",
    openGraph: {
-    title: "ShadcnDashboard - Tailwind + Shadcn Nextjs",
-    description: "Modern admin dashboard built with Next.js, Tailwind, and Shadcn.",
+    title: "bin | Vo Dinh Quan",
+    description: "Full-stack Engineer working with ASP.NET Core and React.",
     images: [
       {
         url: "/OG-Image.png",
@@ -42,7 +43,7 @@ export default function RootLayout({
 }) {
   return (
 
-    <html lang="en" suppressHydrationWarning
+    <html lang="vi" suppressHydrationWarning
       data-color-theme="CUSTOM_THEME"
       data-layout="vertical"
       data-boxed-layout="boxed"
@@ -60,8 +61,10 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          {children}
-          <OfflineBanner />
+          <LanguageProvider>
+            {children}
+            <OfflineBanner />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

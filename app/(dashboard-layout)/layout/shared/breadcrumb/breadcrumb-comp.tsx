@@ -1,5 +1,7 @@
+"use client";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
+import { useLanguage } from "@/app/context/language-context";
 
 interface BreadcrumbItem {
   to?: string;
@@ -13,20 +15,21 @@ interface BreadCrumbType {
 }
 
 const BreadcrumbComp = ({ title }: BreadCrumbType) => {
+  const { t } = useLanguage();
   return (
     <>
       <Card
         className={`py-5 px-6 bg-background  overflow-hidden rounded-xl border`}
       >
         <div className="flex items-center justify-between gap-6 relative">
-          <h4 className="font-semibold text-xl text-forground">{title}</h4>
+          <h4 className="font-semibold text-xl text-forground">{t(title)}</h4>
           <ol
             className="flex items-center whitespace-nowrap"
             aria-label="Breadcrumb"
           >
             <li className="flex items-center">
               <Link className="text-forground text-sm  leading-none" href="/">
-                Home
+                {t("Home")}
               </Link>
             </li>
             <li className="mx-2">
@@ -36,7 +39,7 @@ const BreadcrumbComp = ({ title }: BreadCrumbType) => {
               className="flex items-center text-sm text-forground leading-none opacity-80"
               aria-current="page"
             >
-              {title}
+              {t(title)}
             </li>
           </ol>
         </div>

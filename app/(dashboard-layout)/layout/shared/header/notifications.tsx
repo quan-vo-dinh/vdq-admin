@@ -14,8 +14,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/app/context/language-context";
 
 const Notifications = ({ className }: { className?: string }) => {
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState(NotificationData.Notification);
 
   const unreadCount = notifications.filter(item => !item.isRead).length;
@@ -49,9 +51,9 @@ const Notifications = ({ className }: { className?: string }) => {
           className="w-screen sm:w-[360px] py-6 px-0"
         >
           <div className="flex items-center px-6 justify-between">
-            <h3 className="text-lg font-semibold">Notifications</h3>
+            <h3 className="text-lg font-semibold">{t("Notifications")}</h3>
             {unreadCount > 0 && (
-              <Badge className="px-3 bg-primary dark:bg-primary hover:bg-primary">{unreadCount} new</Badge>
+              <Badge className="px-3 bg-primary dark:bg-primary hover:bg-primary">{unreadCount} {t("new")}</Badge>
             )}
           </div>
 
@@ -77,10 +79,10 @@ const Notifications = ({ className }: { className?: string }) => {
                     <div className="ps-4 flex justify-between w-full">
                       <div className="w-3/4 text-start">
                         <h5 className={cn("mb-1 text-sm font-normal", !item.isRead && "font-semibold")}>
-                          {item.title}
+                          {t(item.title)}
                         </h5>
                         <div className="text-xs text-muted-foreground line-clamp-1">
-                          {item.subtitle}
+                          {t(item.subtitle)}
                         </div>
                       </div>
 
@@ -97,7 +99,7 @@ const Notifications = ({ className }: { className?: string }) => {
           {/* Footer Button */}
           <div className="pt-5 px-6">
             <Button className="w-full" nativeButton={false} render={<Link href="#" />}>
-              See All Notifications
+              {t("See All Notifications")}
             </Button>
           </div>
         </DropdownMenuContent>

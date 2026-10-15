@@ -1,6 +1,5 @@
 'use client'
 import Image from 'next/image'
-import CardBox from '../shared/CardBox'
 import Link from 'next/link'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import {
@@ -17,8 +16,11 @@ import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import BreadcrumbComp from '@/app/(dashboard-layout)/layout/shared/breadcrumb/breadcrumb-comp'
 import StyleDivider from '../shared/StyleDivider'
+import { currentUser } from '@/lib/profile'
+import { useLanguage } from '@/app/context/language-context'
 
 const UserProfile = () => {
+  const { t } = useLanguage()
   const [openModal, setOpenModal] = useState(false)
   const [modalType, setModalType] = useState<'personal' | 'address' | null>(
     null
@@ -35,23 +37,23 @@ const UserProfile = () => {
   ]
 
   const [personal, setPersonal] = useState({
-    firstName: 'Mathew',
-    lastName: 'Anderson',
-    email: 'mathew.anderson@gmail.com',
-    phone: '(347) 528-1947',
-    position: 'Team Leader',
-    facebook: 'https://www.facebook.com/wrappixel',
-    twitter: 'https://twitter.com/wrappixel',
-    github: 'https://github.com/wrappixel',
-    dribbble: 'https://dribbble.com/wrappixel',
+    firstName: 'Vo Dinh',
+    lastName: 'Quan',
+    email: '',
+    phone: '',
+    position: String(currentUser.role),
+    facebook: String(currentUser.social.facebook),
+    linkedin: String(currentUser.social.linkedin),
+    github: String(currentUser.social.github),
+    instagram: String(currentUser.social.instagram),
   })
 
   const [address, setAddress] = useState({
-    location: 'United States',
-    state: 'San Diego, California, United States',
-    pin: '92101',
-    zip: '30303',
-    taxNo: 'GA45273910',
+    location: '',
+    state: '',
+    pin: '',
+    zip: '',
+    taxNo: '',
   })
 
   const [tempPersonal, setTempPersonal] = useState(personal)
@@ -76,20 +78,11 @@ const UserProfile = () => {
   }
 
   const socialLinks = [
-    {
-      href: 'https://www.facebook.com/wrappixel',
-      icon: 'streamline-logos:facebook-logo-2-solid',
-    },
-    {
-      href: 'https://twitter.com/wrappixel',
-      icon: 'streamline-logos:x-twitter-logo-solid',
-    },
-    { href: 'https://github.com/wrappixel', icon: 'ion:logo-github' },
-    {
-      href: 'https://dribbble.com/wrappixel',
-      icon: 'streamline-flex:dribble-logo-remix',
-    },
-  ]
+    { href: personal.facebook, icon: 'streamline-logos:facebook-logo-2-solid', label: 'Facebook' },
+    { href: personal.linkedin, icon: 'mdi:linkedin', label: 'LinkedIn' },
+    { href: personal.github, icon: 'ion:logo-github', label: 'GitHub' },
+    { href: personal.instagram, icon: 'mdi:instagram', label: 'Instagram' },
+  ].filter((item) => item.href)
 
   return (
     <div className="flex flex-col p-px bg-border gap-px">
@@ -100,8 +93,8 @@ const UserProfile = () => {
           <div className='flex flex-col sm:flex-row items-center gap-6 rounded-xl relative w-full break-words'>
             <div>
               <Image
-                src={'/images/profile/avtar.webp'}
-                alt='image'
+                src={currentUser.avatar}
+                alt={currentUser.name}
                 width={80}
                 height={80}
                 className='rounded-full'
@@ -112,13 +105,16 @@ const UserProfile = () => {
                 <h5 className='card-title'>
                   {personal.firstName} {personal.lastName}
                 </h5>
+                <p className='text-sm text-gray-500 dark:text-gray-400'>
+                  {t("Hi, I'm bin")}
+                </p>
                 <div className='flex flex-wrap items-center gap-1 md:gap-3'>
                   <p className='text-sm text-gray-500 dark:text-gray-400'>
-                    {personal.position}
+                    {t(personal.position)}
                   </p>
                   <div className='hidden h-4 w-px bg-gray-300 dark:bg-gray-700 xl:block'></div>
                   <p className='text-sm text-gray-500 dark:text-gray-400'>
-                    {address.location}
+                    {address.location || '—'}
                   </p>
                 </div>
               </div>
@@ -128,6 +124,8 @@ const UserProfile = () => {
                     key={index}
                     href={item.href}
                     target='_blank'
+                    rel='noopener noreferrer'
+                    aria-label={item.label}
                     className='flex h-11 w-11 items-center justify-center gap-2 rounded-full shadow-md border border-border hover:bg-gray-50 dark:hover:bg-white/[0.03] dark:hover:text-gray-200'>
                     <Icon icon={item.icon} width='20' height='20' />
                   </Link>
@@ -139,27 +137,36 @@ const UserProfile = () => {
 
         <div className='grid grid-cols-1 xl:grid-cols-2 gap-px'>
           <div className='space-y-6 bg-background md:p-6 p-4 relative w-full break-words'>
-            <h5 className='card-title'>Personal Information</h5>
+            <h5 className='card-title'>{t('Personal Information')}</h5>
+            <p className='text-sm text-gray-500 dark:text-gray-400'>{t(currentUser.bio)}</p>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-7 2xl:gap-x-32'>
               <div>
-                <p className='text-xs text-gray-500'>First Name</p>
+                <p className='text-xs text-gray-500'>{t('First Name')}</p>
                 <p>{personal.firstName}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-500'>Last Name</p>
+                <p className='text-xs text-gray-500'>{t('Last Name')}</p>
                 <p>{personal.lastName}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-500'>Email</p>
-                <p>{personal.email}</p>
+                <p className='text-xs text-gray-500'>{t('Email')}</p>
+                <p>{personal.email || '—'}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-500'>Phone</p>
-                <p>{personal.phone}</p>
+                <p className='text-xs text-gray-500'>{t('Phone')}</p>
+                <p>{personal.phone || '—'}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-500'>Position</p>
-                <p>{personal.position}</p>
+                <p className='text-xs text-gray-500'>{t('Position')}</p>
+                <p>{t(personal.position)}</p>
+              </div>
+              <div>
+                <p className='text-xs text-gray-500'>{t('Workplace')}</p>
+                <p>{currentUser.workplace}</p>
+              </div>
+              <div>
+                <p className='text-xs text-gray-500'>{t('Education')}</p>
+                <p>{currentUser.education} · {t(currentUser.fieldOfStudy)}</p>
               </div>
             </div>
             <div className='flex justify-end'>
@@ -169,33 +176,33 @@ const UserProfile = () => {
                   setOpenModal(true)
                 }}
                 className='flex items-center gap-1.5 rounded-md'>
-                <Icon icon='ic:outline-edit' width='18' height='18' /> Edit
+                <Icon icon='ic:outline-edit' width='18' height='18' /> {t('Edit')}
               </Button>
             </div>
           </div>
 
           <div className='space-y-6 bg-background md:p-6 p-4 relative w-full break-words'>
-            <h5 className='card-title'>Address Details</h5>
+            <h5 className='card-title'>{t('Address Details')}</h5>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-7 2xl:gap-x-32'>
               <div>
-                <p className='text-xs text-gray-500'>Location</p>
-                <p>{address.location}</p>
+                <p className='text-xs text-gray-500'>{t('Location')}</p>
+                <p>{address.location || '—'}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-500'>Province / State</p>
-                <p>{address.state}</p>
+                <p className='text-xs text-gray-500'>{t('Province / State')}</p>
+                <p>{address.state || '—'}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-500'>PIN Code</p>
-                <p>{address.pin}</p>
+                <p className='text-xs text-gray-500'>{t('PIN Code')}</p>
+                <p>{address.pin || '—'}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-500'>ZIP</p>
-                <p>{address.zip}</p>
+                <p className='text-xs text-gray-500'>{t('ZIP')}</p>
+                <p>{address.zip || '—'}</p>
               </div>
               <div>
-                <p className='text-xs text-gray-500'>Federal Tax No.</p>
-                <p>{address.taxNo}</p>
+                <p className='text-xs text-gray-500'>{t('Federal Tax No.')}</p>
+                <p>{address.taxNo || '—'}</p>
               </div>
             </div>
             <div className='flex justify-end'>
@@ -205,7 +212,7 @@ const UserProfile = () => {
                   setOpenModal(true)
                 }}
                 className='flex items-center gap-1.5 rounded-md'>
-                <Icon icon='ic:outline-edit' width='18' height='18' /> Edit
+                <Icon icon='ic:outline-edit' width='18' height='18' /> {t('Edit')}
               </Button>
             </div>
           </div>
@@ -217,18 +224,18 @@ const UserProfile = () => {
           <DialogHeader>
             <DialogTitle className='mb-4'>
               {modalType === 'personal'
-                ? 'Edit Personal Information'
-                : 'Edit Address Details'}
+                ? t('Edit Personal Information')
+                : t('Edit Address Details')}
             </DialogTitle>
           </DialogHeader>
 
           {modalType === 'personal' ? (
             <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='firstName'>First Name</Label>
+                <Label htmlFor='firstName'>{t('First Name')}</Label>
                 <Input
                   id='firstName'
-                  placeholder='First Name'
+                  placeholder={t('First Name')}
                   value={tempPersonal.firstName}
                   onChange={(e) =>
                     setTempPersonal({
@@ -239,10 +246,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='lastName'>Last Name</Label>
+                <Label htmlFor='lastName'>{t('Last Name')}</Label>
                 <Input
                   id='lastName'
-                  placeholder='Last Name'
+                  placeholder={t('Last Name')}
                   value={tempPersonal.lastName}
                   onChange={(e) =>
                     setTempPersonal({
@@ -253,10 +260,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor='email'>{t('Email')}</Label>
                 <Input
                   id='email'
-                  placeholder='Email'
+                  placeholder={t('Email')}
                   value={tempPersonal.email}
                   onChange={(e) =>
                     setTempPersonal({ ...tempPersonal, email: e.target.value })
@@ -264,10 +271,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='phone'>Phone</Label>
+                <Label htmlFor='phone'>{t('Phone')}</Label>
                 <Input
                   id='phone'
-                  placeholder='Phone'
+                  placeholder={t('Phone')}
                   value={tempPersonal.phone}
                   onChange={(e) =>
                     setTempPersonal({ ...tempPersonal, phone: e.target.value })
@@ -275,10 +282,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='position'>Position</Label>
+                <Label htmlFor='position'>{t('Position')}</Label>
                 <Input
                   id='position'
-                  placeholder='Position'
+                  placeholder={t('Position')}
                   value={tempPersonal.position}
                   onChange={(e) =>
                     setTempPersonal({
@@ -289,10 +296,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='facebook'>Facebook URL</Label>
+                <Label htmlFor='facebook'>{t('Facebook URL')}</Label>
                 <Input
                   id='facebook'
-                  placeholder='Facebook URL'
+                  placeholder={t('Facebook URL')}
                   value={tempPersonal.facebook}
                   onChange={(e) =>
                     setTempPersonal({
@@ -303,24 +310,24 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='twitter'>Twitter URL</Label>
+                <Label htmlFor='linkedin'>{t('LinkedIn URL')}</Label>
                 <Input
-                  id='twitter'
-                  placeholder='Twitter URL'
-                  value={tempPersonal.twitter}
+                  id='linkedin'
+                  placeholder={t('LinkedIn URL')}
+                  value={tempPersonal.linkedin}
                   onChange={(e) =>
                     setTempPersonal({
                       ...tempPersonal,
-                      twitter: e.target.value,
+                      linkedin: e.target.value,
                     })
                   }
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='github'>GitHub URL</Label>
+                <Label htmlFor='github'>{t('GitHub URL')}</Label>
                 <Input
                   id='github'
-                  placeholder='GitHub URL'
+                  placeholder={t('GitHub URL')}
                   value={tempPersonal.github}
                   onChange={(e) =>
                     setTempPersonal({ ...tempPersonal, github: e.target.value })
@@ -328,15 +335,15 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='dribbble'>Dribbble URL</Label>
+                <Label htmlFor='instagram'>{t('Instagram URL')}</Label>
                 <Input
-                  id='dribbble'
-                  placeholder='Dribbble URL'
-                  value={tempPersonal.dribbble}
+                  id='instagram'
+                  placeholder={t('Instagram URL')}
+                  value={tempPersonal.instagram}
                   onChange={(e) =>
                     setTempPersonal({
                       ...tempPersonal,
-                      dribbble: e.target.value,
+                      instagram: e.target.value,
                     })
                   }
                 />
@@ -345,10 +352,10 @@ const UserProfile = () => {
           ) : (
             <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='location'>Location</Label>
+                <Label htmlFor='location'>{t('Location')}</Label>
                 <Input
                   id='location'
-                  placeholder='Location'
+                  placeholder={t('Location')}
                   value={tempAddress.location}
                   onChange={(e) =>
                     setTempAddress({ ...tempAddress, location: e.target.value })
@@ -356,10 +363,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='state'>Province / State</Label>
+                <Label htmlFor='state'>{t('Province / State')}</Label>
                 <Input
                   id='state'
-                  placeholder='Province / State'
+                  placeholder={t('Province / State')}
                   value={tempAddress.state}
                   onChange={(e) =>
                     setTempAddress({ ...tempAddress, state: e.target.value })
@@ -367,10 +374,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='pin'>PIN Code</Label>
+                <Label htmlFor='pin'>{t('PIN Code')}</Label>
                 <Input
                   id='pin'
-                  placeholder='PIN Code'
+                  placeholder={t('PIN Code')}
                   value={tempAddress.pin}
                   onChange={(e) =>
                     setTempAddress({ ...tempAddress, pin: e.target.value })
@@ -378,10 +385,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='zip'>ZIP</Label>
+                <Label htmlFor='zip'>{t('ZIP')}</Label>
                 <Input
                   id='zip'
-                  placeholder='ZIP'
+                  placeholder={t('ZIP')}
                   value={tempAddress.zip}
                   onChange={(e) =>
                     setTempAddress({ ...tempAddress, zip: e.target.value })
@@ -389,10 +396,10 @@ const UserProfile = () => {
                 />
               </div>
               <div className='flex flex-col gap-2'>
-                <Label htmlFor='taxNo'>Federal Tax No.</Label>
+                <Label htmlFor='taxNo'>{t('Federal Tax No.')}</Label>
                 <Input
                   id='taxNo'
-                  placeholder='Federal Tax No.'
+                  placeholder={t('Federal Tax No.')}
                   value={tempAddress.taxNo}
                   onChange={(e) =>
                     setTempAddress({ ...tempAddress, taxNo: e.target.value })
@@ -406,12 +413,12 @@ const UserProfile = () => {
             <Button
               className='rounded-md'
               onClick={handleSave}>
-              Save Changes
+              {t('Save Changes')}
             </Button>
             <Button
               className='rounded-md bg-lighterror dark:bg-darkerror text-error hover:bg-error hover:text-white'
               onClick={() => setOpenModal(false)}>
-              Close
+              {t('Close')}
             </Button>
           </DialogFooter>
         </DialogContent>

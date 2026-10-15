@@ -11,6 +11,7 @@ import { NotesProvider } from "@/app/context/notes-context/index";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { mutate } from "swr";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/app/context/language-context";
 
 interface colorsType {
   lineColor: string;
@@ -19,6 +20,7 @@ interface colorsType {
 }
 
 const NotesApp = () => {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => setIsOpen(false);
 
@@ -115,7 +117,7 @@ const NotesApp = () => {
                   >
                     <Menu size={18} />
                   </Button>
-                  <h6 className="text-base"> Edit Note</h6>
+                  <h6 className="text-base">{t("Edit Note")}</h6>
                 </div>
                 <AddNotes colors={colorvariation} />
               </div>
