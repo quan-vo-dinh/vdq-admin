@@ -46,7 +46,7 @@ export default function RootLayout({
     <html lang="vi" suppressHydrationWarning
       data-color-theme="CUSTOM_THEME"
       data-layout="vertical"
-      data-boxed-layout="boxed"
+      data-boxed-layout="full"
       data-sidebar-type="true"
       data-card-shadow="false"
       className="style-lyra"

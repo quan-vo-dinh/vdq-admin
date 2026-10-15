@@ -36,7 +36,7 @@ Shadcn Dashboard is built with Next.js (App Router), offering a production-ready
 - **Personal profile** - The header and profile page display bin (Vo Dinh Quan), Full-stack Engineer, with a local profile image and portfolio link. This is a static dashboard identity, not an authentication account.
 
 - **Modern Dashboard** - Ready-to-use dashboard layout with statistics, charts, and widgets
-- **Apps** - Blog, Notes, and Tickets apps out of the box
+- **Apps** - Big Calendar, Blog, Notes, and Tickets apps out of the box
 - **Authentication Pages** - Login, Register, Forgot Password, OTP Verification, Reset Password, Two-Factor Auth
 - **Forms & Tables** - Vertical & Horizontal form layouts, form validation, and a data table
 - **User Profile** - Rich profile page with connections and activity views
@@ -46,6 +46,32 @@ Shadcn Dashboard is built with Next.js (App Router), offering a production-ready
 - **Dark Mode Support** - Full light/dark theme toggle via `next-themes`
 - **Rich Charting** - Recharts integration for beautiful visualizations
 - **Rich Text Editor** - TipTap-powered editor for the Blog app
+
+## Big Calendar
+
+Open [http://localhost:3000/apps/calendar](http://localhost:3000/apps/calendar), or **Apps → Big Calendar / Lịch & kế hoạch** in the sidebar.
+
+- Agenda, year, month, week and day views; Monday starts the week.
+- Calendar fills the available viewport. Four compact weekly indicators expose explanations on hover/click; week/day default to **Fit**, with **Detail** for a roomier scrollable time grid. Sidebars and dense calendars scroll internally, and mobile filters open in a sheet.
+- Create, edit, duplicate, reschedule and delete events or tasks. Details include description, location, attendees, category, priority and planned/confirmed/completed/cancelled status.
+- Six event colors; dot, color and mixed badges; all-day and multi-day events.
+- Weekly task checklist and progress, scheduled hours, overlap counts and conflict warnings. Statistics follow the selected week; search and filters apply to the calendar.
+- Working days/hours, displayed hours and weekend visibility are saved through the API. Times use **Asia/Ho_Chi_Minh (GMT+7)**.
+- Search title/description/location/attendees, filter categories/status, and export the visible period and active filters to `.ics`.
+- VI/EN and the existing light/dark theme; mobile filters and horizontally scrollable week/month grids. Click a slot to create, or open an event to edit its dates on touch devices. Desktop drag/drop preserves event duration.
+- Keyboard shortcuts outside inputs and dialogs: **N** new plan, **T** today, **← / →** navigate, **1–5** agenda/year/month/week/day.
+
+Data flows through `app/api/calendar/route.ts` → `app/context/calendar-context/` → `app/components/apps/calendar/`. The first request creates editable sample plans for the current week. Events and preferences persist in `.data/calendar.json` (gitignored), with serialized atomic writes within one Node process. Set `CALENDAR_DATA_DIR` to choose another writable directory.
+
+This storage targets a personal, single-process Node deployment with a persistent disk. Serverless, multiple instances and per-user calendars need a database and authentication; the template currently has no account isolation. Attendee names/emails are notes only; external calendar synchronization, invitations, recurrence and background reminders are not implemented.
+
+```bash
+pnpm test:calendar  # Date boundaries, overlaps, rescheduling, validation, ICS
+pnpm build         # Production bundle and TypeScript 7 type-check
+pnpm lint
+```
+
+Lint tooling uses ESLint 9 and a scoped TypeScript 6 compiler API dependency through `.pnpmfile.cjs`; application builds retain TypeScript 7. Existing lint errors elsewhere in the template remain separate from Calendar validation.
 
 ## Folder Structure
 

@@ -37,6 +37,7 @@ export interface MenuItem {
 import { uniqueId } from "lodash";
 import {
   BookOpen,
+  CalendarRange,
   CircleUserRound,
   House,
   Lock,
@@ -75,6 +76,12 @@ const SidebarContent: MenuItem[] = [
   {
     heading: "Apps",
     items: [
+      {
+        id: uniqueId(),
+        name: "Big Calendar",
+        icon: CalendarRange,
+        url: "/apps/calendar",
+      },
       {
         id: uniqueId(),
         name: "Notes",

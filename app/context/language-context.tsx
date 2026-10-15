@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 export type Language = "vi" | "en";
 
 const vietnamese: Record<string, string> = {
+  "Big Calendar": "Lịch & kế hoạch",
   "Dashboard": "Bảng điều khiển", "Modern": "Tổng quan", "Pages": "Trang", "Apps": "Ứng dụng",
   "User Profile": "Hồ sơ cá nhân", "Notes": "Ghi chú", "Blogs": "Bài viết", "Blog Listing": "Danh sách bài viết",
   "Blog Detail": "Chi tiết bài viết", "Blog Edit": "Sửa bài viết", "Blog Create": "Tạo bài viết",
