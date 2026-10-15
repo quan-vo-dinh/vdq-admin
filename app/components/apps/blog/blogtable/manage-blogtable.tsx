@@ -207,28 +207,34 @@ const ManageBlogTable = () => {
           <div className="flex items-center gap-3">
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    onClick={handleEdit}
-                    size={"sm"}
-                    variant={"link"}
-                    className={"h-8 w-8 hover:bg-primary/5 rounded-lg bg-background border border-border  "}
-                  >
-                    <Pen size={18} />
-                  </Button>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      onClick={handleEdit}
+                      size={"sm"}
+                      variant={"link"}
+                      className={"h-8 w-8 hover:bg-primary/5 rounded-lg bg-background border border-border  "}
+                      aria-label="Edit Blog"
+                    />
+                  }
+                >
+                  <Pen size={18} />
                 </TooltipTrigger>
                 <TooltipContent>Edit Blog</TooltipContent>
               </Tooltip>
               <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    size={"sm"}
-                    onClick={handleRowDelete}
-                    variant={"link"}
-                    className={"h-8 w-8 text-destructive! rounded-lg bg-background border border-border hover:bg-destructive/5"}
-                  >
-                    <Trash2 size={18} />
-                  </Button>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      size={"sm"}
+                      onClick={handleRowDelete}
+                      variant={"link"}
+                      className={"h-8 w-8 text-destructive! rounded-lg bg-background border border-border hover:bg-destructive/5"}
+                      aria-label="Delete Blog"
+                    />
+                  }
+                >
+                  <Trash2 size={18} />
                 </TooltipTrigger>
                 <TooltipContent>Delete Blog</TooltipContent>
               </Tooltip>
@@ -297,17 +303,17 @@ const ManageBlogTable = () => {
             {!showSearch ? (
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger>
-                    <Button
-                      size={"sm"}
-                      onClick={() => setShowSearch(true)}
-                      variant={"ghost"}
-                    >
-
-                      <SearchIcon size={16}
-
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        size={"sm"}
+                        onClick={() => setShowSearch(true)}
+                        variant={"ghost"}
+                        aria-label="Search blogs"
                       />
-                    </Button>
+                    }
+                  >
+                    <SearchIcon size={16} />
                   </TooltipTrigger>
                   <TooltipContent>Search</TooltipContent>
                 </Tooltip>

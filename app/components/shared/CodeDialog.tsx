@@ -41,20 +41,21 @@ const CodeDialog = ({ children }: { children: string }) => {
 
             {/* Copy Code Tooltip */}
             <Tooltip>
-              <TooltipTrigger>
-                <button className="p-2 cursor-pointer" onClick={handleCopy} >
-                  {copied ? (
-                    <Check
-                      size={20}
-                      className="text-primary"
-                    />
-                  ) : (
-                    <Copy
-                      className="hover:text-primary"
-                      size={20}
-                    />
-                  )}
-                </button>
+              <TooltipTrigger
+                render={
+                  <button
+                    type="button"
+                    className="p-2 cursor-pointer"
+                    onClick={handleCopy}
+                    aria-label="Copy code"
+                  />
+                }
+              >
+                {copied ? (
+                  <Check size={20} className="text-primary" />
+                ) : (
+                  <Copy className="hover:text-primary" size={20} />
+                )}
               </TooltipTrigger>
               <TooltipContent className="whitespace-nowrap ">
                 Copy Code

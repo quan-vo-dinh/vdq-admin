@@ -111,18 +111,20 @@ const Notelist = () => {
                       <div>
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
-                              <Button
-                                variant={"ghost"}
-                                className={
-                                  "hover:text-destructive hover:bg-destructive/12 text-black dark:text-white dark:hover:text-destructive dark:hover:bg-destructive/12"
-                                }
-                                size="icon"
-                                onClick={() => deleteNote(note.id)}
-                                aria-label={t("Delete note")}
-                              >
-                                <Trash2 size={18} />
-                              </Button>
+                            <TooltipTrigger
+                              render={
+                                <Button
+                                  variant={"ghost"}
+                                  className={
+                                    "hover:text-destructive hover:bg-destructive/12 text-black dark:text-white dark:hover:text-destructive dark:hover:bg-destructive/12"
+                                  }
+                                  size="icon"
+                                  onClick={() => deleteNote(note.id)}
+                                  aria-label={t("Delete note")}
+                                />
+                              }
+                            >
+                              <Trash2 size={18} />
                             </TooltipTrigger>
                             <TooltipContent>{t("Delete")}</TooltipContent>
                           </Tooltip>

@@ -74,20 +74,21 @@ const AnimatedCodeWrapper = ({
 
             {/* Copy */}
             <Tooltip>
-              <TooltipTrigger>
-                <button onClick={handleCopy} className="p-2">
-                  {copied ? (
-                    <Check
-                      size={20}
-                      className="text-primary"
-                    />
-                  ) : (
-                    <Copy
-                      size={20}
-                      className="hover:text-primary"
-                    />
-                  )}
-                </button>
+              <TooltipTrigger
+                render={
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="p-2"
+                    aria-label="Copy code"
+                  />
+                }
+              >
+                {copied ? (
+                  <Check size={20} className="text-primary" />
+                ) : (
+                  <Copy size={20} className="hover:text-primary" />
+                )}
               </TooltipTrigger>
               <TooltipContent className="whitespace-nowrap">
                 Copy Code

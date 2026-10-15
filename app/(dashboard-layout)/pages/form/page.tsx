@@ -114,18 +114,21 @@ const Page = () => {
                   Date of birth
                 </Label>
                 <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger>
-                    <Button
-                      variant='outline'
-                      id='date'
-                      className='w-full justify-between font-normal hover:bg-transparent focus:border-primary'>
-                      {date ? date.toLocaleDateString() : 'Select date'}
-                      <Icon
-                        icon='solar:calendar-minimalistic-linear'
-                        width={18}
-                        height={18}
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant='outline'
+                        id='date'
+                        className='w-full justify-between font-normal hover:bg-transparent focus:border-primary'
                       />
-                    </Button>
+                    }
+                  >
+                    {date ? date.toLocaleDateString() : 'Select date'}
+                    <Icon
+                      icon='solar:calendar-minimalistic-linear'
+                      width={18}
+                      height={18}
+                    />
                   </PopoverTrigger>
                   <PopoverContent
                     className='w-auto overflow-hidden p-0'

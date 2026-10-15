@@ -196,15 +196,18 @@ const TicketListing = () => {
                     <TableCell>
                       <TooltipProvider>
                         <Tooltip>
-                          <TooltipTrigger>
-                            <Button
-                              variant="destructive"
-                              size="icon"
-                              onClick={() => deleteTicket(ticket.Id)}
-                              className="bg-background dark:bg-background border border-border"
-                            >
-                              <Trash size="18" />
-                            </Button>
+                          <TooltipTrigger
+                            render={
+                              <Button
+                                variant="destructive"
+                                size="icon"
+                                onClick={() => deleteTicket(ticket.Id)}
+                                className="bg-background dark:bg-background border border-border"
+                                aria-label="Delete Ticket"
+                              />
+                            }
+                          >
+                            <Trash size="18" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Delete Ticket</p>
