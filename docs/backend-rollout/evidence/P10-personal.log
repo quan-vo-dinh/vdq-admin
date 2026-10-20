@@ -1,0 +1,3 @@
+PASS Profile/preferences persistence, CAS conflict, whitelist/URL validation, unchanged owner identity
+PASS concurrent attach CAS loser cleans new object
+PASS private goal upload/decode/size/MIME/prefix, signed read TTL, stale attach preserves old, replacement cleanup, remove, anonymous denial

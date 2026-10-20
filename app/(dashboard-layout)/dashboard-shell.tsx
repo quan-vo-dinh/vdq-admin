@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { PersonalProvider } from "@/app/context/personal-context";
 import Header from "./layout/vertical/header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import Footer from "./layout/footer/page";
@@ -13,7 +14,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <SidebarProvider
+    <PersonalProvider><SidebarProvider
       defaultOpen={true}
       style={{ "--sidebar-width-icon": "52px" } as React.CSSProperties}
     >
@@ -31,7 +32,7 @@ export default function Layout({
           </div>
         </div>
       </SidebarInset>
-    </SidebarProvider>
+    </SidebarProvider></PersonalProvider>
   );
 }
 

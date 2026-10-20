@@ -1,0 +1,6 @@
+/ 307 private/no-store
+/api/notes 401 private/no-store
+/api/calendar 401 private/no-store
+/api/finance 401 private/no-store
+/api/profile 401 private/no-store
+/api/auth/session 401 private/no-store

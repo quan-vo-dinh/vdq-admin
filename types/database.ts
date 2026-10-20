@@ -261,6 +261,20 @@ isOneToOne: false
                   Relationships: [
 
                   ]
+                },"profiles": {
+                  Row: {
+                    "address": NonNullable<Json>,"created_at": string,"id": string,"owner_id": string,"personal": NonNullable<Json>,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "address"?: NonNullable<Json>,"created_at"?: string,"id"?: string,"owner_id"?: string,"personal"?: NonNullable<Json>,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "address"?: NonNullable<Json>,"created_at"?: string,"id"?: string,"owner_id"?: string,"personal"?: NonNullable<Json>,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
                 },"today_items": {
                   Row: {
                     "category": string,"created_at": string,"done": boolean,"id": string,"item_date": string,"owner_id": string,"revision": number,"slot": number,"title": string,"updated_at": string
@@ -271,6 +285,20 @@ isOneToOne: false
                   }
                   Update: {
                     "category"?: string,"created_at"?: string,"done"?: boolean,"id"?: string,"item_date"?: string,"owner_id"?: string,"revision"?: number,"slot"?: number,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"user_preferences": {
+                  Row: {
+                    "created_at": string,"id": string,"locale": string,"owner_id": string,"revision": number,"theme": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"locale"?: string,"owner_id"?: string,"revision"?: number,"theme"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"locale"?: string,"owner_id"?: string,"revision"?: number,"theme"?: string,"updated_at"?: string
                   }
                   Relationships: [
 

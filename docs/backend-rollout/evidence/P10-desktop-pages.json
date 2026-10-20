@@ -1,0 +1,50 @@
+[
+  {
+    "page": "http://localhost:3000/apps/notes",
+    "visible": true,
+    "bounds": {
+      "scroll": 1800,
+      "width": 1800
+    }
+  },
+  {
+    "page": "http://localhost:3000/apps/calendar",
+    "visible": true,
+    "bounds": {
+      "scroll": 1800,
+      "width": 1800
+    }
+  },
+  {
+    "page": "http://localhost:3000/finance/transactions",
+    "visible": true,
+    "bounds": {
+      "scroll": 1800,
+      "width": 1800
+    }
+  },
+  {
+    "page": "http://localhost:3000/finance/goals",
+    "visible": true,
+    "bounds": {
+      "scroll": 1800,
+      "width": 1800
+    }
+  },
+  {
+    "page": "http://localhost:3000/apps/tickets",
+    "visible": true,
+    "bounds": {
+      "scroll": 1800,
+      "width": 1800
+    }
+  },
+  {
+    "page": "http://localhost:3000/pages/user-profile",
+    "visible": true,
+    "bounds": {
+      "scroll": 1800,
+      "width": 1800
+    }
+  }
+]

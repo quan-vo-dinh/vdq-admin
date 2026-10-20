@@ -1,6 +1,6 @@
 # P10 — Một vòng kiểm thử release
 
-Bản tinh gọn v2, 2026-10-20. Chưa triển khai. Phụ thuộc P09. Tiếp: [P11](phase-11-production-deployment.md).
+Bản tinh gọn v2, 2026-10-20. PASS local; xem evidence/P10.md cho gate cuối. Phụ thuộc P09. Tiếp: [P11](phase-11-production-deployment.md).
 
 ## Đầu ra cần đạt
 
@@ -27,11 +27,11 @@ OAuth thật cần consent/user setup P03; account khác nếu có. Thiếu acco
 
 ## Gate và đầu ra
 
-- [ ] Lint/build cuối không có lỗi mới do rollout; lỗi baseline có đối chiếu rõ.
-- [ ] Luồng người dùng hoạt động, owner-only, invariants quan trọng đạt, không saved giả khi DB lỗi.
-- [ ] P09 recovery evidence còn áp dụng; không bỏ backup acceptance.
-- [ ] Một evidence ngắn: commands/results, issue mới/còn mở, browser bằng chứng chính và release identity; không hàng chục receipt.
-- [ ] Có bản app rollback tương thích schema, migrations sẵn cho P11.
+- [x] Lint/build cuối không có lỗi mới do rollout; lỗi baseline có đối chiếu rõ.
+- [x] Luồng người dùng hoạt động, owner-only, invariants quan trọng đạt, không saved giả khi DB lỗi.
+- [x] P09 recovery evidence còn áp dụng; không bỏ backup acceptance.
+- [x] Một evidence ngắn: commands/results, issue mới/còn mở, browser bằng chứng chính và release identity; không hàng chục receipt.
+- [x] Có bản app rollback tương thích schema, migrations sẵn cho P11.
 
 ## Hoãn / rollback
 

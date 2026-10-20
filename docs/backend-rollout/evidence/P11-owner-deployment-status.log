@@ -1,0 +1,49 @@
+Vercel CLI 64.7.0
+Fetching deployment "vdq-admin-asmxl9xhc-bins-projects-c818da1e.vercel.app" in bins-projects-c818da1e
+> Fetched deployment "vdq-admin-asmxl9xhc-bins-projects-c818da1e.vercel.app" in bins-projects-c818da1e [454ms]
+
+  General
+
+    id		dpl_2hF9KdkbWshHZ5jb98gxvFjQfxcu
+    name	vdq-admin
+    target	production
+    status	● Ready
+    url		https://vdq-admin-asmxl9xhc-bins-projects-c818da1e.vercel.app
+    created	Wed Oct 21 2026 00:02:04 GMT+0700 (Indochina Time) [4m ago]
+
+
+  Build Machine
+
+    requested build machine basic
+    actual assigned cores   2 vCPU (actual assignment)
+    memory                  8192 MiB
+    selection type          fixed
+    selection source        plan-default
+
+
+  Duration
+
+    build duration	2m
+    post-build duration	35s
+    billable duration	3m
+    CPU Minutes Usage	6 minutes (3m x 2vCPU)
+
+
+  Aliases
+
+    ╶ https://vdq-admin.vercel.app
+    ╶ https://project-z7211.vercel.app
+    ╶ https://vdq-admin-bins-projects-c818da1e.vercel.app
+    
+
+  Builds
+
+    ┌ .        [0ms]
+    ├── λ index (2.85MB) [bom1]
+    ├── λ _global-error (2.85MB) [bom1]
+    ├── λ _global-error.rsc (2.85MB) [bom1]
+    ├── λ _global-error.segments/__PAGE__.segment.rsc (2.85MB) [bom1]
+    ├── λ _global-error.segments/_full.segment.rsc (2.85MB) [bom1]
+    └── 255 output items hidden
+    
+

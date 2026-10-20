@@ -1,0 +1,3 @@
+PASS rollback archive runtime/build inputs match the source built and production-process-tested this session: 372 files
+Candidate source archive SHA256: 1ec903ae297215fe704ec22545bb5f626bc16df038b9415d6f1e95e52604d799
+No DB rollback; rebuild archived source with same locked dependencies and environment. Archive restore/rebuild not separately executed.

@@ -1,0 +1,11 @@
+PASS anon notes denied 401
+PASS anon calendar_events denied 401
+PASS anon calendar_settings denied 401
+PASS anon finance_accounts denied 401
+PASS anon finance_transactions denied 401
+PASS anon learning_habits denied 401
+PASS anon learning_checkins denied 401
+PASS anon profiles denied 401
+PASS anon user_preferences denied 401
+PASS Today table absent 404
+PASS anonymous assert_owner denied 401

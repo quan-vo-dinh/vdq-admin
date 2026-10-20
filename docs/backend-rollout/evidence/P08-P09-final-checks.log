@@ -1,0 +1,4 @@
+PASS final encrypted backup decrypt/manifest (2026-10-20T16:07:58.394Z)
+PASS source unreferenced media count = 0 after concurrent upload test and exact fixture cleanup
+PASS failed backup with missing key preserved all prior bundle names/checksums (earlier live check)
+PASS source :3000/Supabase retained; isolated drill app/stack stopped

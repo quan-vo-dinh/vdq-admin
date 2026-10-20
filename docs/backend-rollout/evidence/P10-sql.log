@@ -1,0 +1,11 @@
+Connecting to local database...
+psql:/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/domains.test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/domains.test.sql ........... ok
+psql:/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/finance_learning.test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/finance_learning.test.sql .. ok
+psql:/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/owner.test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/owner.test.sql ............. ok
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/personal.test.sql .......... ok
+All tests successful.
+Files=4, Tests=105,  1 wallclock secs ( 0.02 usr  0.00 sys +  0.01 cusr  0.01 csys =  0.04 CPU)
+Result: PASS

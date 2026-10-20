@@ -1,0 +1,60 @@
+{
+  "backup": {
+    "file": "/Users/vodinhquan/Documents/dashboard-backups/2026-10-20T15-53-23.791Z.enc.json",
+    "capturedAt": "2026-10-20T15:53:23.789Z",
+    "source": "local:dashboard-personal-local",
+    "versions": [
+      "20261020000100",
+      "20261020000400",
+      "20261020000500",
+      "20261020000600",
+      "20261020000700",
+      "20261020000710",
+      "20261020000800"
+    ],
+    "counts": {
+      "notes": 2,
+      "calendar_events": 1,
+      "calendar_settings": 1,
+      "finance_settings": 1,
+      "finance_accounts": 2,
+      "finance_categories": 9,
+      "finance_import_batches": 1,
+      "finance_transactions": 2,
+      "finance_budgets": 0,
+      "finance_budget_months": 0,
+      "finance_goals": 1,
+      "finance_bills": 0,
+      "learning_habits": 1,
+      "learning_checkins": 1,
+      "profiles": 1,
+      "user_preferences": 1
+    },
+    "images": 1
+  },
+  "restore": {
+    "restored": true,
+    "target": "local:dashboard-p09-drill",
+    "ownerRemapped": true,
+    "counts": {
+      "notes": 2,
+      "calendar_events": 1,
+      "calendar_settings": 1,
+      "finance_settings": 1,
+      "finance_accounts": 2,
+      "finance_categories": 9,
+      "finance_import_batches": 1,
+      "finance_transactions": 2,
+      "finance_budgets": 0,
+      "finance_budget_months": 0,
+      "finance_goals": 1,
+      "finance_bills": 0,
+      "learning_habits": 1,
+      "learning_checkins": 1,
+      "profiles": 1,
+      "user_preferences": 1
+    },
+    "images": 1
+  },
+  "checks": "exact money, VN dates, rich note, check-in, media SHA256, remapped owner/RLS, non-owner denied"
+}

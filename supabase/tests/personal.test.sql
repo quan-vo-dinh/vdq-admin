@@ -1,0 +1,15 @@
+begin;
+select plan(9);
+select is((select public from storage.buckets where id='personal-media'),false,'private bucket');
+select is((select file_size_limit::bigint from storage.buckets where id='personal-media'),2097152::bigint,'2 MiB');
+select is((select allowed_mime_types from storage.buckets where id='personal-media'),array['image/jpeg','image/png','image/webp'],'MIME allowlist');
+select ok((select relrowsecurity from pg_class where oid='public.profiles'::regclass),'profile RLS');
+select ok((select relrowsecurity from pg_class where oid='public.user_preferences'::regclass),'preferences RLS');
+select ok(not has_table_privilege('anon','public.profiles','select'),'anon denied');
+select ok(not has_column_privilege('authenticated','public.profiles','owner_id','update'),'cannot change identity');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000000',true);
+select is((select count(*) from public.profiles),0::bigint,'non-owner profile denied');
+select is((select count(*) from storage.objects where bucket_id='personal-media'),0::bigint,'non-owner media denied');
+select * from finish();
+rollback;

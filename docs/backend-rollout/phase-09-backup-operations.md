@@ -1,6 +1,6 @@
 # P09 — Backup/restore đủ dùng trước dữ liệu thật
 
-Bản tinh gọn v2, 2026-10-20. Chưa triển khai. Phụ thuộc P08. Tiếp: [P10](phase-10-integration-release-qa.md).
+Bản tinh gọn v2, 2026-10-20. PASS local, [evidence](evidence/P09.md), [runbook](BACKUP_RESTORE.md). Hosted source backup/config thuộc P11. Phụ thuộc P08. Tiếp: [P10](phase-10-integration-release-qa.md).
 
 ## Đầu ra cần đạt
 
@@ -30,10 +30,10 @@ U09 tại [USER_SETUP](USER_SETUP.md): chọn nơi lưu ngoài project, giữ re
 
 ## Gate và rollback
 
-- [ ] Backup gồm data thật theo scope lẫn ảnh, giải mã được, restore thành công sang target khác; owner access đúng.
-- [ ] Có một command/runbook user chạy được và lịch vận hành trung thực, không hứa job đã hoạt động nếu chưa cấu hình.
-- [ ] Failure không xóa bản backup tốt, không plaintext dump/key trong Git.
-- [ ] App/database production không bị reset vì drill. Tool lỗi sửa riêng tool; không chỉnh dữ liệu app để làm test PASS.
+- [x] Backup gồm data thật theo scope lẫn ảnh, giải mã được, restore thành công sang target khác; owner access đúng.
+- [x] Có một command/runbook user chạy được và lịch vận hành trung thực, không hứa job đã hoạt động nếu chưa cấu hình.
+- [x] Failure không xóa bản backup tốt, không plaintext dump/key trong Git.
+- [x] App/database production không bị reset vì drill. Tool lỗi sửa riêng tool; không chỉnh dữ liệu app để làm test PASS.
 
 ## Hoãn sau lần release đầu
 

@@ -1,6 +1,6 @@
 # P08 — Profile, thiết lập và ảnh goal
 
-Bản tinh gọn v2, 2026-10-20. Chưa triển khai. Phụ thuộc P07. Tiếp: [P09](phase-09-backup-operations.md).
+Bản tinh gọn v2, 2026-10-20. Đã triển khai local; còn gate browser upload do quyền extension, user chọn bật sau. [Evidence](evidence/P08.md). Phụ thuộc P07. Tiếp: [P09](phase-09-backup-operations.md).
 
 ## Đầu ra cần đạt
 
@@ -25,11 +25,13 @@ U08 tại [USER_SETUP](USER_SETUP.md): private bucket/size/MIME/policies. Không
 
 ## Kiểm tra bắt buộc và gate
 
-- [ ] Profile Save và locale/theme còn sau reload/tab khác, login identity không đổi.
-- [ ] Goal upload/save/read lại, signed expiry và attach fail giữ ảnh cũ.
-- [ ] Anon/non-owner không đọc/ghi private bucket; path sai/ảnh giả/oversized bị xử lý.
+- [x] Profile Save và locale/theme còn sau reload/tab khác, login identity không đổi.
+- [x] Goal upload/save/read lại, signed expiry và attach fail giữ ảnh cũ.
+- [x] Anon/non-owner không đọc/ghi private bucket; path sai/ảnh giả/oversized bị xử lý.
 - [ ] Browser một vòng form và ảnh desktop/mobile; DB/RLS checks mới + lint/build cuối frontend change.
 
 ## Hoãn / rollback
 
 Không media FSM, generalized file manager, scheduled orphan cleanup, image upload cho Notes/avatar chưa có UI. Khi Storage lỗi tắt upload mới nhưng giữ record/ảnh cũ; đừng drop bucket để sửa form. P09 backup phải chứa object bytes, không chỉ image_path.
+
+Browser form/read image desktop/mobile đã kiểm; filechooser → Save/reload chưa kiểm được. Không báo full P08 PASS.

@@ -16,15 +16,18 @@ import { X } from 'lucide-react';
 import { currentUser } from "@/lib/profile";
 import { useLanguage } from "@/app/context/language-context";
 import { LogoutButton } from "@/app/components/auth/logout-button";
+import { usePersonal } from "@/app/context/personal-context";
 export default function ProfileSheet() {
   const { t } = useLanguage();
+  const {profile}=usePersonal();
+  const name=profile.data ? [profile.data.personal.firstName,profile.data.personal.lastName].filter(Boolean).join(" ") || "Owner" : "…";
 
   return (
     <Sheet>
       {/* Trigger Button */}
       <SheetTrigger aria-label={t("Open profile")} className="cursor-pointer hover:bg-primary/5 flex items-center justify-center rounded-full h-10 w-10">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+          <AvatarImage src={currentUser.avatar} alt={name} />
           <AvatarFallback className="bg-primary text-primary-foreground">
             B
           </AvatarFallback>
@@ -46,7 +49,7 @@ export default function ProfileSheet() {
             <Avatar className="h-16 w-16">
               <AvatarImage
                 src={currentUser.avatar}
-                alt={currentUser.name}
+                alt={name}
                 width={30}
                 height={30}
               />
@@ -57,11 +60,11 @@ export default function ProfileSheet() {
 
             <div className="text-center">
               <h6 className="text-lg font-semibold">
-                {currentUser.name}
+                {name}
               </h6>
               <div className="flex items-center gap-2 justify-center">
                 <span className="text-sm font-normal text-muted-foreground">
-                  {t(currentUser.role)}
+                  {profile.data?.personal.position || "—"}
                 </span>
               </div>
             </div>

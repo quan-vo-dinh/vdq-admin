@@ -14,7 +14,7 @@ Tham chiếu: [index v2](README.md). Cập nhật sau P00/P01 và tinh gọn pla
 - [x] P00 inventory xong, không có server dashboard đang chạy; không reload tab Developer. Không có dữ liệu thật trong state cần cứu theo xác nhận user.
 - [x] User xác nhận **toàn bộ data hiện tại trong scope là mock, có thể bỏ khi cutover**; production rỗng. Ngoài scope giữ nguyên mock/fake/source. Calendar/Today demo đã snapshot/decrypt verify.
 - [x] Docker Engine 29.2.1 qua Docker Desktop chạy được stack local, reset và dump. Phiên kết thúc chỉ stop stack Supabase này, giữ các service Docker khác.
-- [ ] **P09, không chặn P02–P08:** chọn nơi backup cá nhân ngoài Git và giữ recovery key trong password manager trước dữ liệu thật. Demo encrypted snapshot tạm ở `~/Library/Application Support/dashboard-backend-rollout/2026-10-20/`, key demo riêng ở `~/.config/dashboard-backend-rollout/demo-recovery/`; không coi đây là recovery setup đã nghiệm thu.
+- [x] **P09:** user chọn `~/Documents/dashboard-backups`, manual hằng ngày. Tool/drill local PASS; **private recovery key còn cần user cất trong password manager** trước dữ liệu thật. Demo encrypted snapshot tạm ở `~/Library/Application Support/dashboard-backend-rollout/2026-10-20/`, key demo riêng ở `~/.config/dashboard-backend-rollout/demo-recovery/`; không coi đây là recovery setup đã nghiệm thu.
 
 ## U01 — P01: Supabase project và settings
 
@@ -127,21 +127,29 @@ không có email/password fallback trong UI hoặc runtime app.
 - [ ] **Chỉ phục vụ browser QA CSV P06:** Chrome → `chrome://extensions` → ChatGPT → Details →
   bật **Allow access to file URLs** rồi báo đã bật. Extension đã từ chối `setFiles`; user đã trả lời sẽ bật.
   API/SQL CSV đã PASS, full P06 chưa PASS cho đến khi browser import/reload được kiểm chứng.
-- [ ] Ảnh goal riêng vẫn thuộc P08/U08; hiện chọn biểu tượng được lưu, file image control tạm disabled
-  với thông báo P08. Không lưu base64 vào database.
+- [x] P08 đã nối private goal image Storage; không base64 DB. API upload/read/CAS/expiry PASS.
+- [ ] P08 browser upload còn chờ quyền file URL như P06; user xác nhận sẽ bật sau (phiên P08/P09).
 
 ## U08 — P08: Storage
 
-- [ ] Chưa cần bật upload ngoài scope; chỉ bucket private cho ảnh goal, avatar nếu UI hiện có hỗ trợ chọn ảnh.
-- [ ] Kiểm tra policy owner, MIME JPEG/PNG/WebP và max 2 MiB; giữ ảnh mẫu hiện có làm fallback, không public bucket.
+- [x] Local bucket personal-media private, policy owner prefix, JPEG/PNG/WebP <=2 MiB, API decode ảnh thật.
+- [x] Profile/address Save, header, server locale/theme/reload/tab khác và desktop/mobile read đã kiểm.
+- [ ] **P08 gate browser upload:** Chrome → `chrome://extensions` → ChatGPT → Details → **Allow access to file URLs**.
+  User chọn bật sau; API upload PASS không thay browser filechooser → Save → reload. Không cần tạo bucket/account mới local.
+- [ ] P11 áp migration/bucket/policies lên cloud đúng phase, không tự public bucket.
 
 ## U09 — P09: backup đủ dùng
 
-- [ ] Chọn nơi giữ encrypted backup ngoài project/Git, recovery key giữ riêng trong password manager.
-- [ ] Chạy một lệnh backup và một lần restore tách biệt theo P09; bảo vệ cả dữ liệu và ảnh, không chỉ schema.
-- [ ] Chọn workflow vận hành: manual chạy thường xuyên (đề xuất hằng ngày khi dùng thật) hoặc lịch trên runner có sẵn. Manual được chấp nhận nếu biết backup gần nhất là recovery point; không cam kết RPO 24h khi chưa có job chạy tin cậy.
-- [ ] Không bắt buộc GitHub Actions/hosted scheduler/alert integration để release đầu. Nếu chọn tự động sau, kiểm tra Free quota và secrets đúng quyền; không upload dump rõ.
-- [ ] Giữ vài bản backup tốt gần nhất, không xóa bản cuối khi backup mới fail; không mua dịch vụ lưu trữ mặc định.
+- [x] User chọn `~/Documents/dashboard-backups`, **manual hằng ngày**, giữ mặc định 3 bản.
+- [x] Một lệnh backup/decrypt + restore DB/Storage tách biệt/remap owner + app read đã PASS local.
+  Xem [runbook](BACKUP_RESTORE.md) và [evidence](evidence/P09.md).
+- [x] Public/private RSA key đã tạo ngoài Git, private 0600 trong thư mục 0700.
+- [ ] **Bạn cần cất recovery private key** `~/.config/dashboard-backup-recovery/private.pem`
+  vào password manager/nơi riêng. Đã nói sẽ cất, chưa xác minh thao tác. Không gửi key qua chat.
+- [x] Bạn đã chọn chịu trách nhiệm chạy manual; recovery point = bundle thành công gần nhất,
+  máy ngủ/tắt không backup. Không có hosted scheduler/RPO 24h cam kết.
+- [ ] P11 nối/test **backup nguồn hosted** trước dữ liệu production, vì tool hiện cố định local để tránh nhầm linked cloud.
+  Không cần làm lại restore drill nếu không có khác biệt ảnh hưởng. Không mua dịch vụ mặc định.
 
 ## U11 — P11: Vercel production
 
@@ -170,3 +178,35 @@ không có email/password fallback trong UI hoặc runtime app.
 | Backup encryption key | nơi chạy job; recovery key giữ riêng | Không |
 
 Không thêm service-role/secret admin key vào runtime CRUD chỉ để giải quyết lỗi RLS. `.env.example` chứa placeholder; `.env.local`, dump, keystore, token phải ignore và không log.
+
+## Phiên P10/P11 — 2026-10-20
+
+Đã chạy regression và chuẩn bị migration production riêng; **P10/P11 chưa PASS, chưa cloud push/deploy**. Xem [P10 evidence](evidence/P10.md) và [P11 evidence](evidence/P11.md) cho kết quả mới nhất, ưu tiên hơn trạng thái bàn giao cũ. Build PASS, lint giữ nguyên baseline 17/45, SQL 105/105, API Finance/Learning/personal PASS. Browser file upload vẫn bị quyền Chrome chặn khi thử thực tế. User cần bật Allow access to file URLs, chốt Vercel Hobby project/domain và hoàn tất OAuth/recovery setup. Các việc kỹ thuật chưa xong được liệt kê rõ trong evidence; tiếp tục từ đó, không reset owner hoặc push migration root còn Today.
+
+## Cập nhật tiếp tục P10/P11 — ưu tiên trạng thái này
+
+**P06/P08 PASS local: browser CSV và ảnh đã kiểm chứng sau khi bật file URL.** P10 build/scoped lint/API/SQL/process/secret scan PASS; full lint vẫn baseline17/45, vòng browser release đầy đủ và rollback nghiệm thu chưa đóng. P11 migrations đã test trên DB rỗng local không Today; Vercel Hobby project vdq-admin đã tạo (Next.js/Node22), chưa Git/env/domain/deploy/cloud push. Recovery iCloud Passwords đang chờ user import CSV tạm, chưa xác minh cất key. Xem evidence/P10.md, evidence/P11.md cho thứ tự tiếp theo và cleanup. Không yêu cầu bật lại quyền Chrome hoặc tạo lại Vercel project.
+
+### Recovery / Vercel — cập nhật cuối
+
+User yêu cầu **bỏ qua import iCloud Keychain**. Đã hủy nhánh lưu key và xóa CSV tạm0600/thư mục/marker; key gốc vẫn ~/.config/dashboard-backup-recovery/private.pem, không có bằng chứng đã cất iCloud. Không tiếp tục nhắc unlock/import ở phiên sau trừ khi user yêu cầu. Vercel vdq-admin đã lưu duy nhất Function Region **Mumbai bom1** (success toast), Next.js/Node22/Hobby, chưa deploy.
+
+## U11 — trạng thái thực thi mới nhất
+
+- [x] P06/P08 browser uploads PASS, không cần cấu hình Chrome lại.
+- [x] P10 PASS local; P11 cloud7 migrations không Today đã áp.
+- [x] Vercel Hobby vdq-admin, vdq-admin.vercel.app, Next.js/Node22/bom1, sáu env Production đã lưu. Chưa deploy.
+- [ ] Bạn tạo GitHub OAuth App production: homepage https://vdq-admin.vercel.app; callback https://wcgdvsiiemurehkprvqw.supabase.co/auth/v1/callback. Đặt Client ID/Secret kín trong Supabase Authentication → Providers → GitHub, không chat. Báo khi xong để hosted owner bootstrap/đóng signup/relogin.
+- [ ] APP_OWNER_USER_ID cloud, production smoke/redeploy và hosted backup đầu tiên chưa hoàn tất.
+- [ ] iCloud recovery copy chưa có; user yêu cầu bỏ qua bước import. CSV tạm đã xóa. Không yêu cầu thực hiện lại nếu chưa được user giao.
+
+## Cập nhật 2026-10-21 — hosted owner đã hoạt động ở cấu hình
+
+- User đã consent GitHub production. Callback owner_required trước bootstrap là fail-closed dự kiến. Verified identity provider_id/sub129001260 → cloud user f8960b75-231c-4096-b678-dc6dd619627e. Đã chạy bootstrap-owner-hosted.sql, enabled registry đúng một owner; APP_OWNER_USER_ID đã thêm chỉ Production. Không thay owner local.
+- Signup cloud **đã đóng**, Email/manual linking/anonymous tắt; GitHub bật. Site URL/redirect production đúng. Live cloud preflight xác nhận signupDisabled=true, githubEnabled=true.
+- Production **READY** https://vdq-admin.vercel.app ; owner-env redeploy https://vdq-admin-asmxl9xhc-bins-projects-c818da1e.vercel.app, deployment dpl_2hF9KdkbWshHZ5jb98gxvFjQfxcu. Redeploy log Ready2m. Đây là working-tree CLI deployment, không phải Git HEAD; không commit/push/Git auto-deploy.
+- RLS/grants owner/non-owner hosted SQL transaction PASS; Notes non-owner insert/RPC denied,16tables RLS/anon grants, private bucket, Today absent. Anonymous production API401/private-no-store và page307. Logs P11-cloud-security/P11-production-anon-final.
+- Hosted encrypted backup đầu tiên đã tạo trong ~/Documents/dashboard-backups/hosted,16tables rỗng/0images/7production migration variants; decrypt/owner/source scope PASS (P11-hosted-backup/verify.log). Adapter vẫn cần smoke **ảnh hosted thực và backup bytes** trước gate đầy đủ. Local drillP09 và isolated production schema tests đã có; chưa báo hosted media recovery PASS.
+- **Blocker hiện tại: host trả Local browser use is disabled in Work settings.** User yêu cầu agent bật lại; app com.openai.codex bị Computer Use từ chối vì safety, không có tool cập nhật setting. Cần user tự bật Local browser use. Không dùng browser/runtime/cookie khác để bypass. Chưa verify owner relogin sau signup closure hoặc CRUD UI production/ảnh/redeploy persistence. **P11 PARTIAL, không PASS.**
+- Recovery iCloud user bỏ qua, CSV đã xóa; key gốc ngoài Git giữ. Không hỏi lại import.
+- Tiếp: bật browser → owner relogin → record smoke Notes/Calendar/Finance/check-in/Profile/preferences/goal image → backup ảnh/decrypt → redeploy persistence → cleanup exact smoke UUIDs → final backup và gate. Không chạy bootstrap/reset/reopen signup lại.

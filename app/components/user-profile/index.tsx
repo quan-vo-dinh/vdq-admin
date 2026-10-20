@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/card'
 import BreadcrumbComp from '@/app/(dashboard-layout)/layout/shared/breadcrumb/breadcrumb-comp'
 import StyleDivider from '../shared/StyleDivider'
 import { currentUser } from '@/lib/profile'
+import { usePersonal, patchPersonal, type Personal, type Address } from '@/app/context/personal-context'
 import { useLanguage } from '@/app/context/language-context'
 
 const UserProfile = () => {
@@ -37,46 +38,29 @@ const UserProfile = () => {
     },
   ]
 
-  const [personal, setPersonal] = useState({
-    firstName: 'Vo Dinh',
-    lastName: 'Quan',
-    email: '',
-    phone: '',
-    position: String(currentUser.role),
-    facebook: String(currentUser.social.facebook),
-    linkedin: String(currentUser.social.linkedin),
-    github: String(currentUser.social.github),
-    instagram: String(currentUser.social.instagram),
-  })
-
-  const [address, setAddress] = useState({
-    location: '',
-    state: '',
-    pin: '',
-    zip: '',
-    taxNo: '',
-  })
-
-  const [tempPersonal, setTempPersonal] = useState(personal)
-  const [tempAddress, setTempAddress] = useState(address)
-
-  useEffect(() => {
-    if (openModal && modalType === 'personal') {
-      setTempPersonal(personal)
-    }
-    if (openModal && modalType === 'address') {
-      setTempAddress(address)
-    }
-  }, [openModal, modalType, personal, address])
-
-  const handleSave = () => {
-    if (modalType === 'personal') {
-      setPersonal(tempPersonal)
-    } else if (modalType === 'address') {
-      setAddress(tempAddress)
-    }
-    setOpenModal(false)
+  const { profile } = usePersonal()
+  const personal = profile.data?.personal ?? {firstName:'',lastName:'',email:'',phone:'',position:'',facebook:'',linkedin:'',github:'',instagram:''}
+  const address = profile.data?.address ?? {location:'',state:'',pin:'',zip:'',taxNo:''}
+  const [tempPersonal, setTempPersonal] = useState<Personal>(personal)
+  const [tempAddress, setTempAddress] = useState<Address>(address)
+  const [draftRevision,setDraftRevision] = useState(0)
+  const [saveError,setSaveError] = useState('')
+  const [saving,setSaving] = useState(false)
+  const openEditor = (kind:'personal'|'address') => {
+    setTempPersonal(personal);setTempAddress(address);setDraftRevision(profile.data!.revision)
+    setSaveError('');setModalType(kind);setOpenModal(true)
   }
+  const handleSave = async () => {
+    setSaving(true);setSaveError('')
+    try {
+      const saved=await patchPersonal<NonNullable<typeof profile.data>>('/api/profile',{
+        expectedRevision:draftRevision,...(modalType==='personal'?{personal:tempPersonal}:{address:tempAddress})
+      })
+      await profile.mutate(saved,{revalidate:false});setOpenModal(false)
+    } catch(e) {setSaveError((e as Error).message)} finally {setSaving(false)}
+  }
+  if(profile.error)return <p role="alert">{profile.error.message}</p>
+  if(!profile.data)return <p role="status">Đang tải hồ sơ…</p>
 
   const socialLinks = [
     { href: personal.facebook, icon: 'streamline-logos:facebook-logo-2-solid', label: 'Facebook' },
@@ -173,8 +157,7 @@ const UserProfile = () => {
             <div className='flex justify-end'>
               <Button
                 onClick={() => {
-                  setModalType('personal')
-                  setOpenModal(true)
+                  openEditor('personal')
                 }}
                 className='flex items-center gap-1.5 rounded-md'>
                 <Icon icon='ic:outline-edit' width='18' height='18' /> {t('Edit')}
@@ -209,8 +192,7 @@ const UserProfile = () => {
             <div className='flex justify-end'>
               <Button
                 onClick={() => {
-                  setModalType('address')
-                  setOpenModal(true)
+                  openEditor('address')
                 }}
                 className='flex items-center gap-1.5 rounded-md'>
                 <Icon icon='ic:outline-edit' width='18' height='18' /> {t('Edit')}
@@ -222,6 +204,7 @@ const UserProfile = () => {
 
       <Dialog open={openModal} onOpenChange={setOpenModal}>
         <DialogContent size="lg" >
+          {saveError && <p role="alert">{saveError}</p>}
           <DialogHeader>
             <DialogTitle className='mb-4'>
               {modalType === 'personal'
@@ -413,7 +396,7 @@ const UserProfile = () => {
           <DialogFooter className='flex gap-2 mt-4'>
             <Button
               className='rounded-md'
-              onClick={handleSave}>
+              disabled={saving} onClick={handleSave}>
               {t('Save Changes')}
             </Button>
             <Button

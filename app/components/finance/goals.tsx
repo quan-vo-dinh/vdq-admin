@@ -5,7 +5,7 @@ import StyleDivider from "@/app/components/shared/StyleDivider";
 import { FinanceHeading } from "./heading";
 import { DateField } from "./controls";
 import { useFinanceLocale } from "./locale";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Target,
   ShieldCheck,
@@ -62,7 +62,7 @@ function GoalEditor({
   onClose: () => void;
 }) {
   const { text, money } = useFinanceLocale();
-  const { data: loaded, action, busy, notify } = useFinance();
+  const { data: loaded, action, busy, notify, reload: actionRefresh } = useFinance();
   const data = loaded!,
     totals = overview(data);
   const [createId] = useState(() => crypto.randomUUID());
@@ -74,7 +74,11 @@ function GoalEditor({
   const [visual, setVisual] = useState(initial?.visual ?? "study");
   const [image, setImage] = useState(initial?.image ?? "");
   const [imageError, setImageError] = useState("");
-  const [readingImage, setReadingImage] = useState(false);
+  const [file,setFile]=useState<File>();
+  const [removeImage,setRemoveImage]=useState(false);
+  const [savedRevision,setSavedRevision]=useState<number>();
+  useEffect(()=>()=>{if(image.startsWith("blob:"))URL.revokeObjectURL(image);},[image]);
+  const [readingImage,setReadingImage]=useState(false);
   const [error, setError] = useState("");
   const max = Math.max(
     0,
@@ -136,10 +140,21 @@ function GoalEditor({
               deadline,
               priority: initial?.priority ?? "normal",
               visual,
-              image: image || undefined,
+
             };
-            try {await action('goals',initial?'PATCH':'POST',{...goal, expectedRevision:initial?.revision});}
-            catch(e) {setError(e instanceof Error?e.message:'Không lưu được.');return;}
+            setReadingImage(true);
+            try {
+              const saved=await action('goals',initial||savedRevision?'PATCH':'POST',{...goal, expectedRevision:savedRevision??initial?.revision});
+              setSavedRevision(saved.revision);
+              if(file||removeImage){
+                const r=await fetch(`/api/finance/goals/image?id=${goal.id}&revision=${saved.revision}`,{method:file?'POST':'DELETE',headers:file?{'Content-Type':file.type}:undefined,body:file});
+                if(!r.ok)throw new Error(r.status===409?'Mục tiêu đã thay đổi. Ảnh cũ được giữ; tải lại trước khi lưu.':'Đã lưu thông tin mục tiêu, nhưng chưa lưu ảnh. Giữ bản nháp để thử lại.');
+                const attached=await r.json();setSavedRevision(attached.revision);
+                if(attached.cleanupPending)notify('Đã lưu ảnh; ảnh cũ cần dọn qua media cleanup.');
+                await actionRefresh();
+              }
+            }
+            catch(e) {setError(e instanceof Error?e.message:'Không lưu được.');return;} finally {setReadingImage(false);}
             notify("Đã lưu mục tiêu và tính lại phần tiền chưa phân bổ.");
             onClose();
           }}
@@ -167,8 +182,7 @@ function GoalEditor({
               <FieldLabel htmlFor="goal-image">{text("Ảnh riêng cho mục tiêu")}</FieldLabel>
               <Input
                 id="goal-image"
-                disabled
-                title="Ảnh riêng sẽ được lưu qua Storage ở P08"
+                disabled={busy}
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 aria-invalid={Boolean(imageError)}
@@ -180,23 +194,16 @@ function GoalEditor({
                     event.target.value = "";
                     return;
                   }
-                  const reader = new FileReader();
-                  setReadingImage(true);
-                  reader.onload = () => {
-                    setImage(String(reader.result));
-                    setImageError("");
-                  };
-                  reader.onerror = () => setImageError("Không đọc được ảnh. Hãy chọn lại.");
-                  reader.onloadend = () => setReadingImage(false);
-                  reader.readAsDataURL(file);
+                  setFile(file);setRemoveImage(false);setImage(URL.createObjectURL(file));setImageError("");
+
                 }}
               />
-              <FieldDescription>{text("Biểu tượng có sẵn được lưu ngay. Ảnh riêng sẽ được nối Storage ở P08.")}</FieldDescription>
+              <FieldDescription>{text("JPG, PNG hoặc WebP, tối đa 2 MiB. Ảnh riêng chỉ lưu sau khi nhấn Lưu.")}</FieldDescription>
               {imageError && <FieldError>{text(imageError)}</FieldError>}
               {image && (
                 <div className="finance-goal-image-preview">
                   <GoalCover visual={visual} image={image} alt={name || text("Mục tiêu")} />
-                  <Button type="button" variant="ghost" size="sm" onClick={() => setImage("")}>{text("Dùng ảnh có sẵn")}</Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => {setImage("");setFile(undefined);setRemoveImage(true);}}>{text("Dùng ảnh có sẵn")}</Button>
                 </div>
               )}
             </Field>

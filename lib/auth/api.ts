@@ -19,7 +19,7 @@ export function withOwner<T extends Request>(handler: (request: T) => Response |
       checkOrigin(request, env.origin);
       await requireOwner();
       // Legacy demos stay in source; their endpoints are disabled outside local dev.
-      if (env.mode !== 'local' && /^\/api\/(?:blog|developer|ticket|userprofile)(?:\/|$)/.test(new URL(request.url).pathname)) {
+      if (env.mode !== 'local' && /^\/api\/(?:blog|developer|ticket|userprofile|today)(?:\/|$)/.test(new URL(request.url).pathname)) {
         throw new AccessError(403, 'feature_not_enabled');
       }
       return privateResponse(await handler(request));

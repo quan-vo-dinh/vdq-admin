@@ -1,0 +1,5 @@
+Connecting to local database...
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/personal.test.sql .. ok
+All tests successful.
+Files=1, Tests=9,  0 wallclock secs ( 0.01 usr +  0.01 sys =  0.02 CPU)
+Result: PASS

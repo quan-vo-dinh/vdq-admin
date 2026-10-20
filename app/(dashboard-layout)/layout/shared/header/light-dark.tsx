@@ -1,29 +1,26 @@
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
+import { useSyncExternalStore } from "react";
+import { usePersonal } from "@/app/context/personal-context";
 import { Moon, Sun } from "lucide-react";
 import { useLanguage } from "@/app/context/language-context";
 
+const subscribe=()=>()=>{};
 const LightDark = () => {
   const { t } = useLanguage();
-  const { theme: activeMode, setTheme: setActiveMode } = useTheme();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const { theme: activeMode, preferences, saving } = usePersonal();
+  const isMounted=useSyncExternalStore(subscribe,()=>true,()=>false);
 
   const toggleTheme = async () => {
     const toggleMode = () => {
-      setActiveMode(activeMode === "light" ? "dark" : "light");
+      void preferences({theme:activeMode === "light" ? "dark" : "light"});
     };
 
-    if (!(document as any).startViewTransition) {
+    if (!document.startViewTransition) {
       toggleMode();
       return;
     }
 
-    const transition = (document as any).startViewTransition(() => {
+    const transition = document.startViewTransition(() => {
       toggleMode();
     });
 
@@ -53,7 +50,7 @@ const LightDark = () => {
         <Button
           variant="ghost"
           className=" h-10 w-10  hover:bg-primary/5  rounded-full cursor-pointer"
-          onClick={toggleTheme}
+          disabled={saving} onClick={toggleTheme}
           aria-label={t("Toggle theme")}
         >
           <Moon className="size-5" />
@@ -63,7 +60,7 @@ const LightDark = () => {
         <Button
           variant="ghost"
           className=" h-10 w-10  hover:bg-primary/5  rounded-full cursor-pointer"
-          onClick={toggleTheme}
+          disabled={saving} onClick={toggleTheme}
           aria-label={t("Toggle theme")}
         >
           <Sun className="size-5" />

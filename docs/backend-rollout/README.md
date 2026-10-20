@@ -1,6 +1,6 @@
 # Backend rollout — kế hoạch tinh gọn v2
 
-Cập nhật 2026-10-20 theo ưu tiên triển khai nhanh của user. P00/P01 đã PASS. Phiên P02/P03 ngày 2026-10-20: **P02 và P03 PASS local**, gồm GitHub cá nhân login/logout/relogin thật, owner bootstrap và signup đã đóng. Xem [bàn giao](HANDOFF.md), [P02 evidence](evidence/P02.md), [P03 evidence](evidence/P03.md). **P04/P05 PASS local**: Notes và Calendar lưu DB; xem [P04 evidence](evidence/P04.md), [P05 evidence](evidence/P05.md). **P06 đã triển khai; còn gate CSV browser do quyền upload Chrome**, xem [P06 evidence](evidence/P06.md). **P07 PASS local**, xem [P07 evidence](evidence/P07.md). Sau khi đóng gate P06, tiếp theo P08; P08–P12 chưa triển khai. Không có cloud migration/deploy.
+Cập nhật 2026-10-20: **P00–P10 PASS local** theo evidence từng phase. Phiên tiếp tục đã đóng browser CSV P06 và ảnh private P08; P10 regression, OAuth owner relogin, desktop/mobile, process persistence và secret scan PASS. **P11 đã áp 7 migrations cloud không Today**, anon Data API denied; Vercel Hobby project `vdq-admin`, domain `vdq-admin.vercel.app`, Next.js/Node22/bom1 và sáu env Production đã tạo. **Chưa deploy/P11 chưa PASS**: chờ production GitHub OAuth/owner bootstrap, rồi hosted backup và smoke/redeploy. User yêu cầu bỏ qua lưu key vào iCloud; CSV tạm đã xóa, key gốc ngoài Git giữ nguyên. Xem [P10](evidence/P10.md), [P11](evidence/P11.md), [bàn giao](HANDOFF.md).
 
 ## Phạm vi giữ nguyên
 
@@ -48,7 +48,7 @@ Evidence P00/P01 là lịch sử, giữ nguyên. Bộ phase v2 là chỉ dẫn t
 | [P11](phase-11-production-deployment.md) | **Web/backend production dùng được** | P10 |
 | [P12](phase-12-mobile-future.md) | PWA, APK nếu cần — tương lai | P11 |
 
-Không gộp mọi phase cho một phiên. P06/P07 đã được triển khai trong phiên user giao cả hai phase. Còn xác minh CSV browser của P06; sau đó tới P08.
+Không gộp mọi phase cho một phiên. P06/P07 đã được triển khai trong phiên user giao cả hai phase. Phiên user giao P08/P09 đã triển khai cả hai, làm các phần P09 độc lập trong khi P08 chờ quyền browser upload. Còn gate browser P06/P08; kế tiếp P10.
 
 ## Nguyên tắc thực thi v2
 
@@ -88,3 +88,11 @@ Hoãn không có nghĩa bỏ tính năng người dùng đã có: Notes Save, Fi
 ## Nguồn kỹ thuật
 
 [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [update filters](https://supabase.com/docs/reference/javascript/update), [functions](https://supabase.com/docs/guides/database/functions), [Next SSR](https://supabase.com/docs/guides/auth/server-side/nextjs), [backup](https://supabase.com/docs/guides/platform/backups). Khi thực thi, chỉ tra phần cần cho API/SDK đang dùng; không biến mỗi phiên thành nghiên cứu lại stack.
+
+## Phiên P10/P11 — 2026-10-20
+
+Đã chạy regression và chuẩn bị migration production riêng; **P10/P11 chưa PASS, chưa cloud push/deploy**. Xem [P10 evidence](evidence/P10.md) và [P11 evidence](evidence/P11.md) cho kết quả mới nhất, ưu tiên hơn trạng thái bàn giao cũ. Build PASS, lint giữ nguyên baseline 17/45, SQL 105/105, API Finance/Learning/personal PASS. Browser file upload vẫn bị quyền Chrome chặn khi thử thực tế. User cần bật Allow access to file URLs, chốt Vercel Hobby project/domain và hoàn tất OAuth/recovery setup. Các việc kỹ thuật chưa xong được liệt kê rõ trong evidence; tiếp tục từ đó, không reset owner hoặc push migration root còn Today.
+
+## Cập nhật tiếp tục P10/P11 — ưu tiên trạng thái này
+
+**P06/P08 PASS local: browser CSV và ảnh đã kiểm chứng sau khi bật file URL.** P10 build/scoped lint/API/SQL/process/secret scan PASS; full lint vẫn baseline17/45, vòng browser release đầy đủ và rollback nghiệm thu chưa đóng. P11 migrations đã test trên DB rỗng local không Today; Vercel Hobby project vdq-admin đã tạo (Next.js/Node22), chưa Git/env/domain/deploy/cloud push. Recovery iCloud Passwords đang chờ user import CSV tạm, chưa xác minh cất key. Xem evidence/P10.md, evidence/P11.md cho thứ tự tiếp theo và cleanup. Không yêu cầu bật lại quyền Chrome hoặc tạo lại Vercel project.

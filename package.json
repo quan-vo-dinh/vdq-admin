@@ -23,7 +23,10 @@
     "backend:local:stop": "supabase stop",
     "backend:local:reset": "node scripts/backend/reset-local.mjs",
     "backend:local:smoke": "node scripts/backend/local-smoke.mjs",
-    "backend:cloud:smoke": "node --env-file=.env.cloud-tooling.local scripts/backend/cloud-smoke.mjs"
+    "backend:cloud:smoke": "node --env-file=.env.cloud-tooling.local scripts/backend/cloud-smoke.mjs",
+    "backend:backup": "node scripts/backend/backup.mjs --mode backup",
+    "backend:backup:verify": "node scripts/backend/backup.mjs --mode verify",
+    "backend:restore:drill": "node scripts/backend/backup.mjs --mode restore --workdir /tmp/dashboard-p09-drill"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",

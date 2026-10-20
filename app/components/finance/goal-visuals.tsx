@@ -1,5 +1,6 @@
 "use client";
 
+import useSWR from "swr";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import {
@@ -68,11 +69,15 @@ export function GoalCover({
   alt: string;
   image?: string;
 }) {
+  const privateImage=image?.startsWith('/api/finance/goals/image?');
+  const {data,error}=useSWR<{url:string|null}>(privateImage?image:null,async url=>{const r=await fetch(url);if(!r.ok)throw new Error('Không tải được ảnh riêng.');return r.json();},{refreshInterval:90000,dedupingInterval:1000});
+  const source=privateImage?data?.url: image;
   const option = goalVisuals[visual ?? "study"];
   const Icon = option.icon;
   return (
     <div className="finance-goal-cover">
-      <Image src={image || option.image} alt={alt} fill sizes="(max-width: 640px) 90vw, 40vw" unoptimized={Boolean(image)} />
+      <Image src={source || option.image} alt={alt} fill sizes="(max-width: 640px) 90vw, 40vw" unoptimized={Boolean(source)} />
+      {error && <span role="alert">Không tải được ảnh riêng.</span>}
       <span className="finance-goal-cover-icon" aria-hidden="true">
         <Icon />
       </span>

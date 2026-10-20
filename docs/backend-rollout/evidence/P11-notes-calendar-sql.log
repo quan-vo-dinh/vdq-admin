@@ -1,0 +1,38 @@
+NOTICE:  extension "pgtap" already exists, skipping
+SET
+BEGIN
+CREATE EXTENSION
+INSERT 0 2
+DELETE 0
+INSERT 0 1
+ok 1 - anon Notes read closed
+ok 2 - anon Calendar write closed
+SET
+10000000-0000-4000-8000-000000000003
+ok 3 - owner creates Notes
+ok 4 - Notes update
+ok 5 - DB increments revision
+ok 6 - cannot set own revision
+ok 7 - Notes color constraint
+ok 8 - Notes shape constraint
+ok 9 - Calendar timed event
+ok 10 - all-day end must follow start
+ok 11 - owner default settings
+10000000-0000-4000-8000-000000000004
+ok 12 - non-owner Notes invisible
+ok 13 - non-owner Calendar invisible
+ok 14 - non-owner settings invisible
+ok 15 - non-owner Notes insert denied
+ok 16 - non-owner Calendar insert denied
+ok 17 - non-owner settings insert denied
+RESET
+UPDATE 1
+SET
+10000000-0000-4000-8000-000000000003
+ok 18 - disabled Notes invisible
+ok 19 - disabled Calendar invisible
+ok 20 - disabled settings invisible
+RESET
+1..20
+ROLLBACK
+

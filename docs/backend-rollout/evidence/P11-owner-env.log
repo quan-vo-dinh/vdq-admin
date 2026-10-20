@@ -1,0 +1,13 @@
+Vercel CLI 64.7.0
+Retrieving project…
+Saving…
+
+✓ Added           APP_OWNER_USER_ID
+  Project         bins-projects-c818da1e/vdq-admin
+  Environments    Production
+  Type            Config
+Next steps:
+- List Environment Variables:
+  vercel env ls --global-config /tmp/vdq-vercel-cli-auth
+- Pull Development Environment Variables into .env.local:
+  vercel env pull --global-config /tmp/vdq-vercel-cli-auth

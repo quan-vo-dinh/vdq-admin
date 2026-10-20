@@ -1,0 +1,13 @@
+Vercel CLI 64.7.0
+
+  Directory       ~/Developer/Personal/next-shadcn-dashboard-main
+
+Searching for existing projects…
+
+✓ Linked          bins-projects-c818da1e/vdq-admin
+
+Retrieving project…
+> Downloading a fresh `VERCEL_OIDC_TOKEN` for vdq-admin
+Downloading
+
+✓ Updated         .env.local file and added it to .gitignore

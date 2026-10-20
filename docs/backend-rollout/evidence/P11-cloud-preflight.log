@@ -1,0 +1,30 @@
+$ node --env-file=.env.cloud-tooling.local scripts/backend/cloud-smoke.mjs
+{
+  "openApiWithPublishableStatus": 401,
+  "checkedAt": "2026-10-20T17:01:21.683Z",
+  "result": "PASS",
+  "target": "https://wcgdvsiiemurehkprvqw.supabase.co",
+  "publicKeyProvisioned": true,
+  "noKeyStatus": 401,
+  "signupDisabled": true,
+  "githubEnabled": true,
+  "anonymousEnabled": false,
+  "samples": [
+    {
+      "attempt": 1,
+      "status": 200,
+      "totalMs": 346
+    },
+    {
+      "attempt": 2,
+      "status": 200,
+      "totalMs": 192
+    },
+    {
+      "attempt": 3,
+      "status": 200,
+      "totalMs": 181
+    }
+  ],
+  "boundary": "Metadata GET only, no business query, user session, migration, RLS acceptance, or direct/session-pooler DB tooling tested."
+}

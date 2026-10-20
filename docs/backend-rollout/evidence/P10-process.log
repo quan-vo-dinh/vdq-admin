@@ -1,0 +1,6 @@
+▲ Next.js 16.3.0
+- Local:         http://localhost:3100
+- Network:       http://192.168.18.249:3100
+✓ Ready in 133ms
+✓ Running next.config.ts took 24ms
+⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.

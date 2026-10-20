@@ -59,7 +59,7 @@ export async function financeOverview(): Promise<FinanceData> {
  accounts:accounts.map(a=>({id:a.id!,name:a.name!,opening:number(a.opening),note:a.note!,revision:a.revision!,archivedAt:a.archived_at})),
  transactions:transactions.map(t=>({id:t.id!,revision:t.revision!,date:t.date!,description:t.description!,amount:number(t.amount),kind:t.kind as 'income'|'expense'|'refund'|'transfer',account:t.account_id!,destination:t.destination_account_id??undefined,category:categoryCode(t.category_id),source:t.source as 'csv'|'manual'})),
  budgets:categories.filter(c=>c.kind==='expense').map(c=> {const b=budgets.find(b=>b.category_id===c.id);return {id:c.code,archivedAt:c.archived_at,name:b?.name??c.name,limit:b?number(b.default_limit):0,fixed:b?.fixed??false,resourceId:b?.id??undefined,revision:b?.revision??undefined,categoryId:c.id,monthlyLimits:Object.fromEntries(months.filter(m=>m.budget_id===b?.id).map(m=>[m.month!.slice(0,7),number(m.limit_amount)])),monthRows:months.filter(m=>m.budget_id===b?.id).map(m=>({id:m.id!,month:m.month!,revision:m.revision!}))};}),
- goals:goals.map(g=>({id:g.id!,revision:g.revision!,name:g.name!,target:number(g.target),allocated:number(g.allocated),monthly:number(g.monthly),deadline:g.deadline!,priority:g.priority as 'high'|'normal',visual:g.visual as 'study'})),
+ goals:goals.map(g=>({id:g.id!,revision:g.revision!,name:g.name!,target:number(g.target),allocated:number(g.allocated),monthly:number(g.monthly),deadline:g.deadline!,priority:g.priority as 'high'|'normal',visual:g.visual as 'study',image:g.image_path?`/api/finance/goals/image?id=${g.id}`:undefined})),
  bills:bills.map(b=>({id:b.id!,revision:b.revision!,name:b.name!,date:b.due_on!,amount:number(b.amount)}))};
 }
 export async function financeRequest(request:Request,resource?:string) {
@@ -93,7 +93,7 @@ export async function financeRequest(request:Request,resource?:string) {
    values[field]=value;
   }
  }
- if(key==='goals'&&body.image) throw new AccessError(400,'goal_images_require_P08');
+ if(key==='goals'&&(body.image||body.image_path)) throw new AccessError(400,'use_image_endpoint');
  // CAS mutations never accept owner, timestamps, revisions or an entire FinanceData object.
  const perform = async () => {
   switch(key) {

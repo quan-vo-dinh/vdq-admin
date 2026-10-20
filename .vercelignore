@@ -1,0 +1,21 @@
+# Runtime builds receive target-specific environment from Vercel.
+.env
+.env.*
+.git
+.next
+node_modules
+.data
+/docs
+/supabase
+/scripts
+/.agents
+/AGENTS.md
+/CLAUDE.md
+playwright-report
+test-results
+*.dump
+*.backup
+*.enc.json
+
+# Required TypeScript compatibility hook referenced by the lockfile.
+!.pnpmfile.cjs

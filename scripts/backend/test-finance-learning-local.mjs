@@ -5,7 +5,7 @@ const {sql,cookie,status,token,owner}=localDomainSession();
 const origin=process.env.DOMAIN_TEST_URL??'http://localhost:3000';
 assert.match(origin,/^http:\/\/(localhost|127\.0\.0\.1):\d+$/);
 const ids=[];const make=()=>{const id=randomUUID();ids.push(id);return id;};
-async function api(path,method='GET',body,expected=200){const r=await fetch(origin+'/api/'+path,{method,headers:{Cookie:cookie,Origin:'http://localhost:3000','Content-Type':'application/json'},...(body&&{body:JSON.stringify(body)})});const data=await r.json();assert.equal(r.status,expected,JSON.stringify({path,method,data}));if(method==='GET')assert.match(r.headers.get('cache-control'),/no-store/);return data;}
+async function api(path,method='GET',body,expected=200){const r=await fetch(origin+'/api/'+path,{method,headers:{Cookie:cookie,Origin:'http://localhost:3000','Content-Type':'application/json'},...(body&&{body:JSON.stringify(body)})});const data=await r.json();assert.ok((Array.isArray(expected)?expected:[expected]).includes(r.status),JSON.stringify({path,method,status:r.status,data}));if(method==='GET')assert.match(r.headers.get('cache-control'),/no-store/);return Array.isArray(expected)?{status:r.status,data}:data;}
 async function direct(path,method,body,expected){const r=await fetch(status.API_URL+'/rest/v1/'+path,{method,headers:{apikey:status.ANON_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});assert.equal(r.status,expected,await r.text());}
 try{
  const initial=await api('finance');const date=initial.asOf;const food=initial.categories.find(c=>c.code==='food').id,salary=initial.categories.find(c=>c.code==='salary').id;
@@ -16,7 +16,7 @@ try{
  await api('finance/transactions','POST',tx('refund',20000),201);await api('finance/transactions','POST',tx('income',50000),201);
  const after=await api('finance');const own=after.transactions.filter(t=>ids.includes(t.id));assert.equal(own.length,4);assert.equal(own.reduce((sum,t)=>sum+(t.kind==='income'||t.kind==='refund'?Number(t.amount):t.kind==='expense'?-Number(t.amount):0),0),-30000);assert.equal(typeof own[0].amount,'string');
  console.log('PASS Finance persisted CRUD, stable create UUID, text money, transfer/refund fixtures');
- const races=await Promise.all([api('finance/transactions','PATCH',{id:expense.id,expectedRevision:1,description:'QA updated'},200),api('finance/transactions','PATCH',{id:expense.id,expectedRevision:1,description:'QA stale'},409)]);assert.equal(races[0].revision,2);
+ const races=await Promise.all([api('finance/transactions','PATCH',{id:expense.id,expectedRevision:1,description:'QA updated'},[200,409]),api('finance/transactions','PATCH',{id:expense.id,expectedRevision:1,description:'QA stale'},[200,409])]);assert.deepEqual(races.map(r=>r.status).sort(),[200,409]);assert.equal(races.find(r=>r.status===200).data.revision,2);
  await api('finance/transactions','DELETE',{id:expense.id,expectedRevision:1},409);
  await api('finance/transactions','POST',tx('expense',1,{category_id:salary}),400);
  await api('finance/transactions','POST',tx('transfer',1,{category_id:null,destination_account_id:a}),400);

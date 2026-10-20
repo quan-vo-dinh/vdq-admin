@@ -1,0 +1,7 @@
+PASS same committed data across dev/production process: notes
+PASS same committed data across dev/production process: calendar
+PASS same committed data across dev/production process: finance
+PASS same committed data across dev/production process: learning/habits
+PASS same committed data across dev/production process: profile
+PASS same committed data across dev/production process: preferences
+PASS anon 401, CSRF 403, arbitrary source preview 403. No mutations.
