@@ -2,12 +2,11 @@
 
 Mục tiêu: quản lý tiền cá nhân ngay trong dashboard hiện có, ít nhập liệu và dễ hiểu.
 
-Người dùng cần trả lời bốn câu hỏi:
+Người dùng cần trả lời ba câu hỏi:
 
 - Hiện có bao nhiêu tiền, còn bao nhiêu chưa dành cho việc khác?
 - Tháng này tiền đi đâu, danh mục nào đang vượt mức?
 - Đã dành được bao nhiêu cho các mục tiêu?
-- Mua xe, đổi điện thoại hoặc ra ở riêng lúc này có thiếu tiền không?
 
 ## Phạm vi chính
 
@@ -18,7 +17,6 @@ Người dùng cần trả lời bốn câu hỏi:
 | Ngân sách | Hạn mức theo danh mục, phần còn lại hoặc vượt mức                    |
 | Mục tiêu  | Số cần có, đã dành, mức góp tháng và ngày mong muốn                  |
 | Dòng tiền | Số dư dự kiến từ thu nhập, chi phí và khoản sắp đến                  |
-| Mô phỏng  | So sánh làm ngay với chờ thêm bằng tổng chi ban đầu và chi phí tháng |
 
 Điều hướng bằng sidebar. Tabs trong trang chỉ đổi góc nhìn hoặc tình huống. Giữ biểu đồ, carousel, lịch, slider và dialog khi chúng giúp đọc hoặc chỉnh dữ liệu dễ hơn; thông tin phụ có thể thu gọn bằng accordion.
 

@@ -1,5 +1,6 @@
 "use client";
 import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
+import { PageTitleIcon } from "@/app/components/shared/page-title-icon";
 import { HeadingText } from "@/app/components/shared/heading-text";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
@@ -24,7 +25,7 @@ const BreadcrumbComp = ({ title }: BreadCrumbType) => {
         className={`py-5 px-6 bg-background  overflow-hidden rounded-xl border`}
       >
         <div className="flex items-center justify-between gap-6 relative">
-          <div className="flex flex-col gap-1"><h4 className="font-semibold text-xl text-forground"><HeadingText>{t(title)}</HeadingText></h4><PersonalizedIntro taglineOnly /></div>
+          <div className="flex flex-col gap-1"><h4 className="flex items-center gap-2 font-semibold text-xl text-forground"><HeadingText>{t(title)}</HeadingText><PageTitleIcon /></h4><PersonalizedIntro taglineOnly /></div>
           <ol
             className="flex items-center whitespace-nowrap"
             aria-label="Breadcrumb"

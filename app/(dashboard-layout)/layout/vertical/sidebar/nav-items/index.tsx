@@ -3,8 +3,6 @@
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { ChildItem } from "../sidebaritems";
-import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/app/context/language-context";
 
@@ -21,30 +19,13 @@ export default function NavItem({
   className,
   isActive,
 }: NavItemProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const { t } = useLanguage();
 
   return (
 
-     <motion.div className={cn("flex items-center gap-3 w-full group relative group-data-[state=collapsed]:px-2.5 px-3 py-2 my-0.5 transition-all duration-200 rounded-md",
-      isActive && "bg-primary text-background font-medium", className)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+     <div className={cn("flex items-center gap-3 w-full group relative group-data-[state=collapsed]:px-2.5 px-3 py-2 my-0.5 transition-colors duration-150 motion-reduce:transition-none rounded-md",
+      isActive ? "bg-primary text-background font-medium" : "hover:bg-primary/5", className)}
     >
-      <AnimatePresence>
-
-        {isHovered && (
-          <motion.div
-            layoutId="nav-hover-bg"
-            className="absolute inset-0 bg-primary/5  rounded-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 35 }}
-          />
-        )}
-      </AnimatePresence>
-
       <span className={"relative flex items-center gap-2 w-full  rounded-md "}>
         {/* Icon */}
         {item.icon && (
@@ -78,6 +59,6 @@ export default function NavItem({
           <ChevronRight className="ms-auto h-4 w-4 transition-transform duration-200 group-open/nav:rotate-90 hide-menu" />
         )}
       </span>
-    </motion.div >
+    </div>
   );
 }

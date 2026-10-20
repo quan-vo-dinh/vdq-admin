@@ -116,7 +116,7 @@ export function NoResults() {
 export function Status({ status }: { status: Source["status"] }) {
   const { text } = useDeveloperLocale();
   const labels = {
-    fresh: text("Cập nhật trong mẫu", "Fresh in demo"),
+    fresh: text("Đã cập nhật", "Updated"),
     stale: text("Đã cũ", "Stale"),
     partial: text("Một phần", "Partial"),
     unavailable: text("Chưa có dữ liệu", "Unavailable"),

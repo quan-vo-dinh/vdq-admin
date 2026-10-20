@@ -216,11 +216,6 @@ export function CalendarSidebar({
           "Phím tắt: N tạo mới · T hôm nay · ← → chuyển lịch · 1–5 đổi chế độ xem.",
           "Shortcuts: N new · T today · ← → navigate · 1–5 switch views.",
         )}
-        <br />
-        {text(
-          "Dữ liệu khởi tạo là lịch mẫu có thể chỉnh sửa.",
-          "Initial plans are editable sample events.",
-        )}
       </p>
     </div>
   );

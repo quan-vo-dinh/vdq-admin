@@ -101,7 +101,7 @@ export function BudgetsPage() {
                       : b,
                   ),
                 }));
-                notify("Đã cập nhật hạn mức trong phiên.");
+                notify("Đã cập nhật hạn mức.");
                 setEditing(undefined);
               }}
             >

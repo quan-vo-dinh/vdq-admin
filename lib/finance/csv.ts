@@ -51,7 +51,7 @@ export function parseFinanceCsv(text: string, data: FinanceData) {
   const titles = rows.shift()?.map((v) => v.trim());
   if (!titles || titles.join(",") !== header.join(","))
     throw new Error(
-      "Dùng đúng 7 cột trong file mẫu: date,description,amount,kind,category,account,destination.",
+      "Dùng đúng 7 cột trong file CSV: date,description,amount,kind,category,account,destination.",
     );
   const records = rows.filter((r) => r.some((v) => v.trim()));
   if (!records.length || records.length > 1000)

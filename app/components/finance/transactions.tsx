@@ -360,7 +360,7 @@ export function TransactionsPage() {
               </DialogTitle>
               <DialogDescription>
                 {transactionDescription(deleting)} · {money(deleting.amount)}
-                {text(". Số dư và báo cáo trong phiên sẽ được tính lại.")}
+                {text(". Số dư và báo cáo sẽ được tính lại.")}
                 {deleting.kind === "transfer" &&
                   text(
                     " Cả tài khoản gửi và nhận đều được hoàn lại số dư tương ứng.",
@@ -380,7 +380,7 @@ export function TransactionsPage() {
                       (t) => t.id !== deleting.id,
                     ),
                   }));
-                  notify("Đã xóa giao dịch trong phiên.");
+                  notify("Đã xóa giao dịch.");
                   setDeleting(undefined);
                 }}
               >

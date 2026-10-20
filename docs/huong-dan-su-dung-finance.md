@@ -26,10 +26,6 @@ Tạo hoặc sửa tên, ảnh, biểu tượng, số tiền cần có, số đ�
 
 Chọn 30/60/90 ngày. Chỉnh thu nhập, chi phí tháng, ngày nhận tiền và mức muốn giữ lại; xem số dư bằng biểu đồ hoặc lịch. Chi phí tháng cần loại trừ các khoản sắp đến đã liệt kê để tránh tính hai lần. Các khoản này được trừ một lần vào ngày đã khai báo.
 
-## 6. Mô phỏng
-
-Chọn **Mua xe / Đổi điện thoại / Ra ở riêng**. Nhập tổng chi ban đầu, nguồn tiền, chi phí tăng mỗi tháng, tiền dư, mức giữ lại và thời gian chờ. Xem tiền còn lại khi làm ngay hoặc chờ thêm cùng biểu đồ 12 tháng. **Đặt lại mẫu** khôi phục thông số ví dụ.
-
 ## Ba quy tắc đọc số liệu
 
 - Chuyển khoản nội bộ không phải thu nhập hoặc chi tiêu.

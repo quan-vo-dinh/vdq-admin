@@ -80,7 +80,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
               <details
                 key={index}
                 className="group/nav"
-                open={active || item.isActive}
+                open
               >
                 <summary
                   className={cn(

@@ -47,7 +47,6 @@ import {
   NotebookText,
   Wallet,
   ShieldCheck,
-  Ticket,
   Unlink,
   UserPlus,
 } from "lucide-react";
@@ -69,6 +68,8 @@ const SidebarContent: MenuItem[] = [
     items: [{ id: uniqueId(), name: "Developer Workspace", icon: Code2, items: [
       { id: uniqueId(), name: "Developer Overview", url: "/developer" },
       { id: uniqueId(), name: "AI Usage", url: "/developer/ai" },
+      { id: uniqueId(), name: "Developer Feed", url: "/developer/feed" },
+      { id: uniqueId(), name: "Connections", url: "/developer/connections" },
     ] }],
   },
   {
@@ -84,7 +85,6 @@ const SidebarContent: MenuItem[] = [
           { id: uniqueId(), name: "Budgets", url: "/finance/budgets" },
           { id: uniqueId(), name: "Savings Goals", url: "/finance/goals" },
           { id: uniqueId(), name: "Cash Flow", url: "/finance/cash-flow" },
-          { id: uniqueId(), name: "Decision Simulator", url: "/finance/simulator" },
         ],
       },
     ],
@@ -149,8 +149,8 @@ const SidebarContent: MenuItem[] = [
       },
       {
         id: uniqueId(),
-        name: "Tickets",
-        icon: Ticket,
+        name: "Daily Learning",
+        icon: BookOpen,
         url: "/apps/tickets",
       },
     ],

@@ -12,9 +12,9 @@ export const financeEnglish: Record<string, string> = {
   "Chi phí cố định": "Fixed costs",
   "Vượt hạn mức": "Over budget",
   "Biểu tượng mục tiêu": "Goal icon",
-  "Biểu tượng và ảnh mẫu": "Icon and sample image",
+  "Biểu tượng và ảnh": "Icon and image",
   "Ảnh riêng cho mục tiêu": "Your own goal image",
-  "Dùng ảnh mẫu": "Use sample image",
+  "Dùng ảnh có sẵn": "Use available image",
   "Xe cộ": "Transport",
   "Thiết bị": "Devices",
   "Nhà ở": "Home",
@@ -22,7 +22,7 @@ export const financeEnglish: Record<string, string> = {
   "Du lịch": "Travel",
   "Chọn ảnh JPG, PNG hoặc WebP, tối đa 2 MB.": "Choose a JPG, PNG or WebP image up to 2 MB.",
   "Không đọc được ảnh. Hãy chọn lại.": "Unable to read this image. Please choose another.",
-  "Dùng ảnh mẫu hoặc chọn ảnh JPG, PNG, WebP của bạn (tối đa 2 MB).": "Use a sample or select your own JPG, PNG or WebP image (up to 2 MB).",
+  "Dùng ảnh có sẵn hoặc chọn ảnh JPG, PNG, WebP của bạn (tối đa 2 MB).": "Use an available image or select your own JPG, PNG or WebP image (up to 2 MB).",
   "Mua chiếc xe đầu tiên": "Buying your first vehicle",
   "Xem tiền còn lại khi cân nhắc mua xe và chi phí đi lại mỗi tháng.": "Explore your remaining funds after buying a vehicle and covering monthly running costs.",
   "So sánh số tiền còn lại nếu nâng cấp thiết bị theo ngân sách của bạn.": "Compare your remaining funds after upgrading a device within your budget.",
@@ -30,7 +30,7 @@ export const financeEnglish: Record<string, string> = {
   "Ngân sách tháng": "Monthly budget",
   "So mức đã chi với hạn mức của từng danh mục.":
     "Compare category spending with its limit.",
-  "Đã cập nhật hạn mức trong phiên.": "Budget limit updated for this session.",
+  "Đã cập nhật hạn mức.": "Budget limit updated.",
   "Lưu hạn mức": "Save limit",
   "Dòng tiền sắp tới": "Upcoming cash flow",
   "Ước tính từ thu nhập, chi phí và các khoản sắp đến.":
@@ -77,8 +77,6 @@ export const financeEnglish: Record<string, string> = {
   "Tổng chi ban đầu gồm giá mua, phí hoặc tiền cọc.":
     "Upfront cost includes price, fees or deposit.",
   "Tổng chi ban đầu (VND)": "Total upfront cost (VND)",
-  "Mẫu: tiền chưa phân bổ và quỹ liên quan. Giữ riêng các quỹ khác.":
-    "Default: unallocated money plus the related goal. Other goals stay reserved.",
   "Tiền dư hiện tại / tháng (VND)": "Current monthly surplus (VND)",
   "Sau sinh hoạt và kế hoạch góp cho các quỹ khác.":
     "After living costs and planned contributions to other goals.",
@@ -97,13 +95,11 @@ export const financeEnglish: Record<string, string> = {
   "Thử một quyết định": "Try a decision",
   "Xem tiền còn lại khi mua sắm hoặc ra ở riêng.":
     "See what remains after a purchase or moving out.",
-  "Đặt lại mẫu": "Reset example",
   "Ghi lại và tìm các khoản thu chi.":
     "Record and find your income and spending.",
   "Số dư tài khoản": "Account balances",
 
   "Vị trí hiện tại": "Current location",
-  "Dữ liệu minh họa": "Demo data",
   "Kỳ trước": "Previous period",
   "Kỳ sau": "Next period",
   "Cơ cấu chi tiêu · chọn một danh mục để khám phá":
@@ -138,8 +134,6 @@ export const financeEnglish: Record<string, string> = {
   "Tiền chưa phân bổ được tính thế nào?":
     "How are unallocated funds calculated?",
   "Dữ liệu này bao phủ khoảng nào?": "What period does this data cover?",
-  "Dữ liệu minh họa từ 01/09 đến 15/10/2026. Chuyển tiền nội bộ không tính vào thu chi; hoàn tiền giảm chi tiêu. Thay đổi chỉ giữ trong phiên.":
-    "Demo data covers 1 September to 15 October 2026. Internal transfers are excluded from income and spending; refunds reduce spending. Edits last for this session only.",
   "Từng bước đến điều bạn muốn": "Closer to what matters",
   "Lướt qua các quỹ · cùng một nguồn tiền, những ưu tiên khác nhau":
     "Browse your funds · one pool, different priorities",
@@ -184,7 +178,6 @@ export const financeEnglish: Record<string, string> = {
   "Giả định thu nhập để lập kế hoạch, không phải tiền đã nhận":
     "Assumed income for planning, not money already received",
   "Thu nhập thực nhận dự kiến / tháng": "Expected monthly take-home income",
-  "Thông số minh họa có thể thay đổi.": "You can change this demo assumption.",
   "Dự kiến thu nhập": "Expected income",
   "Ngân sách chi tiêu": "Spending budget",
   "Kế hoạch góp mục tiêu": "Planned goal contributions",
@@ -206,7 +199,7 @@ export const financeEnglish: Record<string, string> = {
   "Xem giao dịch gốc": "View original transactions",
   "Ngân sách ·": "Budget ·",
   "Hạn mức cho tháng": "Limit for month",
-  "/2026. Thay đổi này chỉ áp dụng trong phiên.":
+  "/2026.":
     "/2026. This change applies only to this session.",
   "Đã điều chỉnh ngân sách kỳ đang chọn.":
     "Budget updated for the selected period.",
@@ -222,7 +215,6 @@ export const financeEnglish: Record<string, string> = {
   "60 ngày": "60 days",
   "90 ngày": "90 days",
   "Số dư bắt đầu": "Starting balance",
-  "Từ tài khoản minh họa đến 15/10": "From demo accounts as of 15 Oct",
   "Dự kiến sau {0} ngày": "Projected after {0} days",
   "Số dư tổng, gồm cả tiền dành cho quỹ":
     "Total balance, including goal allocations",
@@ -271,7 +263,6 @@ export const financeEnglish: Record<string, string> = {
   "Cơ sở: dùng đúng thông số bạn nhập.": "Base: uses your inputs as entered.",
   "Không tính lãi, vay, tỷ giá hoặc tăng giá.":
     "Excludes interest, borrowing, exchange rates and price increases.",
-  "Khôi phục giả định mẫu": "Restore sample assumptions",
   "Thử một quyết định lớn": "Try a major decision",
   "Điều chỉnh mục tiêu": "Edit goal",
   "Điều bạn muốn dành tiền cho": "What would you like to save for?",
@@ -332,7 +323,6 @@ export const financeEnglish: Record<string, string> = {
   "Xóa mục tiêu {0}": "Delete goal {0}",
   "Các quỹ dùng chung một nguồn số dư. Tiền đã phân bổ cho quỹ này không được tính lại cho quỹ khác; góp dự kiến không tự tăng số tiền thực có.":
     "Goals share one balance. Money allocated to one goal cannot be counted again for another; planned contributions do not increase actual funds.",
-  "Thử thứ tự mua sắm": "Compare purchase priorities",
   "Phân bổ ·": "Allocate ·",
   "Tối đa": "Up to",
   "từ tiền chưa phân bổ. Tổng số dư không đổi.":
@@ -355,9 +345,9 @@ export const financeEnglish: Record<string, string> = {
   "Bỏ qua · trùng": "Skipped · duplicate",
   "Sẵn sàng": "Ready",
   "Nhập CSV · Xem trước rồi xác nhận": "Import CSV · Preview and confirm",
-  "Chỉ hỗ trợ định dạng mẫu của bản trải nghiệm. Chưa hỗ trợ tự nhận diện sao kê ngân hàng.":
-    "Only the demo template is supported. Bank statements are not detected automatically.",
-  "Tải file mẫu": "Download template",
+  "Chỉ hỗ trợ định dạng CSV được cung cấp. Chưa hỗ trợ tự nhận diện sao kê ngân hàng.":
+    "Only the provided CSV format is supported. Bank statements are not detected automatically.",
+  "Tải định dạng CSV": "Download CSV format",
   "UTF-8 · tối đa 1 MB / 1.000 dòng": "UTF-8 · up to 1 MB / 1,000 rows",
   "Chọn file CSV": "Choose CSV file",
   "File vượt quá 1 MB.": "File exceeds 1 MB.",
@@ -370,8 +360,8 @@ export const financeEnglish: Record<string, string> = {
   "Xem trước CSV": "CSV preview",
   "Bỏ qua dòng lỗi và dòng trùng ngày, số tiền, nội dung, loại, tài khoản. Kiểm tra kỹ các giao dịch giống nhau có thể là hai khoản riêng biệt.":
     "Rows with errors or matching date, amount, description, type and accounts are skipped. Check carefully: similar transactions may be separate payments.",
-  "Đã nhập {0} giao dịch CSV vào phiên trải nghiệm.":
-    "Imported {0} CSV transactions into this demo session.",
+  "Đã nhập {0} giao dịch CSV.":
+    "Imported {0} CSV transactions.",
   Nhập: "Import",
   "giao dịch": "transactions",
   "Thu nhập lũy kế": "Cumulative income",
@@ -382,7 +372,6 @@ export const financeEnglish: Record<string, string> = {
     "Review income and spending, set money aside for what matters and plan your next step.",
   "Khoảng tiền chưa phân bổ": "Unallocated funds",
   "Ảnh chụp toàn bộ tài khoản đến 15/10/2026": "All accounts as of 15 Oct 2026",
-  "Minh họa": "Demo",
   "Còn lại sau khi giữ tiền cho mục tiêu và các khoản sắp đến hạn đã khai báo.":
     "Remaining after setting aside goal allocations and declared upcoming bills.",
   "Tổng số dư": "Total balance",
@@ -405,7 +394,6 @@ export const financeEnglish: Record<string, string> = {
   "Thu nhập": "Income",
   "Chi tiêu ròng": "Net spending",
   "Điểm cần chú ý": "Points to review",
-  "Từ giao dịch và kế hoạch minh họa": "Based on demo transactions and plans",
   "{0} danh mục vượt ngân sách": "Over-budget categories: {0}",
   "Ngân sách chưa có mục vượt": "No categories over budget",
   ". Xem khoản phát sinh và cân nhắc điều chỉnh kế hoạch.":
@@ -438,123 +426,27 @@ export const financeEnglish: Record<string, string> = {
   "Ngân sách": "Budgets",
   "Mục tiêu": "Goals",
   "Dòng tiền": "Cash flow",
-  "Mô phỏng": "Simulator",
   "Tài chính cá nhân": "Personal finance",
   "Hiểu dòng tiền. Chủ động kế hoạch.":
     "Understand cash flow. Plan with confidence.",
-  "Bản trải nghiệm": "Demo version",
   "Ghi giao dịch": "Record transaction",
-  "Dữ liệu minh họa đến 15/10/2026 · Thay đổi chỉ giữ trong phiên, tải lại để đặt lại.":
-    "Demo data as of 15 Oct 2026 · Changes stay in this session; reload to reset.",
   "Đóng thông báo": "Dismiss notification",
-  "Chưa tải được dữ liệu minh họa.": "Unable to load demo data.",
+  "Chưa tải được dữ liệu.": "Unable to load data.",
   "Thử lại": "Try again",
-  "Đổi điện thoại": "New phone",
-  "Ra ở riêng": "Move out",
-  "Thử kế hoạch · {0}": "Try a plan · {0}",
-  "Tất cả chi phí là giả định tự nhập, không phải báo giá thị trường":
-    "All costs are your assumptions, not market prices",
-  "Tiền đặt cọc ban đầu (VND)": "Initial rental deposit (VND)",
-  "Giá mua dự kiến (VND)": "Expected purchase price (VND)",
-  "Đồ dùng & chuyển nhà (VND)": "Furnishing & moving costs (VND)",
-  "Chi phí ban đầu khác (VND)": "Other upfront costs (VND)",
-  "Chi phí tăng thêm / tháng (VND)": "Additional monthly cost (VND)",
-  "Phần thuê nhà, điện nước, ăn ở tăng thêm so với hiện tại.":
-    "Extra rent, utilities and living costs compared with your current situation.",
-  "Ví dụ vận hành, bảo trì hoặc dịch vụ tăng thêm.":
-    "For example, extra running, maintenance or service costs.",
-  "Nguồn tiền cân nhắc (VND)": "Funds to consider (VND)",
-  "Mẫu: tiền chưa phân bổ + quỹ liên quan ({0}). Các quỹ khác và hóa đơn đã được giữ riêng.":
-    "Sample: unallocated funds + related goal ({0}). Other goals and bills are kept separate.",
-  "Tiền dư trước quyết định / tháng (VND)":
-    "Monthly surplus before this decision (VND)",
-  "Sau sinh hoạt và kế hoạch của các mục tiêu khác. Giả định duy trì đều mỗi tháng.":
-    "After living costs and other goal contributions. Assumed constant each month.",
-  "Muốn giữ lại trong nguồn này (VND)": "Reserve within these funds (VND)",
-  "Trì hoãn bao nhiêu tháng?": "How many months to wait?",
-  "Nếu thử trả góp": "Try installments",
-  "Phí tổng do bạn nhập; chưa mô phỏng hợp đồng lãi suất thực":
-    "Enter total fees yourself; actual loan interest terms are not modeled",
-  "Trả trước cho giá mua (VND)": "Down payment toward purchase price (VND)",
-  "Tổng lãi & phí cả kỳ (VND)": "Total interest & fees (VND)",
-  "Tính ngoài giá mua. Chỉ áp dụng khi còn tiền cần vay.":
-    "Additional to the purchase price. Applies only when money is borrowed.",
-  "Số kỳ trả hằng tháng": "Number of monthly payments",
-  "Cùng một quyết định, những đánh đổi khác nhau":
-    "One decision, different trade-offs",
-  "Kết quả cập nhật ngay khi thay đổi giả định":
-    "Results update as assumptions change",
-  "Chuyển ngay": "Move now",
-  "Chi ban đầu": "Upfront cost",
-  "Nguồn còn lại": "Funds remaining",
-  "Dư mỗi tháng sau đó": "Monthly surplus afterward",
-  "Thấp hơn mức muốn giữ {0}.": "{0} below your reserve.",
-  "Cao hơn mức muốn giữ {0}.": "{0} above your reserve.",
   Đợi: "Wait",
   tháng: "months",
-  "Chi ban đầu tại thời điểm đó": "Upfront cost at that time",
-  "Nguồn còn sau quyết định": "Funds after the decision",
-  "Tích lũy thêm trước quyết định": "Extra savings before the decision",
-  "Giữ nguyên giá, chưa tính lợi ích hoặc chi phí của việc chờ.":
-    "Assumes unchanged prices; excludes the benefits or costs of waiting.",
-  "Nguồn tiền trong 12 tháng": "Funds over 12 months",
-  "T0 là thời điểm hiện tại · Phần âm biểu thị thiếu nguồn, không phải khoản vay tự động":
-    "T0 is today · Negative values mean a funding gap, not an automatic loan",
-  "Chưa thực hiện": "Keep current plan",
-  "Thực hiện ngay": "Act now",
-  "Đợi {0} tháng": "Wait {0} months",
-  "Trả góp": "Installments",
-  "Đọc đủ chi phí trả góp": "Understand the full installment cost",
-  "Giả định trả đều, kỳ đầu sau một tháng":
-    "Equal payments, first payment after one month",
-  "Số tiền cần vay": "Amount to borrow",
-  "Mỗi kỳ (làm tròn lên VND)": "Each payment (rounded up to whole VND)",
-  "Tổng mua + chi phí + lãi phí": "Purchase + upfront costs + interest & fees",
-  "Tiền dư / tháng trong kỳ trả": "Monthly surplus during repayment",
-  "Số còn ngay sau trả trước:": "Funds immediately after down payment:",
-  ". Phí chậm trả, tất toán và thay đổi thu nhập chưa được mô phỏng.":
-    ". Late fees, early repayment and income changes are not modeled.",
-  "Chi phí mới vượt tiền dư mỗi tháng": "New costs exceed your monthly surplus",
-  "Thực hiện ngay sẽ dùng quá phần muốn giữ":
-    "Acting now uses more than your available reserve margin",
-  "Phương án ngay nằm trong các giả định đã nhập":
-    "The immediate option fits your entered assumptions",
-  "Chưa có phần tích lũy dương để tính thời gian chờ.":
-    "No positive monthly savings to estimate a waiting period.",
-  "Cần khoảng {0} tháng tích lũy trước để đủ chi ban đầu và giữ lại {1}; đây là phép tính trước chi phí phát sinh sau quyết định.":
-    "About {0} months of saving to cover upfront costs and keep {1}; this excludes costs arising after the decision.",
-  "Còn các mục tiêu khác thì sao?": "What about your other goals?",
-  "Giữ riêng các quỹ khác trong nguồn mẫu để tránh đếm trùng":
-    "Other goals stay separate in the sample funds to avoid double counting",
-  "Nếu lấy thêm tiền từ một mục tiêu khác, số tháng bù lại ≈ số tiền lấy / mức góp cho mục tiêu đó. Nếu mức góp bằng 0 thì chưa thể ước tính thời gian bù.":
-    "If you use money from another goal, recovery time ≈ amount used / monthly contribution to that goal. With no contribution, recovery time cannot be estimated.",
-  "đang giữ": "allocated",
-  "Mỗi 1 triệu dùng thêm ≈ {0} tháng bù":
-    "Each extra VND 1 million used ≈ {0} months to recover",
-  "Chưa đặt mức góp": "No contribution set",
-  "Điều chỉnh ưu tiên mục tiêu": "Adjust goal priorities",
-  "Xuất so sánh CSV": "Export comparison CSV",
-  "Lưu cả giả định và kết quả để xem lại.":
-    "Save assumptions and results for later review.",
-  "Phòng thử cho quyết định lớn": "A test space for major decisions",
-  "Nếu mình quyết định…": "What if I decide to…",
-  "Mua ngay, chờ thêm hay trả góp? Thấy tác động đến tiền còn lại trước khi chọn.":
-    "Buy now, wait or pay in installments? See the impact on your funds before choosing.",
-  "Mô phỏng · không tạo giao dịch": "Simulation · no transactions created",
-  "Tình huống mô phỏng": "Simulation scenario",
-  "Đặt lại thông số mẫu": "Reset sample inputs",
   "Lương thực nhận": "Take-home salary",
   "Thu nhập khác": "Other income",
-  "Nhập nội dung, số tiền dương, ngày trong kỳ minh họa và hai tài khoản khác nhau khi chuyển tiền.":
-    "Enter a description, a positive whole amount, a date within the demo period and different accounts for transfers.",
-  "Đã cập nhật giao dịch trong phiên trải nghiệm.":
-    "Transaction updated in this demo session.",
+  "Nhập nội dung, số tiền dương, ngày trong kỳ báo cáo và hai tài khoản khác nhau khi chuyển tiền.":
+    "Enter a description, a positive whole amount, a date within the reporting period and different accounts for transfers.",
+  "Đã cập nhật giao dịch.":
+    "Transaction updated.",
   "Đã thêm giao dịch. Tổng quan và ngân sách đã cập nhật.":
     "Transaction added. Overview and budgets updated.",
   "Chỉnh sửa giao dịch": "Edit transaction",
   "Ghi một giao dịch": "Record a transaction",
-  "Nhập nhanh để hiểu tiền đang đi đâu. Chỉ lưu trong phiên trải nghiệm.":
-    "Record quickly to understand where money goes. Saved only in this demo session.",
+  "Nhập nhanh để hiểu tiền đang đi đâu.":
+    "Record quickly to understand where money goes.",
   "Loại giao dịch": "Transaction type",
   "Ví dụ: Ăn trưa văn phòng": "Example: Office lunch",
   "Số tiền (VND)": "Amount (VND)",
@@ -598,15 +490,15 @@ export const financeEnglish: Record<string, string> = {
   "Lọc loại giao dịch": "Filter by transaction type",
   "Sổ giao dịch tài chính": "Financial transaction ledger",
   "Xóa giao dịch này?": "Delete this transaction?",
-  ". Số dư và báo cáo trong phiên sẽ được tính lại.":
+  ". Số dư và báo cáo sẽ được tính lại.":
     ". Session balances and reports will be recalculated.",
   " Cả tài khoản gửi và nhận đều được hoàn lại số dư tương ứng.":
     " Both sending and receiving account balances will be adjusted.",
-  "Đã xóa giao dịch trong phiên.": "Transaction deleted in this session.",
+  "Đã xóa giao dịch.": "Transaction deleted.",
   "Xóa giao dịch": "Delete transaction",
   "Dấu ngoặc kép trong CSV chưa được đóng.":
     "An opening quote in the CSV is not closed.",
-  "Dùng đúng 7 cột trong file mẫu: date,description,amount,kind,category,account,destination.":
+  "Dùng đúng 7 cột trong file CSV: date,description,amount,kind,category,account,destination.":
     "Use the exact 7 template columns: date,description,amount,kind,category,account,destination.",
   "File cần có từ 1 đến 1.000 giao dịch.":
     "The file must contain 1 to 1,000 transactions.",
@@ -706,8 +598,6 @@ export const financeEnglish: Record<string, string> = {
   "Lần thu nhập kế tiếp": "Next income",
   "Cuối khoảng dự báo": "End of forecast",
   "Chưa có trong khoảng này": "Not in this range",
-  "Dữ liệu minh họa · Mọi điều chỉnh chỉ giữ trong phiên trải nghiệm.":
-    "Demo data · Changes stay in this demo session.",
   "Nguồn tiền cân nhắc": "Funds to consider",
   "Các quỹ khác được giữ riêng": "Other goals are kept separate",
   "Giá mua hoặc cọc + chi phí khác": "Purchase price or deposit + other costs",
@@ -778,11 +668,7 @@ export const financeEnglish: Record<string, string> = {
     "Select a bar to see transactions in that date range. Transfers count toward transaction totals only.",
   "{0} giao dịch trong khoảng đã chọn":
     "{0} transactions in the selected range",
-  "Bấm tên phương án để ẩn hoặc hiện đường. Di chuột tại cùng một tháng để so sánh tiền còn lại và mức chênh so với chưa thực hiện.":
-    "Select a scenario name to hide or show its line. Hover at a month to compare remaining funds against keeping your current plan.",
   "Tháng thứ {0}": "Month {0}",
-  "Ngay so với chưa thực hiện": "Act now − current plan",
-  "Chờ so với chưa thực hiện": "Wait − current plan",
   "Xem giao dịch trong khoảng": "Inspect transactions in a date range",
   "Chọn mốc trên biểu đồ": "Select a chart interval",
   "Hiển thị {0}/{1} giao dịch trong khoảng đã chọn":

@@ -167,25 +167,3 @@ export function forecast(
   }
   return result;
 }
-export function purchaseScenario(
-  balance: number,
-  price: number,
-  extras: number,
-  monthlyCost: number,
-  monthlySurplus: number,
-  reserve: number,
-  delay: number,
-) {
-  const total = price + extras;
-  const after = balance + monthlySurplus * delay - total;
-  return {
-    total,
-    after,
-    aboveReserve: after - reserve,
-    monthlyAfter: monthlySurplus - monthlyCost,
-    monthsToAfford:
-      monthlySurplus > 0
-        ? Math.max(0, Math.ceil((total + reserve - balance) / monthlySurplus))
-        : null,
-  };
-}

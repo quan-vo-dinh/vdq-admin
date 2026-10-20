@@ -89,7 +89,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
           </DialogTitle>
           <DialogDescription>
             {text(
-              "Chỉ hỗ trợ định dạng mẫu của bản trải nghiệm. Chưa hỗ trợ tự nhận diện sao kê ngân hàng.",
+              "Chỉ hỗ trợ định dạng CSV được cung cấp. Chưa hỗ trợ tự nhận diện sao kê ngân hàng.",
             )}
           </DialogDescription>
         </DialogHeader>
@@ -100,7 +100,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             onClick={() => downloadCsv("finance-template.csv", csvTemplate)}
           >
             <Download data-icon="inline-start" />
-            {text("Tải file mẫu")}
+            {text("Tải định dạng CSV")}
           </Button>
           <span className="text-sm text-muted-foreground">
             {text("UTF-8 · tối đa 1 MB / 1.000 dòng")}
@@ -189,7 +189,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
                 ],
               }));
               notify(
-                message("Đã nhập {0} giao dịch CSV vào phiên trải nghiệm.", [
+                message("Đã nhập {0} giao dịch CSV.", [
                   valid.length,
                 ]),
               );

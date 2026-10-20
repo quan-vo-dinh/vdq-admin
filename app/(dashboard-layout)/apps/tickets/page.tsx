@@ -1,28 +1,10 @@
-import TicketsApp from "@/app/components/apps/tickets";
 import type { Metadata } from "next";
-import BreadcrumbComp from "../../layout/shared/breadcrumb/breadcrumb-comp";
-import StyleAwareWrapper from "@/app/components/shared/StyleAwareWrapper";
-import StyleDivider from "@/app/components/shared/StyleDivider";
-
+import LearningApp from "@/app/components/apps/learning";
 export const metadata: Metadata = {
-  title: "Ticket App",
+  title: "Daily Learning | Học mỗi ngày",
+  description:
+    "Không gian điểm danh học tập, duy trì chuỗi ngày và theo dõi hành trình học mỗi ngày.",
 };
-
-const BCrumb = [
-  { to: "/", title: "Home" },
-  { title: "Tickets" },
-];
-
-const Tickets = () => {
-  return (
-    <StyleAwareWrapper
-      lyraClassName="flex flex-col p-px gap-px bg-border"
-    >
-      <BreadcrumbComp title="Tickets App" items={BCrumb} />
-      <StyleDivider />
-      <TicketsApp />
-    </StyleAwareWrapper>
-  );
-};
-
-export default Tickets;
+export default function LearningPage() {
+  return <LearningApp />;
+}

@@ -30,6 +30,8 @@ export type Contribution = {
   date: string;
   sourceId: string;
   commits: number;
+  additions: number;
+  deletions: number;
   prs: number;
   issues: number;
   reviews: number;
@@ -88,6 +90,12 @@ export function selectContributions(
       (source === "all" || d.sourceId === source),
   );
 }
+export function codeChanges(data: DeveloperData, days = 30) {
+  const rows = selectContributions(data, days);
+  const additions = rows.reduce((total, row) => total + row.additions, 0);
+  const deletions = rows.reduce((total, row) => total + row.deletions, 0);
+  return { additions, deletions, total: additions + deletions };
+}
 export const tokens = (rows: Session[]) =>
   rows.reduce((n, s) => n + s.input + s.output + s.cache, 0);
 export function trend(rows: Session[]) {
@@ -117,8 +125,8 @@ export function reportText(
   const count = contributions.reduce((n, d) => n + d.count, 0);
   const unread = data.notifications.filter((n) => !n.read).length;
   return locale === "vi"
-    ? `BÁO CÁO MINH HỌA · ${startDate(days)} → ${SNAPSHOT}\n\nĐã ghi nhận ${count} contributions từ 2 tài khoản GitHub mẫu.\n${sessions.length} phiên AI, ${tokens(sessions).toLocaleString("vi-VN")} token quan sát (input + output + cache, không chồng lặp trong bộ mẫu).\nInbox hiện tại: ${unread} thông báo chưa đọc.\n\nPhạm vi: Codex cá nhân/công việc; một nguồn Claude Code giả lập, chưa xác nhận tài khoản thực. Claude chat chưa có dữ liệu. Dữ liệu AI chỉ gồm phiên quan sát trên một máy mẫu.\n\nKhông cộng quota giữa các nguồn, không quy token thành chi phí hay năng suất. Contributions được cộng theo ngày và tài khoản; có thể trùng hoạt động giữa hai danh tính. Không suy ra công việc đã hoàn thành.\n\nTổng hợp bằng quy tắc từ dữ liệu giả lập, không gọi AI. Mốc dữ liệu: 16/10/2026 09:00 GMT+7.`
-    : `DEMO REPORT · ${startDate(days)} → ${SNAPSHOT}\n\n${count} contributions across 2 sample GitHub accounts.\n${sessions.length} AI sessions, ${tokens(sessions).toLocaleString("en-GB")} observed tokens (input + output + cache, mutually exclusive in this fixture).\nCurrent inbox: ${unread} unread notifications.\n\nCoverage: personal/work Codex; one fictional Claude Code source, actual accounts unconfirmed. Claude chat unavailable. AI observations cover one sample device only.\n\nQuotas are independent. Tokens do not measure cost or productivity. Contributions are summed by date and account; activity across identities may overlap. No completion of work is inferred.\n\nRule-based summary of fictional data; no AI call. Snapshot: 16 October 2026, 09:00 GMT+7.`;
+    ? `BÁO CÁO HOẠT ĐỘNG · ${startDate(days)} → ${SNAPSHOT}\n\nĐã ghi nhận ${count} contributions từ 2 tài khoản GitHub.\n${sessions.length} phiên AI, ${tokens(sessions).toLocaleString("vi-VN")} token quan sát (input + output + cache, không chồng lặp).\nInbox hiện tại: ${unread} thông báo chưa đọc.\n\nPhạm vi: Codex cá nhân/công việc; một nguồn Claude Code, tài khoản chưa xác nhận. Claude chat chưa có dữ liệu. Dữ liệu AI chỉ gồm phiên quan sát trên một máy.\n\nKhông cộng quota giữa các nguồn, không quy token thành chi phí hay năng suất. Contributions được cộng theo ngày và tài khoản; có thể trùng hoạt động giữa hai danh tính. Không suy ra công việc đã hoàn thành.\n\nTổng hợp bằng quy tắc, không gọi AI. Mốc dữ liệu: 16/10/2026 09:00 GMT+7.`
+    : `ACTIVITY REPORT · ${startDate(days)} → ${SNAPSHOT}\n\n${count} contributions across 2 GitHub accounts.\n${sessions.length} AI sessions, ${tokens(sessions).toLocaleString("en-GB")} observed tokens (input + output + cache, mutually exclusive in these totals).\nCurrent inbox: ${unread} unread notifications.\n\nCoverage: personal/work Codex; one Claude Code source, actual accounts unconfirmed. Claude chat unavailable. AI observations cover one device only.\n\nQuotas are independent. Tokens do not measure cost or productivity. Contributions are summed by date and account; activity across identities may overlap. No completion of work is inferred.\n\nRule-based summary; no AI call. Snapshot: 16 October 2026, 09:00 GMT+7.`;
 }
 
 export function modelUsage(rows: Session[]) {

@@ -4,13 +4,8 @@ import { useFinanceLocale } from "./locale";
 import { Suspense, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Plus, X, Info } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Breadcrumb,
@@ -31,7 +26,6 @@ const links = [
   { slug: "/budgets", label: "Ngân sách" },
   { slug: "/goals", label: "Mục tiêu" },
   { slug: "/cash-flow", label: "Dòng tiền" },
-  { slug: "/simulator", label: "Mô phỏng" },
 ];
 function FinanceBreadcrumb() {
   const { text } = useFinanceLocale();
@@ -58,7 +52,7 @@ function FinanceBreadcrumb() {
           </BreadcrumbPage>
         </BreadcrumbItem>
         <BreadcrumbItem>
-          <Badge variant="outline">{text("Dữ liệu minh họa")} · VND</Badge>
+          <Badge variant="outline">VND</Badge>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -89,25 +83,6 @@ export function FinanceShell({ children }: { children: ReactNode }) {
           <FinanceBreadcrumb />
         </Suspense>
         <div className="flex shrink-0 items-center gap-2">
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={text("Bản trải nghiệm")}
-                />
-              }
-            >
-              <Info />
-            </TooltipTrigger>
-            <TooltipContent>
-              {text(
-                "Dữ liệu minh họa đến 15/10/2026 · Thay đổi chỉ giữ trong phiên, tải lại để đặt lại.",
-              )}{" "}
-              · VND · GMT+7
-            </TooltipContent>
-          </Tooltip>
           <Button disabled={!data} size="sm" onClick={() => setAdding(true)}>
             <Plus data-icon="inline-start" />
             {text("Ghi giao dịch")}
@@ -132,7 +107,7 @@ export function FinanceShell({ children }: { children: ReactNode }) {
       {error && !data ? (
         <Alert variant="destructive">
           <AlertDescription>
-            {text("Chưa tải được dữ liệu minh họa.")}{" "}
+            {text("Chưa tải được dữ liệu.")}{" "}
             <Button variant="outline" size="sm" onClick={reload}>
               {text("Thử lại")}
             </Button>

@@ -70,7 +70,7 @@ export function TransactionEditor({
       (kind === "transfer" && account === destination)
     ) {
       setError(
-        "Nhập nội dung, số tiền dương, ngày trong kỳ minh họa và hai tài khoản khác nhau khi chuyển tiền.",
+        "Nhập nội dung, số tiền dương, ngày trong kỳ báo cáo và hai tài khoản khác nhau khi chuyển tiền.",
       );
       return;
     }
@@ -93,7 +93,7 @@ export function TransactionEditor({
     }));
     notify(
       initial
-        ? "Đã cập nhật giao dịch trong phiên trải nghiệm."
+        ? "Đã cập nhật giao dịch."
         : "Đã thêm giao dịch. Tổng quan và ngân sách đã cập nhật.",
     );
     onClose();
@@ -118,7 +118,7 @@ export function TransactionEditor({
           </DialogTitle>
           <DialogDescription>
             {text(
-              "Nhập nhanh để hiểu tiền đang đi đâu. Chỉ lưu trong phiên trải nghiệm.",
+              "Nhập nhanh để hiểu tiền đang đi đâu.",
             )}
           </DialogDescription>
         </DialogHeader>

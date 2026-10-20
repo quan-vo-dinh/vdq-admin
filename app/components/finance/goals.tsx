@@ -47,7 +47,6 @@ import {
   PageIntro,
   Metric,
   MoneyInput,
-  FinanceLink,
   FinanceIcon,
   FinanceBadge,
   NoResults,
@@ -164,7 +163,7 @@ function GoalEditor({
               />
             </Field>
             <Field>
-              <FieldLabel>{text("Biểu tượng và ảnh mẫu")}</FieldLabel>
+              <FieldLabel>{text("Biểu tượng và ảnh")}</FieldLabel>
               <GoalVisualPicker value={visual} onChange={setVisual} />
             </Field>
             <Field data-invalid={Boolean(imageError)}>
@@ -193,12 +192,12 @@ function GoalEditor({
                   reader.readAsDataURL(file);
                 }}
               />
-              <FieldDescription>{text("Dùng ảnh mẫu hoặc chọn ảnh JPG, PNG, WebP của bạn (tối đa 2 MB).")}</FieldDescription>
+              <FieldDescription>{text("Dùng ảnh có sẵn hoặc chọn ảnh JPG, PNG, WebP của bạn (tối đa 2 MB).")}</FieldDescription>
               {imageError && <FieldError>{text(imageError)}</FieldError>}
               {image && (
                 <div className="finance-goal-image-preview">
                   <GoalCover visual={visual} image={image} alt={name || text("Mục tiêu")} />
-                  <Button type="button" variant="ghost" size="sm" onClick={() => setImage("")}>{text("Dùng ảnh mẫu")}</Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setImage("")}>{text("Dùng ảnh có sẵn")}</Button>
                 </div>
               )}
             </Field>
@@ -427,9 +426,6 @@ export function GoalsPage() {
           <p className="max-w-2xl text-sm text-muted-foreground">
             {text("Tiền dành cho mục tiêu nằm trong số dư hiện có.")}
           </p>
-          <FinanceLink href="/finance/simulator">
-            {text("Thử thứ tự mua sắm")}
-          </FinanceLink>
         </div>
       </FinanceBoard>
       {editor && (

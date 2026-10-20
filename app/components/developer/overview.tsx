@@ -7,6 +7,7 @@ import {
   Inbox,
   Activity,
   Sparkles,
+  FileDiff,
 } from "lucide-react";
 import StyleAwareWrapper from "@/app/components/shared/StyleAwareWrapper";
 import StyleDivider from "@/app/components/shared/StyleDivider";
@@ -23,6 +24,7 @@ import { useDeveloper } from "@/app/context/developer-context";
 import {
   selectSessions,
   selectContributions,
+  codeChanges,
   tokens,
 } from "@/lib/developer/model";
 import { Choice, useDeveloperLocale } from "./shared";
@@ -68,7 +70,7 @@ export function Overview() {
   const models = [...new Set(selectSessions(data, days, source, provider).map(s => s.model))];
   const sessions = selectSessions(data, days, source, provider, model);
   const contributions = selectContributions(data, days);
-  const unread = data.notifications.filter((n) => !n.read);
+  const changes = codeChanges(data, 30);
   const metrics = [
     {
       title: "Contributions",
@@ -77,8 +79,6 @@ export function Overview() {
       badge: `${days} ${text("ngày", "days")}`,
       tinted: true,
       icon: Activity,
-      href: "/developer#activity",
-      label: text("Xem lịch đóng góp", "View contribution calendar"),
     },
     {
       title: text("Pull requests đã mở", "Pull requests opened"),
@@ -87,18 +87,15 @@ export function Overview() {
       badge: `${days} ${text("ngày", "days")}`,
       tinted: false,
       icon: GitPullRequest,
-      href: "/developer#inbox",
-      label: text("Xem Inbox", "View inbox"),
     },
     {
-      title: text("Inbox chưa đọc", "Unread inbox"),
-      value: unread.length,
-      sub: `${unread.filter((n) => n.kind === "review").length} ${text("yêu cầu review", "review requests")}`,
-      badge: `${unread.filter((n) => n.kind === "review").length} review`,
+      title: text("Dòng code thay đổi", "Lines changed"),
+      value: changes.total,
+      sub: text("Số dòng thêm và xóa trong 30 ngày qua", "Lines added and deleted over the past 30 days"),
+      badge: text("30 ngày", "30 days"),
+      changes,
       tinted: true,
-      icon: Inbox,
-      href: "/developer#inbox",
-      label: text("Mở Inbox", "Open inbox"),
+      icon: FileDiff,
     },
   ];
   return (
@@ -176,35 +173,34 @@ export function Overview() {
               <div className="flex w-full flex-col items-start gap-4">
                 <div className="flex w-full items-center justify-between">
                   <div className="flex flex-col gap-1">
-                    <p className="text-sm font-normal text-foreground">
-                      {m.title}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-normal text-foreground">{m.title}</p>
+                      {"changes" in m && <Badge variant="outline">{m.badge}</Badge>}
+                    </div>
                     <div className="flex items-center gap-2" title={m.sub}>
                       <h3 className="text-2xl font-semibold tabular-nums">
                         {number(m.value)}
                       </h3>
-                      <Badge
+                      {!("changes" in m) && <Badge
                         variant={m.tinted ? "default" : "outline"}
                         className={m.tinted ? "bg-chart-2/10! text-chart-2!" : undefined}
                       >
                         {m.badge}
-                      </Badge>
+                      </Badge>}
+                    {"changes" in m && m.changes && (
+                      <span className="inline-flex shrink-0 items-center gap-2 text-sm font-medium tabular-nums">
+                        <span className="text-success-foreground" aria-label={text(`${number(m.changes.additions)} dòng thêm`, `${number(m.changes.additions)} lines added`)}>+{number(m.changes.additions)}</span>
+                        <span className="text-destructive" aria-label={text(`${number(m.changes.deletions)} dòng xóa`, `${number(m.changes.deletions)} lines deleted`)}>−{number(m.changes.deletions)}</span>
+                      </span>
+                    )}
                       <span className="sr-only">{m.sub}</span>
                     </div>
+
                   </div>
                   <div className="w-fit rounded-md border border-border p-2.5">
                     <m.icon size={16} />
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  className="flex h-auto cursor-pointer gap-1.5 rounded-md px-4 py-2"
-                  render={<Link href={m.href} />}
-                  nativeButton={false}
-                >
-                  {m.label}
-                  <span><ArrowRight width={18} height={18} /></span>
-                </Button>
               </div>
             </CardContent>
           </DashboardCard>

@@ -34,7 +34,6 @@ try {
     accountBalance,
     categorySpent,
     forecast,
-    purchaseScenario,
     budgetLimit,
   } = require(join(temporary, "model.js"));
   const { financeDemo } = require(join(temporary, "demo.js"));
@@ -190,24 +189,6 @@ try {
     assert.equal(a[7].balance, b[7].balance - 1_000_000);
     assert.equal(a.at(-1).balance, -7_000_000);
     assert.ok(a.every((r) => Number.isSafeInteger(r.balance)));
-  });
-  test("purchase scenario exposes insufficient cash and monthly deficit instead of clamping", () => {
-    const result = purchaseScenario(
-      12_000_000,
-      32_000_000,
-      2_000_000,
-      3_000_000,
-      2_000_000,
-      2_000_000,
-      3,
-    );
-    assert.equal(result.after, -16_000_000);
-    assert.equal(result.monthlyAfter, -1_000_000);
-    assert.equal(result.monthsToAfford, 12);
-    assert.equal(
-      purchaseScenario(0, 1_000_000, 0, 0, 0, 0, 0).monthsToAfford,
-      null,
-    );
   });
   test("CSV template and exports round trip quotes, commas, Unicode and newlines", () => {
     assert.equal(

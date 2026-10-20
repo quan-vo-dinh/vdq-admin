@@ -1,10 +1,12 @@
 # Personal Finance UI
 
-Finance giúp xem thu chi, đặt hạn mức, dành tiền và thử một quyết định mua sắm. [Bối cảnh cô đọng](personal-finance-context.md) là phạm vi hiện tại; [hướng dẫn nhanh](huong-dan-su-dung-finance.md) mô tả thao tác.
+Finance giúp xem thu chi, đặt hạn mức, dành tiền và dự báo dòng tiền. [Bối cảnh cô đọng](personal-finance-context.md) là phạm vi hiện tại; [hướng dẫn nhanh](huong-dan-su-dung-finance.md) mô tả thao tác.
+
+Ngày 20/10/2026: đã gỡ trang Mô phỏng và chức năng so sánh quyết định mua sắm. Các ghi nhận kiểm tra Mô phỏng bên dưới là lịch sử trước khi gỡ.
 
 ## Bố cục và component
 
-Điều hướng giữa sáu trang bằng sidebar của dashboard; đã bỏ thanh điều hướng ngang trùng lặp. Giữ theme trung tính, responsive và VI/EN. Tabs trong trang dùng cho góc nhìn hoặc tình huống.
+Điều hướng giữa năm trang bằng sidebar của dashboard; đã bỏ thanh điều hướng ngang trùng lặp. Giữ theme trung tính, responsive và VI/EN. Tabs trong trang dùng cho góc nhìn hoặc tình huống.
 
 Các nhóm nội dung dùng `FinanceBoard` dựa trên `StyleAwareWrapper` với lưới 12 cột, viền và khoảng cách 1px như dashboard Modern. Giữa các hàng chính dùng `<StyleDivider wrapperClassName="col-span-12" />`; tiêu đề panel dùng icon rõ nét trong ô 32px. Biểu đồ thu chi dùng `ChartLine`.
 
@@ -19,11 +21,10 @@ Typography: tiêu đề trang 24px (20px trên mobile), tiêu đề khối/thẻ
 | Ngân sách | Tabs biểu đồ thanh/radar, radial tổng sử dụng, Select danh mục và Dialog chỉnh hạn mức                                                   |
 | Mục tiêu  | Hai tổng đã dành/chưa phân bổ; các thẻ radial progress; Dialog thêm/sửa/phân bổ, Calendar chọn ngày                                      |
 | Dòng tiền | Ba số dư bắt đầu/cuối/thấp nhất; Tabs biểu đồ/lịch; bốn giả định; Accordion khoản sắp đến                                                |
-| Mô phỏng  | Tabs xe/điện thoại/ở riêng; sáu đầu vào; hai kết quả làm ngay/chờ thêm và biểu đồ 12 tháng                                               |
 
 Money inputs dùng InputGroup định dạng VND và Slider khi phù hợp. NumberTicker hỗ trợ reduced motion. Biểu đồ dùng Recharts trong ChartContainer, số âm và hoàn tiền giữ đúng dấu. Radar chỉ gồm danh mục có hạn mức, hiển thị chi ròng âm ở 0%; sổ giao dịch giữ nguyên số gốc.
 
-Tổng quan dùng Base UI Toast nổi ở góc dưới phải cho cảnh báo ngân sách, có nút đóng và dẫn đến ngân sách; không chiếm hàng trong layout. Dismissal lưu trong `sessionStorage` theo tháng/danh mục/số tiền vượt. Nguồn tiền hiển thị đầy đủ VND, tỷ trọng phân bổ, số tài khoản/khoản sắp đến. Các metric dùng icon lớn với màu theo ý nghĩa. Ngân sách bổ sung hạn mức tháng, chi ròng, số danh mục trong hạn và chi phí cố định. Mục tiêu lưu `visual` và ảnh riêng tùy chọn trong phiên; ảnh mẫu từ Unsplash, ảnh riêng được đọc tại trình duyệt. Mô phỏng dùng `tabs-05` với underline/hover chuyển động, hỗ trợ reduced motion; tab cùng hàng phần giới thiệu trên desktop và nội dung đổi theo tình huống.
+Tổng quan dùng Base UI Toast nổi ở góc dưới phải cho cảnh báo ngân sách, có nút đóng và dẫn đến ngân sách; không chiếm hàng trong layout. Dismissal lưu trong `sessionStorage` theo tháng/danh mục/số tiền vượt. Nguồn tiền hiển thị đầy đủ VND, tỷ trọng phân bổ, số tài khoản/khoản sắp đến. Các metric dùng icon lớn với màu theo ý nghĩa. Ngân sách bổ sung hạn mức tháng, chi ròng, số danh mục trong hạn và chi phí cố định. Mục tiêu lưu `visual` và ảnh riêng tùy chọn trong phiên; ảnh mẫu từ Unsplash, ảnh riêng được đọc tại trình duyệt.
 
 Đã bỏ các panel và chỉ số lặp, lọc/đặt ưu tiên mục tiêu, tính mức góp bắt buộc để kịp ngày, trả góp, thời gian bù quỹ, khoản chi đột xuất riêng, kịch bản ±10% và CSV mô phỏng. CSV giao dịch vẫn giữ.
 

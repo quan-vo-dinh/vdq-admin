@@ -5,7 +5,6 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { RefreshCw, Download, Database, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +14,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useDeveloper } from "@/app/context/developer-context";
-import { Choice, Status, downloadText, useDeveloperLocale } from "./shared";
-import { ProviderTitle } from "./brand-icon";
+import { Choice, downloadText, useDeveloperLocale } from "./shared";
+import { DeveloperConnections } from "./connections";
 import { reportText, SNAPSHOT } from "@/lib/developer/model";
 import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { cn } from "@/lib/utils";
@@ -49,11 +48,13 @@ function QuickTools() {
           >
             AI Usage
           </Button>
+          <Button size="sm" variant={path === "/developer/feed" ? "secondary" : "ghost"} render={<Link href="/developer/feed" />} nativeButton={false}>Developer Feed</Button>
         </nav>
+        {path !== "/developer/feed" && <>
         <Button
           size="icon-sm"
           variant="outline"
-          aria-label={text("Tải lại mẫu", "Reload demo")}
+          aria-label={text("Tải lại", "Reload")}
           disabled={isValidating}
           onClick={reload}
         >
@@ -74,17 +75,19 @@ function QuickTools() {
           ]}
         />
         <Button
-          size="icon-sm"
-          variant="outline"
-          aria-label={text("Nguồn dữ liệu", "Data sources")}
-          onClick={() => setPanel("sources")}
+          size="sm"
+          variant={path === "/developer/connections" ? "secondary" : "outline"}
+          render={<Link href="/developer/connections" />}
+          nativeButton={false}
         >
-          <Database />
+          <Database data-icon="inline-start" />
+          {text("Kết nối", "Connections")}
         </Button>
         <Button size="sm" onClick={() => setPanel("reports")}>
           <FileText data-icon="inline-start" />
           {text("Báo cáo", "Report")}
         </Button>
+        </>}
       </div>
       <Dialog
         open={activePanel === "reports" || activePanel === "sources"}
@@ -99,7 +102,8 @@ function QuickTools() {
           }
         }}
       >
-        <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className={cn("max-h-[85vh] overflow-y-auto", activePanel === "sources" ? "sm:max-w-5xl" : "sm:max-w-2xl")}
+          closeLabel={text("Đóng", "Close")}>
           <DialogHeader>
             <DialogTitle>
               {activePanel === "reports"
@@ -108,8 +112,8 @@ function QuickTools() {
             </DialogTitle>
             <DialogDescription>
               {text(
-                "Dữ liệu mẫu · 16/10/2026, 09:00 GMT+7",
-                "Demo snapshot · 16 October 2026, 09:00 GMT+7",
+                activePanel === "sources" ? "Quản lý thiết lập và quyền truy cập từng nguồn." : "16/10/2026, 09:00 GMT+7",
+                activePanel === "sources" ? "Manage setup and access for each source." : "16 October 2026, 09:00 GMT+7",
               )}
             </DialogDescription>
           </DialogHeader>
@@ -131,35 +135,19 @@ function QuickTools() {
               </DialogFooter>
             </>
           ) : (
-            <div className="flex flex-col gap-4">
-              {data.sources.map((s) => (
-                <div
-                  key={s.id}
-                  className="flex flex-col gap-2 rounded-lg border p-3"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <ProviderTitle provider={s.provider}>
-                      {s.name}
-                    </ProviderTitle>
-                    <Status status={s.status} />
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {s.observedAt?.slice(0, 16).replace("T", " ")} GMT+7 ·{" "}
-                    {s.detail}
-                  </p>
-                </div>
-              ))}
-              <p className="text-sm text-muted-foreground">
-                {text(
-                  "Chưa kết nối tài khoản thật. Claude chat chưa có dữ liệu; nguồn Claude Code là minh họa. Token, quota và chi phí là các đại lượng riêng.",
-                  "No live accounts connected. Claude chat is unavailable; Claude Code is illustrative. Tokens, quota and costs are distinct metrics.",
-                )}
-              </p>
-            </div>
+            <DeveloperConnections />
           )}
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+function DeveloperHeader() {
+  return (
+    <div className="-mb-3 flex flex-wrap items-center justify-between gap-4 pb-1">
+      <PersonalizedIntro compact />
+      <QuickTools />
+    </div>
   );
 }
 export function DeveloperShell({ children }: { children: ReactNode }) {
@@ -167,12 +155,9 @@ export function DeveloperShell({ children }: { children: ReactNode }) {
   const { text } = useDeveloperLocale();
   return (
     <div className="developer-workspace flex min-w-0 flex-col gap-4">
-      <div className="-mb-3 flex flex-wrap items-center justify-between gap-4 pb-1">
-        <PersonalizedIntro compact />
-        <Suspense fallback={<Skeleton className="h-8 w-64" />}>
-          <QuickTools />
-        </Suspense>
-      </div>
+      <Suspense fallback={null}>
+        <DeveloperHeader />
+      </Suspense>
       {error && (
         <Alert variant="destructive">
           <AlertDescription>

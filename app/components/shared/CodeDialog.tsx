@@ -27,7 +27,7 @@ const CodeDialog = ({ children }: { children: string }) => {
     <div className="px-6 py-2 bg-gray-100 dark:bg-white/2 border-t border-border">
       <div className={`flex items-center ${isOpen ? "justify-between" : "justify-end"}`}>
         <h5 className={`text-base  font-semibold ${isOpen ? "block" : "hidden"}`}>
-          Sample Code
+          Code
         </h5>
         <TooltipProvider>
           <div className="flex items-center gap-2">

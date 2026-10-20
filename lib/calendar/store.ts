@@ -43,7 +43,7 @@ function seed(): CalendarData {
     ["Review giao diện", 2, 14, 15, "orange", "meeting", "event"],
     ["Hoàn thiện tài liệu dự án", 3, 9, 11, "blue", "work", "task"],
     ["Cà phê & kết nối", 3, 15, 16, "rose", "personal", "event"],
-    ["Tổng kết và demo tuần", 4, 14, 16, "orange", "meeting", "event"],
+    ["Tổng kết và trình bày tuần", 4, 14, 16, "orange", "meeting", "event"],
     ["Thời gian cho bản thân", 5, 9, 11, "green", "personal", "event"],
   ];
   const events = definitions.map(
@@ -56,7 +56,7 @@ function seed(): CalendarData {
       category,
       kind,
       description:
-        "Nội dung mẫu — chỉnh sửa hoặc xóa để bắt đầu kế hoạch của bạn.",
+        "Chỉnh sửa hoặc xóa để điều chỉnh kế hoạch của bạn.",
       status: i === 0 ? "completed" : i % 3 === 0 ? "planned" : "confirmed",
       priority: i === 3 ? "high" : "medium",
       location: category === "meeting" ? "Google Meet" : "",
@@ -70,7 +70,7 @@ function seed(): CalendarData {
     end: `${dateKey(addDays(monday, 5))}T00:00`,
     allDay: true,
     color: "violet",
-    description: "Sự kiện mẫu kéo dài nhiều ngày.",
+    description: "Sự kiện kéo dài nhiều ngày.",
   });
   return { events, settings: { ...defaultSettings } };
 }
