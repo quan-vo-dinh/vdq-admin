@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import {
   useId,
   type Dispatch,
@@ -65,10 +66,10 @@ export function CalendarSidebar({
   const filterId = useId();
   return (
     <div className="flex flex-col gap-4 p-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-base font-semibold"><HeadingText>
           {text("Lịch của tôi", "My calendars")}
-        </h2>
+        </HeadingText></h2>
         <Badge variant="outline">{selectedCategories.length}/4</Badge>
       </div>
       <Calendar
@@ -114,7 +115,7 @@ export function CalendarSidebar({
                   />
                   {categories[category]}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-sm text-muted-foreground">
                   {
                     events.filter(
                       (e) =>
@@ -133,10 +134,10 @@ export function CalendarSidebar({
       </FieldSet>
       <Separator />
       <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-base font-semibold"><HeadingText>
             {text("Công việc tuần này", "Tasks this week")}
-          </h2>
+          </HeadingText></h2>
           <Badge variant="secondary">
             {completed}/{tasks.length}
           </Badge>
@@ -145,7 +146,7 @@ export function CalendarSidebar({
           value={tasks.length ? (completed / tasks.length) * 100 : 0}
           aria-label={text("Tiến độ công việc tuần", "Weekly task progress")}
         />
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {formatDate(weekStart, { day: "numeric", month: "short" })} –{" "}
           {formatDate(addDays(weekStart, 6), {
             day: "numeric",
@@ -168,14 +169,14 @@ export function CalendarSidebar({
                 >
                   <span
                     className={cn(
-                      "text-xs leading-relaxed",
+                      "text-sm leading-relaxed",
                       task.status === "completed" &&
                         "text-muted-foreground line-through",
                     )}
                   >
                     {task.title}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-sm text-muted-foreground">
                     {formatDate(fromKey(task.start), {
                       weekday: "short",
                       day: "numeric",
@@ -192,7 +193,7 @@ export function CalendarSidebar({
             ))}
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             {text(
               "Chưa có công việc trong tuần.",
               "No tasks planned this week.",
@@ -210,7 +211,7 @@ export function CalendarSidebar({
         </Button>
       </div>
       <Separator />
-      <p className="text-[10px] leading-relaxed text-muted-foreground">
+      <p className="text-sm leading-relaxed text-muted-foreground">
         {text(
           "Phím tắt: N tạo mới · T hôm nay · ← → chuyển lịch · 1–5 đổi chế độ xem.",
           "Shortcuts: N new · T today · ← → navigate · 1–5 switch views.",

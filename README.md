@@ -73,7 +73,25 @@ pnpm lint
 
 Lint tooling uses ESLint 9 and a scoped TypeScript 6 compiler API dependency through `.pnpmfile.cjs`; application builds retain TypeScript 7. Existing lint errors elsewhere in the template remain separate from Calendar validation.
 
+## Personal Finance UI
+
+Open [http://localhost:3000/finance](http://localhost:3000/finance), or **Tài chính cá nhân → Quản lý tài chính** in the sidebar.
+
+- Six pages: overview, transactions, monthly budgets, savings goals, cash-flow forecast, and purchase/moving simulator.
+- Interactive demonstration dataset, explicitly dated **15 October 2026**. This is fictional data, not inferred personal balances or verified income.
+- `/api/finance` supplies the read-only demo through the shared SWR fetcher. The server layout provides the same initial dataset so all page segments render during instant-navigation validation. The Finance layout owns session edits: add/edit/delete transactions, adjust monthly budgets, allocate/release goals, and preview/confirm standardized CSV imports. Edits survive navigation within Finance; a full reload resets the session. No real bank connection or persistent financial records.
+- Internal transfers preserve total cash and stay out of income/expense reports. Refunds reduce category expenses. Goal allocations reserve existing funds without creating money or consumption expenses.
+- Forecast income, costs and upcoming bills with editable assumptions. Compare acting now with waiting for a purchase or moving out; amounts are editable examples.
+- CSV accepts the downloaded seven-column template (UTF-8, up to 1 MB / 1,000 rows), previews validation and skips exact-key duplicates before confirmation. It is not a universal bank statement importer. Export the filtered ledger to CSV.
+- UI is Vietnamese-first and inherits the app's light/dark theme. Navigate using the dashboard sidebar; wide tables scroll within their containers.
+
+Validation: `pnpm test:finance`, scoped ESLint and `pnpm build`. Current scope: [concise product context](docs/personal-finance-context.md). Implementation: [docs/personal-finance-ui.md](docs/personal-finance-ui.md).
+
+Hướng dẫn nhanh tiếng Việt: [docs/huong-dan-su-dung-finance.md](docs/huong-dan-su-dung-finance.md).
+
 ## Folder Structure
+
+Dashboard headings share `HeadingText` (`app/components/shared/heading-text.tsx`) and `animated-text-02`. `CardTitle` and `DialogTitle` apply it automatically; raw page headings compose it explicitly. The theme gradient preserves icons/actions and supports reduced motion.
 
 ```
 |-- public/                                    # Static assets served from the site root

@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
   // Instant Navigations (Next.js 16.3): App Shells, Partial Prefetching, Instant Insights
   cacheComponents: true,
   partialPrefetching: true,

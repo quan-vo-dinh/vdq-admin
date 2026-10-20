@@ -1,4 +1,5 @@
 'use client'
+import { HeadingText } from "@/app/components/shared/heading-text";
 
 import React, { useState } from 'react'
 import { Input } from '@/components/ui/input'
@@ -60,7 +61,7 @@ const Page = () => {
         <div className='flex flex-col gap-px'>
           {/* Default Inputs */}
           <div className='md:p-6 p-4 bg-background'>
-            <h5 className='card-title'>Default Inputs</h5>
+            <h5 className='card-title'><HeadingText>Default Inputs</HeadingText></h5>
             <div className='mt-6 flex flex-col gap-6'>
               {/* Basic Input */}
               <div>
@@ -192,7 +193,7 @@ const Page = () => {
 
           {/* Textarea */}
           <div className='bg-background md:p-6 p-4 gap-px'>
-            <h5 className='card-title'>Textarea Input</h5>
+            <h5 className='card-title'><HeadingText>Textarea Input</HeadingText></h5>
             <div className='mt-6 flex flex-col gap-6'>
               <div>
                 <Label htmlFor='comment'>Description</Label>
@@ -231,7 +232,7 @@ const Page = () => {
 
           {/* Input Colors */}
           <div className='bg-background gap-px md:p-6 p-4'>
-            <h5 className='card-title'>Input Colors</h5>
+            <h5 className='card-title'><HeadingText>Input Colors</HeadingText></h5>
             <div className='mt-6 flex flex-col gap-6'>
               <div>
                 <Label htmlFor='warning' className='text-warning'>
@@ -271,7 +272,7 @@ const Page = () => {
         <div className='flex flex-col gap-px'>
           {/* Input Group with Icons */}
           <div className='bg-background md:p-6 p-4'>
-            <h5 className='card-title'>Input Group</h5>
+            <h5 className='card-title'><HeadingText>Input Group</HeadingText></h5>
             <div className='mt-6 flex flex-col gap-6'>
               <div className='relative'>
                 <Icon
@@ -346,13 +347,13 @@ const Page = () => {
 
           {/* File Input */}
           <div className='bg-background md:p-6 p-4'>
-            <h5 className='card-title'>File Input</h5>
+            <h5 className='card-title'><HeadingText>File Input</HeadingText></h5>
             <Input type='file' className='mt-6' />
           </div>
 
           {/* Checkbox */}
           <div className='bg-background md:p-6 p-4'>
-            <h5 className='card-title'>Checkbox</h5>
+            <h5 className='card-title'><HeadingText>Checkbox</HeadingText></h5>
             <div className='flex gap-6 mt-6'>
               <div className='flex items-center gap-2'>
                 <Checkbox id='default' />
@@ -371,7 +372,7 @@ const Page = () => {
 
           {/* Radio */}
           <div className='bg-background md:p-6 p-4'>
-            <h5 className='card-title'>Radio Buttons</h5>
+            <h5 className='card-title'><HeadingText>Radio Buttons</HeadingText></h5>
             <RadioGroup defaultValue='default' className='mt-6 flex gap-6'>
               <div className='flex items-center gap-2'>
                 <RadioGroupItem value='default' id='default' />
@@ -390,7 +391,7 @@ const Page = () => {
 
           {/* Switch */}
           <div className='bg-background md:p-6 p-4 h-full'>
-            <h5 className='card-title'>Toggle Switch</h5>
+            <h5 className='card-title'><HeadingText>Toggle Switch</HeadingText></h5>
             <div className='grid grid-cols-2 sm:grid-cols-3 gap-6 mt-6'>
               <div className='flex items-center gap-2'>
                 <Switch checked={switch1} onCheckedChange={setSwitch1} />

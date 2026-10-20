@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import NotesSidebar from "@/app/components/apps/notes/notes-sidebar";
@@ -117,7 +118,7 @@ const NotesApp = () => {
                   >
                     <Menu size={18} />
                   </Button>
-                  <h6 className="text-base">{t("Edit Note")}</h6>
+                  <h6 className="text-base"><HeadingText>{t("Edit Note")}</HeadingText></h6>
                 </div>
                 <AddNotes colors={colorvariation} />
               </div>

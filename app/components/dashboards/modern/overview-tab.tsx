@@ -1,4 +1,5 @@
 'use client'
+import { HeadingText } from "@/app/components/shared/heading-text";
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,9 +47,9 @@ export default function OverviewTab() {
     <>
       <div className="flex items-center flex-wrap lg:flex-nowrap lg:gap-0 gap-4 justify-between">
         <div className='flex flex-col items-start'>
-          <h2 className="text-xl flex item-center gap-2">
+          <h2 className="text-xl flex item-center gap-2"><HeadingText>
             {t(greeting)}, {currentUser.nickname} <span className="flex items-center">{getGreetingIcon()}</span>
-          </h2>
+          </HeadingText></h2>
           <p className='text-sm font-normal text-muted-foreground'>{t('Stay informed with today’s analytics')}</p>
         </div>
         <div className="flex items-center lg:flex-nowrap flex-wrap gap-2">

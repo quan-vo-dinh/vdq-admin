@@ -1,0 +1,510 @@
+"use client";
+import { useFinanceLocale } from "./locale";
+import type { ReactNode } from "react";
+import Link from "next/link";
+import {
+  ArrowUpRight,
+  FlaskConical,
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+  type LucideIcon,
+} from "lucide-react";
+import {
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardAction,
+} from "@/components/ui/card";
+import { DashboardCard } from "@/app/components/shared/dashboard-card";
+import { buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupText,
+} from "@/components/ui/input-group";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Slider } from "@/components/ui/slider";
+import { NumberTicker } from "./number-ticker";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty";
+import { cn } from "@/lib/utils";
+import { useFinance } from "@/app/context/finance-context";
+import { Progress } from "@/components/ui/progress";
+import type { FinanceTone } from "./appearance";
+import { ChartContainer } from "@/components/ui/chart";
+import { AreaChart, Area } from "recharts";
+import { FinanceHeading } from "./heading";
+
+export function FinanceIcon({
+  icon: Icon,
+  tone = "balance",
+  size = "default",
+}: {
+  icon: LucideIcon;
+  tone?: FinanceTone;
+  size?: "sm" | "default";
+}) {
+  return (
+    <span
+      data-finance-icon
+      data-finance-tone={tone}
+      data-size={size}
+      aria-hidden="true"
+    >
+      <Icon />
+    </span>
+  );
+}
+export function FinanceBadge({
+  children,
+  tone = "neutral",
+  icon: Icon,
+}: {
+  children: ReactNode;
+  tone?: FinanceTone;
+  icon?: LucideIcon;
+}) {
+  return (
+    <Badge variant="outline" data-finance-badge data-finance-tone={tone}>
+      {Icon && <Icon data-icon="inline-start" aria-hidden="true" />}
+      <span data-finance-value>{children}</span>
+    </Badge>
+  );
+}
+export function FinanceProgress({
+  tone = "goal",
+  ...props
+}: React.ComponentProps<typeof Progress> & { tone?: FinanceTone }) {
+  return <Progress {...props} data-finance-progress data-finance-tone={tone} />;
+}
+
+export function Section({
+  title,
+  description,
+  action,
+  children,
+  className,
+  icon: Icon,
+  tone = "balance",
+}: {
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  children: ReactNode;
+  className?: string;
+  icon?: LucideIcon;
+  tone?: FinanceTone;
+}) {
+  const { text } = useFinanceLocale();
+  return (
+    <DashboardCard
+      data-finance-surface="panel"
+      className={cn("min-w-0", className)}
+    >
+      <CardHeader className="finance-panel-header">
+        <CardTitle className="flex min-w-0 items-center gap-2">
+          {Icon && <FinanceIcon icon={Icon} tone={tone} size="sm" />}
+          <FinanceHeading>{text(title)}</FinanceHeading>
+        </CardTitle>
+        {description && <CardDescription>{text(description)}</CardDescription>}
+        {action && <CardAction>{action}</CardAction>}
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </DashboardCard>
+  );
+}
+export function PageIntro({
+  eyebrow,
+  title,
+  description,
+  children,
+  icon: Icon,
+  tone = "balance",
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  children?: ReactNode;
+  icon?: LucideIcon;
+  tone?: FinanceTone;
+}) {
+  const { text } = useFinanceLocale();
+  return (
+    <div className="finance-page-intro">
+      <div className="flex min-w-0 max-w-2xl items-start gap-3">
+        {Icon && <FinanceIcon icon={Icon} tone={tone} />}
+        <div className="flex flex-col gap-1">
+          <p data-finance-value data-finance-tone={tone} className="sr-only">
+            {text(eyebrow)}
+          </p>
+          <FinanceHeading as="h2" variant="page" className="finance-page-title">
+            {text(title)}
+          </FinanceHeading>
+          <p className="text-sm text-muted-foreground">{text(description)}</p>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+export function Metric({
+  label,
+  value,
+  detail,
+  icon: Icon,
+  negative,
+  series,
+  tone = "balance",
+}: {
+  label: string;
+  value: string;
+  detail: string;
+  icon: LucideIcon;
+  negative?: boolean;
+  series?: number[];
+  tone?: FinanceTone;
+}) {
+  const { text } = useFinanceLocale();
+  return (
+    <DashboardCard
+      size="sm"
+      data-finance-surface="metric"
+      data-finance-tone={negative ? "danger" : tone}
+    >
+      <CardHeader>
+        <CardDescription>{text(label)}</CardDescription>
+        <CardAction>
+          <FinanceIcon
+            icon={Icon}
+            tone={negative ? "danger" : tone}
+          />
+        </CardAction>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-1">
+        <p
+          data-finance-value
+          className={cn(
+            "text-xl font-semibold tracking-tight tabular-nums sm:text-2xl",
+            negative && "text-destructive",
+          )}
+        >
+          <NumberTicker value={value} />
+        </p>
+        <p className="text-sm text-muted-foreground">{text(detail)}</p>
+        {series && series.length > 1 && (
+          <ChartContainer
+            config={{
+              value: { label: text(label), color: "var(--foreground)" },
+            }}
+            className="finance-metric-sparkline"
+            aria-hidden="true"
+          >
+            <AreaChart
+              data={series.map((value) => ({ value }))}
+              margin={{ top: 3, bottom: 0, left: 0, right: 0 }}
+            >
+              <Area
+                type="stepAfter"
+                dataKey="value"
+                stroke="var(--foreground)"
+                fill="var(--foreground)"
+                fillOpacity={0.04}
+                strokeWidth={1.5}
+                isAnimationActive={false}
+              />
+            </AreaChart>
+          </ChartContainer>
+        )}
+      </CardContent>
+    </DashboardCard>
+  );
+}
+export function FinanceLink({
+  href,
+  children,
+  variant = "ghost",
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: "ghost" | "outline";
+}) {
+  return (
+    <Link href={href} className={buttonVariants({ variant, size: "sm" })}>
+      {children}
+      <ArrowUpRight data-icon="inline-end" />
+    </Link>
+  );
+}
+export function MoneyInput({
+  id,
+  label,
+  value,
+  onChange,
+  description,
+  min = 0,
+  max = 1_000_000_000,
+  sliderMax,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  description?: string;
+  min?: number;
+  max?: number;
+  sliderMax?: number;
+}) {
+  const { text, number } = useFinanceLocale();
+  return (
+    <Field>
+      <FieldLabel htmlFor={id}>{text(label)}</FieldLabel>
+      <InputGroup>
+        <InputGroupInput
+          id={id}
+          inputMode="numeric"
+          autoComplete="off"
+          required
+          value={number(value, { maximumFractionDigits: 0 })}
+          onChange={(e) => {
+            const next = Number(e.target.value.replace(/[^0-9]/g, ""));
+            if (Number.isFinite(next))
+              onChange(Math.min(max, Math.max(min, Math.round(next))));
+          }}
+        />
+        <InputGroupAddon align="inline-end">
+          <InputGroupText>₫</InputGroupText>
+        </InputGroupAddon>
+      </InputGroup>
+      {sliderMax !== undefined && (
+        <Slider
+          aria-label={text(label)}
+          value={[value]}
+          min={min}
+          max={Math.max(sliderMax, value)}
+          step={100_000}
+          onValueChange={(v) =>
+            onChange(
+              Math.min(
+                max,
+                Math.max(min, Math.round(Array.isArray(v) ? v[0] : v)),
+              ),
+            )
+          }
+        />
+      )}
+      {description && <FieldDescription>{text(description)}</FieldDescription>}
+    </Field>
+  );
+}
+export function Choice({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string; icon?: LucideIcon }[];
+}) {
+  const { text } = useFinanceLocale();
+  return (
+    <ToggleGroup
+      aria-label={text(label)}
+      className="max-w-full overflow-x-auto"
+      variant="outline"
+      size="sm"
+      value={[value]}
+      onValueChange={(values) => {
+        if (values[0]) onChange(String(values[0]));
+      }}
+    >
+      {options.map((o) => (
+        <ToggleGroupItem key={o.value} value={o.value}>
+          {o.icon && <o.icon data-icon="inline-start" aria-hidden="true" />}
+          {text(o.label)}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
+  );
+}
+export function SelectField({
+  id,
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  const { text } = useFinanceLocale();
+  return (
+    <Field>
+      <FieldLabel htmlFor={id}>{text(label)}</FieldLabel>
+      <Select
+        items={options.map((o) => ({ ...o, label: text(o.label) }))}
+        value={value}
+        onValueChange={(v) => {
+          if (v !== null) onChange(v);
+        }}
+      >
+        <SelectTrigger id={id} className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent data-finance-typography>
+          <SelectGroup>
+            {options.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {text(o.label)}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </Field>
+  );
+}
+export function NoResults({
+  title = "Chưa có dữ liệu phù hợp",
+  description = "Thử đổi kỳ hoặc bỏ bớt bộ lọc để xem thêm.",
+}: {
+  title?: string;
+  description?: string;
+}) {
+  const { text } = useFinanceLocale();
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyTitle><FinanceHeading as="span">{text(title)}</FinanceHeading></EmptyTitle>
+        <EmptyDescription>{text(description)}</EmptyDescription>
+      </EmptyHeader>
+    </Empty>
+  );
+}
+export function AmountRow({
+  label,
+  amount,
+  emphasis = false,
+  tone,
+  icon: Icon,
+}: {
+  label: string;
+  amount: number;
+  emphasis?: boolean;
+  tone?: FinanceTone;
+  icon?: LucideIcon;
+}) {
+  const { text, money } = useFinanceLocale();
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-between gap-4 py-2 text-sm",
+        emphasis && "font-semibold",
+      )}
+    >
+      <span className="flex items-center gap-2 text-muted-foreground">
+        {Icon && <Icon className="size-4 shrink-0" aria-hidden="true" />}
+        {text(label)}
+      </span>
+      <span
+        data-finance-value={tone || emphasis ? "" : undefined}
+        data-finance-tone={
+          amount < 0 && emphasis ? "danger" : (tone ?? "balance")
+        }
+        className={cn(
+          "tabular-nums",
+          amount < 0 && emphasis && "text-destructive",
+        )}
+      >
+        {money(amount)}
+      </span>
+    </div>
+  );
+}
+export function PlanBadge() {
+  const { text } = useFinanceLocale();
+  return (
+    <FinanceBadge tone="goal" icon={FlaskConical}>
+      {text("Giả định")}
+    </FinanceBadge>
+  );
+}
+export function MonthPicker() {
+  const { text, date } = useFinanceLocale();
+  const { month, setMonth } = useFinance();
+  return (
+    <ButtonGroup aria-label={text("Kỳ báo cáo")}>
+      <Button
+        variant="outline"
+        size="icon"
+        aria-label={text("Kỳ trước")}
+        disabled={month === "2026-09"}
+        onClick={() => setMonth("2026-09")}
+      >
+        <ChevronLeft />
+      </Button>
+      <Select
+        items={[
+          {
+            value: "2026-09",
+            label: date("2026-09-01", { month: "long", year: "numeric" }),
+          },
+          {
+            value: "2026-10",
+            label: date("2026-10-01", { month: "long", year: "numeric" }),
+          },
+        ]}
+        value={month}
+        onValueChange={(v) => {
+          if (v) setMonth(v);
+        }}
+      >
+        <SelectTrigger aria-label={text("Kỳ báo cáo")}>
+          <CalendarDays />
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent data-finance-typography>
+          <SelectGroup>
+            {["2026-09", "2026-10"].map((m) => (
+              <SelectItem key={m} value={m}>
+                {date(`${m}-01`, { month: "long", year: "numeric" })}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <Button
+        variant="outline"
+        size="icon"
+        aria-label={text("Kỳ sau")}
+        disabled={month === "2026-10"}
+        onClick={() => setMonth("2026-10")}
+      >
+        <ChevronRight />
+      </Button>
+    </ButtonGroup>
+  );
+}

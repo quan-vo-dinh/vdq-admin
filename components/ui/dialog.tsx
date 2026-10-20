@@ -6,6 +6,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
+import { HeadingText } from "@/app/components/shared/heading-text"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
@@ -43,9 +44,11 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  closeLabel = "Close",
   ...props
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean
+  closeLabel?: string
 }) {
   return (
     <DialogPortal>
@@ -72,7 +75,7 @@ function DialogContent({
           >
             <XIcon
             />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{closeLabel}</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>
@@ -117,7 +120,7 @@ function DialogFooter({
   )
 }
 
-function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
+function DialogTitle({ className, children, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
@@ -126,7 +129,9 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
         className
       )}
       {...props}
-    />
+    >
+      <HeadingText>{children}</HeadingText>
+    </DialogPrimitive.Title>
   )
 }
 

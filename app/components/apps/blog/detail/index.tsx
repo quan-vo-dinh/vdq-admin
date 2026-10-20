@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import React, { useEffect, useContext } from "react";
 import { usePathname } from "next/navigation";
 
@@ -114,7 +115,7 @@ const BlogDetailData = () => {
               <Badge className="mt-3 " variant={"secondary"}>
                 {post?.category}
               </Badge>
-              <h2 className="md:text-4xl text-2xl my-6">{post?.title}</h2>
+              <h2 className="md:text-4xl text-2xl my-6"><HeadingText>{post?.title}</HeadingText></h2>
               <div>
                 <div className="flex gap-3">
                   <div className="flex gap-2 items-center text-sm ">
@@ -204,7 +205,7 @@ const BlogDetailData = () => {
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>
-                <h5 className="text-xl mb-2">Post Comments</h5>
+                <h5 className="text-xl mb-2"><HeadingText>Post Comments</HeadingText></h5>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -222,7 +223,7 @@ const BlogDetailData = () => {
               </Button>
               <div className="mt-6">
                 <div className="flex gap-3 items-center">
-                  <h5 className="text-xl ">Comments</h5>
+                  <h5 className="text-xl "><HeadingText>Comments</HeadingText></h5>
                   <div className="h-8 w-8 rounded-full flex items-center justify-center text-primary bg-primary/5 font-bold">
                     {post?.comments?.length || 0}
                   </div>

@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import * as React from "react";
 import { useContext, useState } from "react";
 import {
@@ -66,7 +67,7 @@ const AddNotes = ({ colors }: Props) => {
             className="w-full"
             placeholder={t("Write your note here...")}
           />
-          <h6 className="text-base pt-4">{t("Change Note Color")}</h6>
+          <h6 className="text-base pt-4"><HeadingText>{t("Change Note Color")}</HeadingText></h6>
           <div className="flex gap-2 items-center">
             {colors?.map((color) => (
               <div

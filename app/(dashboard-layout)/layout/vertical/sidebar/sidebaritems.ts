@@ -44,6 +44,7 @@ import {
   LogIn,
   LucideIcon,
   NotebookText,
+  Wallet,
   ShieldCheck,
   Ticket,
   Unlink,
@@ -60,6 +61,24 @@ const SidebarContent: MenuItem[] = [
         icon: House,
         url: "/",
       }
+    ],
+  },
+  {
+    heading: "Personal Finance",
+    items: [
+      {
+        id: uniqueId(),
+        name: "My Finances",
+        icon: Wallet,
+        items: [
+          { id: uniqueId(), name: "Finance Overview", url: "/finance" },
+          { id: uniqueId(), name: "Transactions", url: "/finance/transactions" },
+          { id: uniqueId(), name: "Budgets", url: "/finance/budgets" },
+          { id: uniqueId(), name: "Savings Goals", url: "/finance/goals" },
+          { id: uniqueId(), name: "Cash Flow", url: "/finance/cash-flow" },
+          { id: uniqueId(), name: "Decision Simulator", url: "/finance/simulator" },
+        ],
+      },
     ],
   },
   {

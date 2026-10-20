@@ -5,6 +5,11 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 export type Language = "vi" | "en";
 
 const vietnamese: Record<string, string> = {
+  "Ascending": "Tăng dần", "Descending": "Giảm dần", "Sort": "Sắp xếp",
+  "item": "mục", "items": "mục", "Page": "Trang", "Previous page": "Trang trước", "Next page": "Trang sau",
+  "Personal Finance": "Tài chính cá nhân", "My Finances": "Quản lý tài chính",
+  "Finance Overview": "Tổng quan tài chính", "Transactions": "Giao dịch", "Budgets": "Ngân sách",
+  "Savings Goals": "Mục tiêu tiết kiệm", "Cash Flow": "Dòng tiền", "Decision Simulator": "Mô phỏng quyết định",
   "Big Calendar": "Lịch & kế hoạch",
   "Dashboard": "Bảng điều khiển", "Modern": "Tổng quan", "Pages": "Trang", "Apps": "Ứng dụng",
   "User Profile": "Hồ sơ cá nhân", "Notes": "Ghi chú", "Blogs": "Bài viết", "Blog Listing": "Danh sách bài viết",

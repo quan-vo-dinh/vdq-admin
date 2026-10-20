@@ -1,3 +1,4 @@
+import { HeadingText } from "@/app/components/shared/heading-text";
 import React, { useContext, useEffect } from "react";
 import { TicketContext } from "@/app/context/ticket-context/index";
 import { mutate } from "swr";
@@ -59,7 +60,7 @@ const TicketFilter = () => {
             onClick={() => setFilter("total_tickets")}
           >
             <h3 className="text-2xl">{tickets.length}</h3>
-            <h6 className="text-base ">Total Tickets</h6>
+            <h6 className="text-base "><HeadingText>Total Tickets</HeadingText></h6>
           </div>
         </div>
         <div className="lg:col-span-3 md:col-span-6  col-span-12">
@@ -68,7 +69,7 @@ const TicketFilter = () => {
             onClick={() => setFilter("Pending")}
           >
             <h3 className=" text-2xl">{pendingC}</h3>
-            <h6 className="text-base ">Pending Tickets</h6>
+            <h6 className="text-base "><HeadingText>Pending Tickets</HeadingText></h6>
           </div>
         </div>
         <div className="lg:col-span-3 md:col-span-6  col-span-12">
@@ -77,7 +78,7 @@ const TicketFilter = () => {
             onClick={() => setFilter("Open")}
           >
             <h3 className=" text-2xl">{openC}</h3>
-            <h6 className="text-base ">Open Tickets</h6>
+            <h6 className="text-base "><HeadingText>Open Tickets</HeadingText></h6>
           </div>
         </div>
         <div className="lg:col-span-3 md:col-span-6  col-span-12">
@@ -86,7 +87,7 @@ const TicketFilter = () => {
             onClick={() => setFilter("Closed")}
           >
             <h3 className="text-2xl">{closeC}</h3>
-            <h6 className="text-base ">Closed Tickets</h6>
+            <h6 className="text-base "><HeadingText>Closed Tickets</HeadingText></h6>
           </div>
         </div>
       </div>

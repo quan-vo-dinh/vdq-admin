@@ -120,6 +120,7 @@ export function EventEditor({
       }}
     >
       <DialogContent
+        data-readable-feature
         className="calendar-theme max-h-[92dvh] overflow-y-auto sm:max-w-xl"
         showCloseButton={!busy}
       >
@@ -454,7 +455,7 @@ export function EventEditor({
             if (!busy) setConfirmDelete(open);
           }}
         >
-          <AlertDialogContent>
+          <AlertDialogContent data-readable-feature>
             <AlertDialogHeader>
               <AlertDialogTitle>
                 {text("Xóa kế hoạch này?", "Delete this plan?")}

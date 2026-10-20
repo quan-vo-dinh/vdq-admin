@@ -58,7 +58,7 @@ export function CalendarStats({
                 {text("Bấm để xem chi tiết", "Click for details")}
               </TooltipContent>
             </Tooltip>
-            <PopoverContent align="end">
+            <PopoverContent data-readable-feature align="end">
               <PopoverHeader>
                 <PopoverTitle>
                   {stat.label}: {stat.value}
@@ -68,7 +68,7 @@ export function CalendarStats({
                 </PopoverDescription>
               </PopoverHeader>
               <p>{stat.detail}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {text(
                   "Các chỉ số tính trên cả tuần; bộ lọc chỉ áp dụng cho vùng lịch.",
                   "Statistics cover the full week; filters apply only to the calendar.",

@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { HeadingText } from "@/app/components/shared/heading-text"
 
 function Card({
   className,
@@ -33,7 +34,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+function CardTitle({ className, children, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
@@ -42,7 +43,9 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
         className
       )}
       {...props}
-    />
+    >
+      <HeadingText>{children}</HeadingText>
+    </div>
   )
 }
 

@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import { format } from "date-fns";
 import { Circle, Eye, MessageSquare } from "lucide-react";
 import { BlogPostType } from "@/app/(dashboard-layout)/types/apps/blog";
@@ -67,7 +68,7 @@ const BlogCard = ({ post }: Btype) => {
             <Badge className="mt-3 rounded-md bg-muted text-muted-foreground">
               {category}
             </Badge>
-            <h5 className="text-xl py-6 group-hover:text-primary">
+            <h5 className="text-xl py-6 group-hover:text-primary"><HeadingText>
               <Link
                 href={`/apps/blog/detail/${linkTo}`}
                 className="line-clamp-2"
@@ -75,7 +76,7 @@ const BlogCard = ({ post }: Btype) => {
                 {" "}
                 {title}
               </Link>
-            </h5>
+            </HeadingText></h5>
             <div>
               <div className="flex gap-3">
                 <div className="flex gap-2 items-center text-sm  ">

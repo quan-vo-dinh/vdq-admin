@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import {
   useEffect,
   useRef,
@@ -220,7 +221,7 @@ function TimeGrid(props: Props) {
           style={{ "--calendar-columns": days.length } as CSSProperties}
         >
           <div ref={headerRef} className="calendar-time-header">
-            <div className="flex items-center justify-center text-[10px] text-muted-foreground">
+            <div className="flex items-center justify-center text-xs text-muted-foreground">
               GMT+7
             </div>
             {days.map((day) => (
@@ -240,7 +241,7 @@ function TimeGrid(props: Props) {
             ))}
           </div>
           <div ref={allDayRef} className="calendar-all-day-grid">
-            <div className="p-2 text-[10px] text-muted-foreground">
+            <div className="p-2 text-xs text-muted-foreground">
               {text("Cả ngày", "All day")}
             </div>
             <div
@@ -376,9 +377,9 @@ function MonthGrid(props: Props) {
     const viewport = viewportRef.current;
     if (!viewport) return;
     const measure = () => {
-      const rowHeight = Math.max(76, (viewport.clientHeight - 30) / 6);
+      const rowHeight = Math.max(96, (viewport.clientHeight - 44) / 6);
       setEventLimit(
-        Math.max(1, Math.min(3, Math.floor((rowHeight - 48) / 22))),
+        Math.max(1, Math.min(3, Math.floor((rowHeight - 52) / 32))),
       );
     };
     const observer = new ResizeObserver(measure);
@@ -394,7 +395,7 @@ function MonthGrid(props: Props) {
       >
         {days.slice(0, columns).map((d) => (
           <div
-            className="border-b px-2 py-3 text-center text-xs text-muted-foreground"
+            className="border-b px-2 py-3 text-center text-sm text-muted-foreground"
             key={dateKey(d)}
           >
             {formatDate(d, { weekday: "short" })}
@@ -452,7 +453,7 @@ function MonthGrid(props: Props) {
                 ))}
                 {dayEvents.length > eventLimit && (
                   <button
-                    className="px-2 text-left text-xs text-muted-foreground hover:text-foreground"
+                    className="px-2 text-left text-sm text-muted-foreground hover:text-foreground"
                     onClick={() => onDay(day)}
                   >
                     +{dayEvents.length - eventLimit}{" "}
@@ -484,9 +485,9 @@ function YearGrid(props: Props) {
         return (
           <section key={month} className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm capitalize">
+              <h3 className="text-base capitalize"><HeadingText>
                 {formatDate(first, { month: "long" })}
-              </h3>
+              </HeadingText></h3>
               <Badge variant="secondary">{count}</Badge>
             </div>
             <div className="grid grid-cols-7 gap-1">
@@ -495,7 +496,7 @@ function YearGrid(props: Props) {
                 .map((label, i) => (
                   <span
                     key={i}
-                    className="py-1 text-center text-[10px] text-muted-foreground"
+                    className="py-1 text-center text-sm text-muted-foreground"
                   >
                     {label}
                   </span>
@@ -617,7 +618,7 @@ function Agenda(props: Props) {
                   >
                     <span
                       className={cn(
-                        "truncate text-sm font-medium",
+                        "truncate text-base font-medium",
                         event.status === "completed" &&
                           "line-through text-muted-foreground",
                       )}

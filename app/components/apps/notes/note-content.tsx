@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import React, { useContext, useState, useEffect } from "react";
 import { Check } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -81,7 +82,7 @@ const NoteContent = () => {
               onBlur={handleBlur}
             />
             <br />
-            <h6 className="text-base mb-3">{t("Change Note Color")}</h6>
+            <h6 className="text-base mb-3"><HeadingText>{t("Change Note Color")}</HeadingText></h6>
 
             <div className="flex gap-2 items-center">
               {colorvariation.map((color1) => (

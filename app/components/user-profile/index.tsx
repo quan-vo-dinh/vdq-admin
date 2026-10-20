@@ -1,4 +1,5 @@
 'use client'
+import { HeadingText } from "@/app/components/shared/heading-text";
 import Image from 'next/image'
 import Link from 'next/link'
 import { Icon } from '@iconify/react/dist/iconify.js'
@@ -102,9 +103,9 @@ const UserProfile = () => {
             </div>
             <div className='flex flex-wrap gap-4 justify-center sm:justify-between items-center w-full'>
               <div className='flex flex-col sm:text-left text-center gap-1.5'>
-                <h5 className='card-title'>
+                <h5 className='card-title'><HeadingText>
                   {personal.firstName} {personal.lastName}
-                </h5>
+                </HeadingText></h5>
                 <p className='text-sm text-gray-500 dark:text-gray-400'>
                   {t("Hi, I'm bin")}
                 </p>
@@ -137,7 +138,7 @@ const UserProfile = () => {
 
         <div className='grid grid-cols-1 xl:grid-cols-2 gap-px'>
           <div className='space-y-6 bg-background md:p-6 p-4 relative w-full break-words'>
-            <h5 className='card-title'>{t('Personal Information')}</h5>
+            <h5 className='card-title'><HeadingText>{t('Personal Information')}</HeadingText></h5>
             <p className='text-sm text-gray-500 dark:text-gray-400'>{t(currentUser.bio)}</p>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-7 2xl:gap-x-32'>
               <div>
@@ -182,7 +183,7 @@ const UserProfile = () => {
           </div>
 
           <div className='space-y-6 bg-background md:p-6 p-4 relative w-full break-words'>
-            <h5 className='card-title'>{t('Address Details')}</h5>
+            <h5 className='card-title'><HeadingText>{t('Address Details')}</HeadingText></h5>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-7 2xl:gap-x-32'>
               <div>
                 <p className='text-xs text-gray-500'>{t('Location')}</p>

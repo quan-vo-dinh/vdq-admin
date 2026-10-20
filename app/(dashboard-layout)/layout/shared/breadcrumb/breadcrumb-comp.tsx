@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { useLanguage } from "@/app/context/language-context";
@@ -22,7 +23,7 @@ const BreadcrumbComp = ({ title }: BreadCrumbType) => {
         className={`py-5 px-6 bg-background  overflow-hidden rounded-xl border`}
       >
         <div className="flex items-center justify-between gap-6 relative">
-          <h4 className="font-semibold text-xl text-forground">{t(title)}</h4>
+          <h4 className="font-semibold text-xl text-forground"><HeadingText>{t(title)}</HeadingText></h4>
           <ol
             className="flex items-center whitespace-nowrap"
             aria-label="Breadcrumb"

@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,7 @@ const TitleIconCard: React.FC<TitleCardProps> = ({
       style={{ borderRadius: "12px" }}
     >
       <div className="flex justify-between items-center border-b border-border px-6 py-4">
-        <h5 className="text-xl font-semibold">{title}</h5>
+        <h5 className="text-xl font-semibold"><HeadingText>{title}</HeadingText></h5>
 
         <Button className="flex items-center" onClick={onDownload}>
           <Download size={20} />

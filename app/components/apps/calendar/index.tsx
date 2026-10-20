@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import {
   CalendarDays,
@@ -294,7 +295,7 @@ function CalendarWorkspace() {
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-lg tracking-tight">Big Calendar</h1>
+              <h1 className="text-xl tracking-tight"><HeadingText>Big Calendar</HeadingText></h1>
               <Badge variant="secondary">
                 {text("Không gian cá nhân", "Personal workspace")}
               </Badge>
@@ -438,11 +439,11 @@ function CalendarWorkspace() {
                       </Button>
                     </div>
                     <h2
-                      className="text-sm font-semibold capitalize"
+                      className="text-base font-semibold capitalize"
                       aria-live="polite"
-                    >
+                    ><HeadingText>
                       {heading}
-                    </h2>
+                    </HeadingText></h2>
                   </div>
                   <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <Button
@@ -588,7 +589,7 @@ function CalendarWorkspace() {
                   fitHours={fitHours}
                 />
               </div>
-              <div className="calendar-grid-footer flex shrink-0 flex-wrap items-center justify-between gap-1 border-t px-3 py-1 text-[10px] text-muted-foreground">
+              <div className="calendar-grid-footer flex shrink-0 flex-wrap items-center justify-between gap-1 border-t px-3 py-1 text-xs text-muted-foreground">
                 <span className="flex items-center gap-2">
                   <span className="size-2.5 rounded-sm border bg-muted" />
                   {text("Ngoài giờ làm việc", "Outside working hours")} ·{" "}
@@ -609,7 +610,7 @@ function CalendarWorkspace() {
       <div
         role="status"
         aria-live="polite"
-        className="calendar-save-status shrink-0 truncate text-[10px] text-muted-foreground"
+        className="calendar-save-status shrink-0 truncate text-xs text-muted-foreground"
       >
         {notice ||
           text(

@@ -1,4 +1,5 @@
 "use client";
+import { HeadingText } from "@/app/components/shared/heading-text";
 import { Trash2 } from "lucide-react";
 import React, { useState, useContext, useEffect } from "react";
 import { NotesType } from "../../../(dashboard-layout)/types/apps/notes";
@@ -87,7 +88,7 @@ const Notelist = () => {
             ]}
           />
         </div>
-        <h6 className="text-base mt-6">{t("All Notes")}</h6>
+        <h6 className="text-base mt-6"><HeadingText>{t("All Notes")}</HeadingText></h6>
         <div className="flex flex-col gap-3 mt-4">
           {filteredNotes && filteredNotes.length ? (
             filteredNotes.map((note, index) => (
@@ -101,9 +102,9 @@ const Notelist = () => {
                       } transition-transform duration-200`}
                     onClick={() => handleNoteClick(note.id)}
                   >
-                    <h6 className={`text-base truncate text-primary`}>
+                    <h6 className={`text-base truncate text-primary`}><HeadingText>
                       {note.title}
-                    </h6>
+                    </HeadingText></h6>
                     <div className="flex items-center justify-between">
                       <p className="text-xs">
                         {new Date(note.datef ?? "").toLocaleDateString(language === "vi" ? "vi-VN" : "en-US")}

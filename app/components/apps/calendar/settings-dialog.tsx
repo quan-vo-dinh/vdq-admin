@@ -71,6 +71,7 @@ export function SettingsDialog({
       }}
     >
       <DialogContent
+        data-readable-feature
         className="sm:max-w-lg max-h-[90dvh] overflow-y-auto"
         showCloseButton={!busy}
       >
