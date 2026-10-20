@@ -1,0 +1,86 @@
+
+> main@0.1.0 test:finance /Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main
+> node scripts/test-finance.mjs
+
+TAP version 13
+# Subtest: VI/EN formatting keeps VND values and interpolated notices consistent
+ok 1 - VI/EN formatting keeps VND values and interpolated notices consistent
+  ---
+  duration_ms: 17.531125
+  type: 'test'
+  ...
+# Subtest: localized demo labels do not translate user content or mutate financial data
+ok 2 - localized demo labels do not translate user content or mutate financial data
+  ---
+  duration_ms: 2.56225
+  type: 'test'
+  ...
+# Subtest: all English messages retain their interpolation placeholders
+ok 3 - all English messages retain their interpolation placeholders
+  ---
+  duration_ms: 1.51975
+  type: 'test'
+  ...
+# Subtest: internal transfer changes both accounts and preserves total balance and income/expense
+ok 4 - internal transfer changes both accounts and preserves total balance and income/expense
+  ---
+  duration_ms: 0.183959
+  type: 'test'
+  ...
+# Subtest: refund reduces its category expense and never inflates income
+ok 5 - refund reduces its category expense and never inflates income
+  ---
+  duration_ms: 0.164583
+  type: 'test'
+  ...
+# Subtest: goal allocation reduces available funds without changing cash or expenses
+ok 6 - goal allocation reduces available funds without changing cash or expenses
+  ---
+  duration_ms: 0.076667
+  type: 'test'
+  ...
+# Subtest: monthly budget adjustment does not modify another month
+ok 7 - monthly budget adjustment does not modify another month
+  ---
+  duration_ms: 0.127125
+  type: 'test'
+  ...
+# Subtest: forecast pays salary only on declared dates and applies each bill once
+ok 8 - forecast pays salary only on declared dates and applies each bill once
+  ---
+  duration_ms: 4.329167
+  type: 'test'
+  ...
+# Subtest: forecast shock occurs once on day seven and allows negative balances
+ok 9 - forecast shock occurs once on day seven and allows negative balances
+  ---
+  duration_ms: 2.176208
+  type: 'test'
+  ...
+# Subtest: CSV template and exports round trip quotes, commas, Unicode and newlines
+ok 10 - CSV template and exports round trip quotes, commas, Unicode and newlines
+  ---
+  duration_ms: 0.428458
+  type: 'test'
+  ...
+# Subtest: CSV rejects impossible dates, invalid transfers, fractional or excessive VND and unknown categories
+ok 11 - CSV rejects impossible dates, invalid transfers, fractional or excessive VND and unknown categories
+  ---
+  duration_ms: 0.283375
+  type: 'test'
+  ...
+# Subtest: CSV export defuses spreadsheet formulas
+ok 12 - CSV export defuses spreadsheet formulas
+  ---
+  duration_ms: 0.053791
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37.89025

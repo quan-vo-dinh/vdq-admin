@@ -1,0 +1,117 @@
+
+> main@0.1.0 build /Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main
+> next build
+
+▲ Next.js 16.3.0 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 122ms
+- Cache Components enabled
+- Partial Prefetching enabled
+- Experiments (use with caution):
+  ✓ turbopackRustReactCompiler
+  ✓ useOffline
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 4.3s
+  Running TypeScript ...
+  Finished TypeScript in 899ms ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/53) ...
+⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+
+  Generating static pages using 11 workers (13/53) 
+
+  Generating static pages using 11 workers (26/53) 
+  Generating static pages using 11 workers (39/53) 
+⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+✓ Generating static pages using 11 workers (53/53) in 1262ms
+Turbopack build encountered 1 warning:
+./app/api/code/route.ts:12:20
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m10 |[0m     [36mreturn[0m [33mNextResponse[0m.json({ error: [32m'file missing'[0m }, { status: [35m400[0m })
+  [90m11 |[0m
+[33m[1m>[0m [90m12 |[0m   [36mconst[0m filePath = path.join(process.cwd(), file)
+  [90m   |[0m                    [33m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m13 |[0m   [36mconst[0m code = fs.readFileSync(filePath, [32m'utf8'[0m)
+  [90m14 |[0m
+  [90m15 |[0m   [36mreturn[0m [36mnew[0m [33mNextResponse[0m(code, {
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: path.join(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import trace:
+  App Route:
+    ./app/api/code/route.ts
+    ./app/api/code/route.ts
+
+
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/blog
+├ ƒ /api/calendar
+├ ƒ /api/code
+├ ○ /api/developer
+├ ƒ /api/developer/feed
+├ ○ /api/finance
+├ ƒ /api/notes
+├ ƒ /api/ticket
+├ ƒ /api/today
+├ ƒ /api/userprofile
+├ ƒ /api/userprofile/add-comments
+├ ƒ /api/userprofile/add-replies
+├ ○ /api/userprofile/get-gallery
+├ ○ /api/userprofile/get-users
+├ ƒ /api/userprofile/replies-like
+├ ○ /apps/blog/create
+├   /apps/blog/detail/[slug]
+│ ├ ◐ /apps/blog/detail/[slug]
+│ └ ○ /apps/blog/detail/garmins-instinct-crossover-is-a-rugged-hybrid-smartwatch
+├ ○ /apps/blog/edit
+├ ○ /apps/blog/manage-blog
+├ ○ /apps/blog/post
+├ ○ /apps/calendar
+├ ○ /apps/notes
+├ ○ /apps/tickets
+├ ○ /apps/tickets/create
+├ ○ /auth/auth2/forgot-password
+├ ○ /auth/auth2/login
+├ ○ /auth/auth2/register
+├ ○ /auth/auth2/two-steps
+├ ○ /auth/error
+├ ○ /auth/maintenance
+├ ○ /developer
+├ ○ /developer/ai
+├ ○ /developer/connections
+├ ○ /developer/feed
+├ ○ /developer/github
+├ ○ /developer/inbox
+├ ○ /developer/reports
+├ ○ /developer/sources
+├ ○ /finance
+├ ○ /finance/budgets
+├ ○ /finance/cash-flow
+├ ○ /finance/goals
+├ ○ /finance/transactions
+├ ○ /icons/iconify
+├ ○ /layout/footer
+├ ○ /layout/vertical/sidebar/buy-now
+├ ○ /pages/form
+├ ○ /pages/tables
+└ ○ /pages/user-profile
+
+
+○  (Static)             prerendered as static content
+◐  (Partial Prerender)  prerendered as static HTML with dynamic server-streamed content
+ƒ  (Dynamic)            server-rendered on demand
+

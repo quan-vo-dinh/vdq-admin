@@ -1,0 +1,34 @@
+{
+  "measuredAt": "2026-10-20T07:14:16.981Z",
+  "source": "Current local machine; no credentials sent",
+  "target": "https://wcgdvsiiemurehkprvqw.supabase.co/rest/v1/",
+  "kind": "HTTPS request duration, not DB query latency or ICMP RTT",
+  "samples": [
+    {
+      "attempt": 1,
+      "status": 401,
+      "totalMs": 483
+    },
+    {
+      "attempt": 2,
+      "status": 401,
+      "totalMs": 204
+    },
+    {
+      "attempt": 3,
+      "status": 401,
+      "totalMs": 71
+    },
+    {
+      "attempt": 4,
+      "status": 401,
+      "totalMs": 65
+    },
+    {
+      "attempt": 5,
+      "status": 401,
+      "totalMs": 465
+    }
+  ],
+  "decision": "Keep Mumbai. Authenticated cold/warm query timing deferred to P03; no region migration."
+}

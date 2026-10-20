@@ -17,26 +17,26 @@ export default function NoteContent() {
   const { language } = useLanguage();
   const text = (vi: string, en: string) => language === "vi" ? vi : en;
   // Drafts stay available when switching between notes in this workspace.
-  const [drafts, setDrafts] = useState<Record<number, NoteDraft>>({});
+  const [drafts, setDrafts] = useState<Record<string, NoteDraft & { expectedRevision?: number }>>({});
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
-  const [saved, setSaved] = useState<number | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
   const note = notes.find(n => n.id === selectedNoteId);
   if (loading) return <div className="p-6"><Skeleton className="h-72" /></div>;
   if (error) return <Alert variant="destructive"><AlertDescription>{text("Không tải được ghi chú. Hãy thử tải lại trang.", "Could not load notes. Please reload.")}</AlertDescription></Alert>;
   if (!note) return <Empty><EmptyHeader><EmptyTitle>{text("Thêm ghi chú đầu tiên của bạn", "Add your first note")}</EmptyTitle></EmptyHeader></Empty>;
-  const initial: NoteDraft = { title: note.title ?? "", color: note.color ?? "primary", content: note.content ?? plainDocument(note.title), localTime: noteDateTime(note.datef) };
+  const initial: NoteDraft & { expectedRevision?: number } = { title: note.title ?? "", color: note.color ?? "primary", content: note.content ?? plainDocument(note.title), localTime: noteDateTime(note.datef), expectedRevision: note.revision };
   const draft = drafts[note.id] ?? initial;
   const dirty = JSON.stringify(draft) !== JSON.stringify(initial);
   const onChange = (patch: Partial<NoteDraft>) => { setDrafts(previous => ({ ...previous, [note.id]: { ...(previous[note.id] ?? initial), ...patch } })); setSaved(null); };
   const save = async () => {
     setSaving(true); setSaveError("");
     try {
-      const { localTime, ...update } = draft;
-      await updateNote(note.id, { ...update, datef: noteTimestamp(localTime) });
+      const { localTime, expectedRevision, ...update } = draft;
+      await updateNote(note.id, { ...update, datef: noteTimestamp(localTime) }, expectedRevision);
       setDrafts(previous => { const next = { ...previous }; delete next[note.id]; return next; });
       setSaved(note.id);
-    } catch { setSaveError(text("Chưa lưu được ghi chú. Kiểm tra ngày giờ và thử lại.", "Could not save. Check the date and time and try again.")); }
+    } catch { setSaveError(text("Chưa lưu được ghi chú. Nội dung vẫn được giữ. Nếu có xung đột, sao chép bản nháp và tải lại.", "Could not save. Draft retained. On conflict, copy your draft and reload.")); }
     finally { setSaving(false); }
   };
   const formatTime = (value?: string) => value ? new Intl.DateTimeFormat(language === "vi" ? "vi-VN" : "en-GB", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(value)) : "—";

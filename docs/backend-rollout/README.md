@@ -1,0 +1,90 @@
+# Backend rollout — kế hoạch tinh gọn v2
+
+Cập nhật 2026-10-20 theo ưu tiên triển khai nhanh của user. P00/P01 đã PASS. Phiên P02/P03 ngày 2026-10-20: **P02 và P03 PASS local**, gồm GitHub cá nhân login/logout/relogin thật, owner bootstrap và signup đã đóng. Xem [bàn giao](HANDOFF.md), [P02 evidence](evidence/P02.md), [P03 evidence](evidence/P03.md). **P04/P05 PASS local**: Notes và Calendar lưu DB; xem [P04 evidence](evidence/P04.md), [P05 evidence](evidence/P05.md). Tiếp theo P06; P06–P12 chưa triển khai. Không có cloud migration/deploy.
+
+## Phạm vi giữ nguyên
+
+- Một owner GitHub-only, sử dụng hằng ngày; Supabase Free PostgreSQL/Auth/Storage + Next.js API trên Vercel Hobby.
+- Notes, Calendar, Finance, Learning, personal Profile/Preferences và ảnh goal hiện có sẽ lưu thật; tái sử dụng UI/SWR/Context.
+- Blog, Developer Workspace, social profile, ticket template cũ và KPI demo ngoài scope: giữ source/mock, không xây backend.
+- User đã xác nhận dữ liệu hiện tại trong scope đều mock: production rỗng. Không importer/mapping/demo snapshot mới; nếu phát sinh dữ liệu thật trước cutover thì kiểm tra lại đúng dataset đó.
+- Chưa ORM/backend riêng/Redis/Realtime/đa user/multi-currency/native sync. Không paid add-on, không tự thay region/project.
+
+## Đính chính phạm vi — 2026-10-20
+
+User xác nhận **không có trang Today**. Route `/today` và mục sidebar đã xóa.
+P04 chỉ yêu cầu Notes; P05 chỉ yêu cầu Calendar/settings và các view hiện có của Calendar.
+Không tạo trang thay thế hoặc di chuyển các widget Today sang Developer/trang khác.
+Today priorities, Quick Note, Recent Notes và Activity kiểu Today đã loại khỏi scope release;
+không xây backend bổ sung, đồng bộ, backup/restore, QA, deploy hoặc mobile flow cho module này.
+P06–P08 chỉ Finance/Learning/Profile/Preferences/ảnh goal; P09–P12 chỉ vận hành các module đã chấp nhận.
+Source/API/schema Today local là phần dư từ diễn giải trước; giữ để bảo toàn lịch sử, không tự khôi phục UI
+hoặc coi đó là scope production. Trước P11 phải rà/tách migration chưa áp trên cloud để không triển khai
+Today chỉ vì nó nằm trong migration local gộp. P00/P01 và log/ảnh cũ là lịch sử, không là yêu cầu hiện tại.
+
+## Hạ tầng đã có — dùng lại P01
+
+Theo evidence P01: dasboard-vodinhquan, ref wcgdvsiiemurehkprvqw, URL https://wcgdvsiiemurehkprvqw.supabase.co, Free/Mumbai ap-south-1. Data API ON, auto-expose OFF, automatic RLS trigger enabled. Chưa business migrations; cloud default grants còn cần xử lý theo SQL app trước public.
+
+Local CLI/config/env/check/reset/typegen/smoke và schema dump/restore đã kiểm chứng; xem [local runbook](LOCAL_DEVELOPMENT.md). Workspace đã linked cloud qua ignored .temp, local chỉ dùng wrapper/--local rõ ràng. Không đọc/copy secret hoặc quay lại cloud UI xác minh toàn bộ ở mỗi phase.
+
+Evidence P00/P01 là lịch sử, giữ nguyên. Bộ phase v2 là chỉ dẫn tiếp theo; không làm lại P00/P01 chỉ vì câu chữ phase cũ khác v2.
+
+## Lộ trình và đầu ra dùng được
+
+| Phase | Đầu ra chính | Phụ thuộc |
+| --- | --- | --- |
+| [P00](phase-00-inventory-preservation.md) | Inventory/bảo toàn — đã PASS | — |
+| [P01](phase-01-supabase-environments.md) | Môi trường/tooling — đã PASS | P00 |
+| [P02](phase-02-schema-security-contracts.md) | Một foundation owner/RLS nhỏ | P01 |
+| [P03](phase-03-github-owner-auth.md) | **GitHub login chạy, UI cũ, API được bảo vệ** | P02 |
+| [P04](phase-04-notes.md) | **Notes lưu thật, reload còn** | P03 |
+| [P05](phase-05-today-calendar.md) | Calendar và settings lưu thật | P04 |
+| [P06](phase-06-finance.md) | Finance; chia 6A CRUD và 6B CSV/báo cáo nếu cần | P05 |
+| [P07](phase-07-learning.md) | Habits/check-ins/streak lưu thật | P06 |
+| [P08](phase-08-profile-preferences-storage.md) | Profile/preferences và ảnh goal private | P07 |
+| [P09](phase-09-backup-operations.md) | Một workflow backup/restore đã thử | P08 |
+| [P10](phase-10-integration-release-qa.md) | Một vòng QA release | P09 |
+| [P11](phase-11-production-deployment.md) | **Web/backend production dùng được** | P10 |
+| [P12](phase-12-mobile-future.md) | PWA, APK nếu cần — tương lai | P11 |
+
+Không gộp mọi phase cho một phiên. Mốc tiếp theo là P06 Finance; P06 có thể bàn giao theo 6A/6B thay vì thêm framework để làm tất cả một lượt.
+
+## Nguyên tắc thực thi v2
+
+1. Đọc HANDOFF + đúng phase đang giao + user setup liên quan; xem evidence chi tiết chỉ khi cần. Không đọc lại mọi phase, toàn repo và mọi log chỉ để bắt đầu.
+2. Tái sử dụng công cụ đã PASS. Không tạo wrapper, validator env, snapshot/receipt, manifest hoặc harness mới nếu thứ đã có đáp ứng. Không cài lại dependencies/đổi version vì thói quen.
+3. Ưu tiên một luồng UI → API → DB hoạt động. Module đơn giản có thể một file server/domain và route adapter; không bắt đủ service/repository/factory/schema folders.
+4. RLS + explicit grants vẫn bắt buộc, không admin key trong request CRUD. CRUD một row dùng supabase-js/query filters; RPC chỉ khi transaction/invariant thực sự cần. Không generic command bus/ledger request đa module.
+5. API update/delete dùng revision kiểm tra nguyên tử, 409 giữ draft; UUID create ổn định cho retry. RLS bảo vệ identity, không hứa CAS cưỡng chế cho owner tự thao tác Data API ngoài app.
+6. Phần tiền/timezone/check-in phải đúng nhưng kiểm thử ở domain tương ứng; P02 không test Finance/Notes chưa xây. Không dựng framework giả định tải lớn để chuẩn bị tương lai.
+7. Kiểm thử thay đổi đúng một vòng: module/SQL tests liên quan, browser luồng chính khi đổi UI, lint theo repo và build cuối khi frontend/shared TS bị ảnh hưởng. Chỉ rerun khi code mới, lỗi hoặc concern chưa giải quyết yêu cầu. Không full baseline/restore/benchmark ở mỗi phase.
+8. P10 tổng hợp regression cuối; P09 restore một lần đủ data/ảnh/owner; P11 smoke môi trường thật và backup đầu tiên, không lặp toàn bộ drill nếu không có khác biệt ảnh hưởng.
+9. Evidence mỗi phase một file Markdown ngắn: đã đổi, lệnh/kết quả, lỗi/blocker, user action và bước sau. Ảnh/log chỉ khi có ích hoặc cần điều tra; không tạo bộ receipt/checksum riêng cho từng thao tác.
+10. Nếu setup lỗi cùng nguyên nhân qua hai lần thử có mục tiêu mà chưa tiến triển, ghi blocker/nhu cầu user, chuyển phần độc lập; không retry vòng lặp hoặc mở rộng tooling vô hạn. Không báo PASS khi còn thiếu kiểm chứng bắt buộc.
+11. Không cần giờ chạy cố định/ước lượng hứa hẹn; cập nhật ngắn khi tác vụ kéo dài, nêu đầu ra thực tế. Không dùng hết timebox để đánh dấu hoàn thành.
+12. Giữ thay đổi ngoài phạm vi và P00/P01 đã có. Không reset/reformat, commit/push/deploy trái phạm vi user giao. Hạ tầng cloud mutation chỉ khi tới phase thực thi được giao, không trong lượt sửa plan.
+
+## Kiểm tra không cắt giảm
+
+- Verify session + đúng owner tại server, RLS/grants chặn anon/non-owner, private data không public-cache, secret không vào bundle.
+- Save thành công là DB commit, reload/restart/redeploy không mất; lỗi giữ draft, không fallback mock trong module đã migrate.
+- Calendar ngày/giờ VN, Finance tiền/transfer/refund/import atomic, Learning unique check-in và archive rules.
+- Trước dùng production thật: backup data + ảnh, khôi phục được, user biết lịch backup; không giả định Free tự backup.
+- Không public arbitrary-file /api/code hoặc bỏ hở API ngoài scope vì hoãn tính năng.
+
+## Hoãn có chủ đích
+
+Global idempotency ledger, tất cả CRUD qua RPC, SQL validator Tiptap trùng JS, tiền BigInt framework từ P02, importer demo, media asset FSM, CI/CD pipeline, hosted backup scheduler/alert engine, stress benchmark và native/offline adapters.
+
+Hoãn không có nghĩa bỏ tính năng người dùng đã có: Notes Save, Finance CSV/goal image, Calendar, Learning và Profile đều phải hoàn tất trước P11. Nếu user cần automated backup hoặc quy mô vượt mức hiện tại thì bổ sung công việc có mục tiêu, không làm trước vô điều kiện.
+
+## Tài liệu đồng bộ
+
+- [User setup](USER_SETUP.md), [HANDOFF](HANDOFF.md), [thiết kế tổng thể v2](../PERSONAL_BACKEND_DATABASE_PLAN.md).
+- Ưu tiên chỉ dẫn: yêu cầu user mới nhất → README/phase v2 → tài liệu tổng thể; evidence là kết quả lịch sử, không ép làm lại các yêu cầu đã hoãn.
+- Local runbook/P00/P01 giữ nguyên công cụ và trạng thái. Token/dump/key không vào Git/chat.
+
+## Nguồn kỹ thuật
+
+[Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [update filters](https://supabase.com/docs/reference/javascript/update), [functions](https://supabase.com/docs/guides/database/functions), [Next SSR](https://supabase.com/docs/guides/auth/server-side/nextjs), [backup](https://supabase.com/docs/guides/platform/backups). Khi thực thi, chỉ tra phần cần cho API/SDK đang dùng; không biến mỗi phiên thành nghiên cứu lại stack.

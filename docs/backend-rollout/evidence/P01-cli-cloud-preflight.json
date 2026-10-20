@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-10-20T07:32:40.452Z",
+  "command": "supabase projects list -o json",
+  "target": "wcgdvsiiemurehkprvqw",
+  "readOnly": true,
+  "cliAccess": "VERIFIED",
+  "project": {
+    "id": "wcgdvsiiemurehkprvqw",
+    "name": "dasboard-vodinhquan",
+    "region": "ap-south-1",
+    "status": "ACTIVE_HEALTHY"
+  }
+}

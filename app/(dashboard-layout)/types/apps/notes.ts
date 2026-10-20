@@ -1,7 +1,8 @@
 import type { JSONContent } from "@tiptap/react";
 
 export interface NotesType {
-  id: number;
+  id: string;
+  revision?: number;
   background?: string;
   color?: string;
   title?: string;

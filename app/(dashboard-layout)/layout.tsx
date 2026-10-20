@@ -1,37 +1,20 @@
-"use client";
-import React from "react";
-import Header from "./layout/vertical/header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import Footer from "./layout/footer/page";
-import { AppSidebar } from "./layout/vertical/sidebar/app-sidebar";
-import { cn } from "@/lib/utils";
-import RouteErrorBoundary from "@/app/components/shared/route-error-boundary";
+import { Suspense } from "react";
+import { connection } from "next/server";
+import { redirect } from "next/navigation";
+import { requireOwner } from "@/lib/auth/owner";
+import { AccessError } from "@/lib/auth/policy";
+import DashboardShell from "./dashboard-shell";
 
-export default function Layout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <SidebarProvider
-      defaultOpen={true}
-      style={{ "--sidebar-width-icon": "52px" } as React.CSSProperties}
-    >
-      <AppSidebar />
-      <SidebarInset className="dashboard-inset outline outline-border m-2 rounded-none! overflow-hidden">
-        <Header />
-        <div className="dashboard-content flex min-w-0 flex-1 flex-col gap-4 p-3 sm:p-4">
-          <div className={cn("dashboard-container mx-auto min-w-0 w-full", "container")}>
-            <div className="dashboard-page min-h-[calc(100vh-140px)]">
-              <RouteErrorBoundary title="Page error">{children}</RouteErrorBoundary>
-            </div>
-            <div className="dashboard-footer pt-6">
-              <Footer />
-            </div>
-          </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+async function OwnerBoundary({ children }: { children: React.ReactNode }) {
+  // Keep request-time auth out of prerender error handling (Cache Components).
+  await connection();
+  try { await requireOwner(); }
+  catch (error) {
+    const code = error instanceof AccessError ? error.code : "auth_unavailable";
+    redirect(`/auth/auth2/login?error=${code}`);
+  }
+  return <DashboardShell>{children}</DashboardShell>;
 }
-
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<div role="status" className="p-6">Checking session…</div>}><OwnerBoundary>{children}</OwnerBoundary></Suspense>;
+}

@@ -32,7 +32,8 @@ export function SettingsDialog({
   onClose: () => void;
   onSaved: (message: string) => void;
 }) {
-  const { settings, saveSettings, busy } = useCalendar();
+  const { settings, settingsRevision, saveSettings, busy } = useCalendar();
+  const [expectedRevision] = useState(settingsRevision);
   const [draft, setDraft] = useState(settings);
   const [error, setError] = useState("");
   const { text } = useCalendarLocale();
@@ -51,7 +52,7 @@ export function SettingsDialog({
       return;
     }
     try {
-      await saveSettings(draft);
+      await saveSettings(draft, expectedRevision);
       onSaved(text("Đã lưu tùy chỉnh lịch.", "Calendar preferences saved."));
       onClose();
     } catch {

@@ -1,0 +1,2 @@
+$ node scripts/test-notes-api.mjs
+PASS Notes: owner CRUD, UUID canonical retry, rich text/date, private cache, atomic CAS, stale delete, invalid date/link/oversize, anon denial

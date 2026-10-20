@@ -1,0 +1,29 @@
+{
+  "openApiWithPublishableStatus": 401,
+  "checkedAt": "2026-10-20T07:26:14.152Z",
+  "result": "PASS",
+  "target": "https://wcgdvsiiemurehkprvqw.supabase.co",
+  "publicKeyProvisioned": true,
+  "noKeyStatus": 401,
+  "signupDisabled": false,
+  "githubEnabled": false,
+  "anonymousEnabled": false,
+  "samples": [
+    {
+      "attempt": 1,
+      "status": 200,
+      "totalMs": 350
+    },
+    {
+      "attempt": 2,
+      "status": 200,
+      "totalMs": 189
+    },
+    {
+      "attempt": 3,
+      "status": 200,
+      "totalMs": 197
+    }
+  ],
+  "boundary": "Metadata GET only, no business query, user session, migration, RLS acceptance, or direct/session-pooler DB tooling tested."
+}

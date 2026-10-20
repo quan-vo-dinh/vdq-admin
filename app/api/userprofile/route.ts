@@ -1,7 +1,8 @@
+import { withOwner } from "@/lib/auth/api";
 import { NextResponse } from 'next/server'
 import { posts } from './userdata'
 
-export async function GET() {
+async function handleGET() {
   try {
     return NextResponse.json({ status: 200, msg: 'Success', data: posts })
   } catch (error: unknown) {
@@ -13,7 +14,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+async function handlePOST(req: Request) {
   try {
     const { postId } = (await req.json()) as { postId: string }
     const postIndex = posts.findIndex((x) => x.id === postId)
@@ -35,3 +36,6 @@ export async function POST(req: Request) {
     })
   }
 }
+
+export const GET = withOwner(handleGET);
+export const POST = withOwner(handlePOST);

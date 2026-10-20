@@ -1,0 +1,314 @@
+$ eslint
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/(dashboard-layout)/layout/shared/header/light-dark.tsx
+  13:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/(dashboard-layout)/layout/shared/header/light-dark.tsx:13:5
+  11 |
+  12 |   useEffect(() => {
+> 13 |     setIsMounted(true);
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |   }, []);
+  15 |
+  16 |   const toggleTheme = async () => {  react-hooks/set-state-in-effect
+  21:23  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-explicit-any
+  26:37  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-explicit-any
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/(dashboard-layout)/layout/shared/header/search.tsx
+  18:31  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  19:18  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  53:6   warning  React Hook useMemo has a missing dependency: 'searchItems'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/(dashboard-layout)/layout/shared/logo/logo.tsx
+  3:29  warning  'SidebarProvider' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/(dashboard-layout)/layout/vertical/sidebar/nav-secondary.tsx
+  3:10  warning  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/(dashboard-layout)/pages/form/page.tsx
+  20:10  warning  'Calendar1' is defined but never used  @typescript-eslint/no-unused-vars
+  20:21  warning  'Clock' is defined but never used      @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/api/blog/route.ts
+  260:27  warning  'req' is defined but never used    @typescript-eslint/no-unused-vars
+  263:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/api/ticket/route.ts
+  107:5  error  'resetTickets' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/api/userprofile/get-users/route.ts
+  5:7  warning  'chance' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/auth/auth2/two-steps/page.tsx
+  61:22  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/auth/authforms/social-buttons.tsx
+   4:8   warning  'Link' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   5:8   warning  'Image' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  12:48  warning  'title' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  21:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  34:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/auth/error/page.tsx
+  13:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blog-featuredcard.tsx
+   8:10  warning  'Card' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+   8:16  warning  'CardContent' is defined but never used                                                                        @typescript-eslint/no-unused-vars
+   8:29  warning  'CardHeader' is defined but never used                                                                         @typescript-eslint/no-unused-vars
+  36:6   warning  React Hook useEffect has a missing dependency: 'setLoading'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogadd/blog-status.tsx
+  12:10  warning  'Badge' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogadd/category-tags.tsx
+  3:10  warning  'Input' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogedit/blog-status.tsx
+  4:10  warning  'Badge' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogedit/category-tags.tsx
+   3:10  warning  'Input' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  41:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogedit/category-tags.tsx:41:9
+  39 |       const firstPost = posts[0];
+  40 |       if (firstPost.category) {
+> 41 |         setCats(
+     |         ^^^^^^^ Avoid calling setState() directly within an effect
+  42 |           Array.isArray(firstPost.category)
+  43 |             ? firstPost.category
+  44 |             : [firstPost.category]  react-hooks/set-state-in-effect
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogedit/general-detail.tsx
+  18:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogedit/general-detail.tsx:18:7
+  16 |     if (posts.length > 0) {
+  17 |       const firstPost = posts[0];
+> 18 |       setTitle(firstPost.title || "");
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  19 |       setContent(firstPost.content || "");
+  20 |     }
+  21 |   }, [posts]);  react-hooks/set-state-in-effect
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogedit/medias.tsx
+  28:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogedit/post-date.tsx
+  26:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogedit/post-date.tsx:26:7
+  24 |   useEffect(() => {
+  25 |     if (posts.length > 0 && posts[0].createdAt) {
+> 26 |       setPublishDate(new Date(posts[0].createdAt));
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  27 |     }
+  28 |   }, [posts]);
+  29 |  react-hooks/set-state-in-effect
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogtable/manage-blogtable.tsx
+  247:17  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/blogtable/manage-blogtable.tsx:247:17
+  245 |     }),
+  246 |   ];
+> 247 |   const table = useReactTable({
+      |                 ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  248 |     data: tableData,
+  249 |     columns,
+  250 |     state: {  react-hooks/incompatible-library
+  263:31  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  263:39  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  264:17  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/blog/detail/index.tsx
+  68:6  warning  React Hook useEffect has a missing dependency: 'setLoading'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/tickets/create-ticketform.tsx
+  48:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/tickets/create-ticketform.tsx:48:5
+  46 |     );
+  47 |     // Set the new ticket ID
+> 48 |     setTicketId(maxId + 1);
+     |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  49 |   }, [tickets]);
+  50 |
+  51 |   const handleSubmit = () => {  react-hooks/set-state-in-effect
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/tickets/ticket-filter.tsx
+   8:7   warning  'chance' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  32:11  warning  'result' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/apps/tickets/ticket-listing.tsx
+  2:22  warning  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+  7:3   warning  'TableBody' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/dashboards/modern/total-assets.tsx
+  47:29  warning  'href' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/shared/editor/tiptap-edit.tsx
+  7:10  warning  'CodeBlockLowlight' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/tables/checkbox-table/CheckboxTable.tsx
+  4:8  warning  'CardBox' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/tables/data-table/DataTable.tsx
+   41:8   warning  'CardBox' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  215:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @next/next/no-img-element
+  215:17  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    jsx-a11y/alt-text
+  292:20  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @next/next/no-img-element
+  292:20  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    jsx-a11y/alt-text
+  305:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @next/next/no-img-element
+  339:16  warning  'row' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  359:17  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/tables/data-table/DataTable.tsx:359:17
+  357 |
+  358 |   // React Table Setup
+> 359 |   const table = useReactTable({
+      |                 ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  360 |     data,
+  361 |     columns,
+  362 |     state: { globalFilter, sorting },  react-hooks/incompatible-library
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/tables/hover-table/HoverTable.tsx
+  4:8  warning  'CardBox' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/tables/striped-row-table/StripedRowTable.tsx
+  4:8  warning  'CardBox' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/user-profile/index.tsx
+  65:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/components/user-profile/index.tsx:65:7
+  63 |   useEffect(() => {
+  64 |     if (openModal && modalType === 'personal') {
+> 65 |       setTempPersonal(personal)
+     |       ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  66 |     }
+  67 |     if (openModal && modalType === 'address') {
+  68 |       setTempAddress(address)  react-hooks/set-state-in-effect
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/context/blog-context/index.tsx
+  43:19  warning  'id' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  55:38  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-explicit-any
+  66:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/context/blog-context/index.tsx:66:7
+  64 |   useEffect(() => {
+  65 |     if (postsData) {
+> 66 |       setPosts(postsData.data);
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  67 |       setLoading(isPostsLoading);
+  68 |     } else if (postsError) {
+  69 |       setError(postsError);  react-hooks/set-state-in-effect
+  74:6   warning  React Hook useEffect has a missing dependency: 'isPostsLoading'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-hooks/exhaustive-deps
+  93:9   error    React Hook "useSWR" is called in function "fetchPostById" that is neither a React function component nor a custom React Hook function. React component names must start with an uppercase letter. React Hook names must start with the word "use"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-hooks/rules-of-hooks
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/context/language-context.tsx
+  75:45  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/context/language-context.tsx:75:45
+  73 |   useEffect(() => {
+  74 |     const stored = window.localStorage.getItem("dashboard-language");
+> 75 |     if (stored === "en" || stored === "vi") setLanguage(stored);
+     |                                             ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  76 |   }, []);
+  77 |
+  78 |   useEffect(() => {  react-hooks/set-state-in-effect
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/context/ticket-context/index.tsx
+  49:7  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/app/context/ticket-context/index.tsx:49:7
+  47 |   useEffect(() => {
+  48 |     if (ticketsData) {
+> 49 |       setTickets(ticketsData.data);
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  50 |       setLoading(isTicketsLoading);
+  51 |     } else if (ticketsError) {
+  52 |       setError(ticketsError);  react-hooks/set-state-in-effect
+  57:6  warning  React Hook useEffect has a missing dependency: 'isTicketsLoading'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/exhaustive-deps
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/hooks/use-mobile.ts
+  14:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/hooks/use-mobile.ts:14:5
+  12 |     }
+  13 |     mql.addEventListener("change", onChange)
+> 14 |     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+     |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  15 |     return () => mql.removeEventListener("change", onChange)
+  16 |   }, [])
+  17 |  react-hooks/set-state-in-effect
+
+✖ 66 problems (21 errors, 45 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+
+[ELIFECYCLE] Command failed with exit code 1.

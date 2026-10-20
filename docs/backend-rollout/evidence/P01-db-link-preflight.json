@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-20T07:35:14.259Z",
+  "command": "supabase link --project-ref wcgdvsiiemurehkprvqw (stdin closed, no password supplied)",
+  "purpose": "P01 read-only connection preflight; no migrations",
+  "target": "wcgdvsiiemurehkprvqw",
+  "result": "CONNECTED",
+  "linkMetadataCreated": true,
+  "configUnchanged": true
+}

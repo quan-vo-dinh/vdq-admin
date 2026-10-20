@@ -1,10 +1,11 @@
+import { withOwner } from "@/lib/auth/api";
 import { Chance } from 'chance'
 import { NextResponse } from 'next/server'
 import { users } from '../userdata'
 
 const chance = new Chance()
 
-export async function GET() {
+async function handleGET() {
   try {
     return NextResponse.json({ status: 200, msg: 'Success', data: users })
   } catch (error: unknown) {
@@ -15,3 +16,5 @@ export async function GET() {
     })
   }
 }
+
+export const GET = withOwner(handleGET);

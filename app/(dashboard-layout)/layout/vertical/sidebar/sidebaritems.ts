@@ -40,7 +40,6 @@ import {
   Code2,
   CalendarRange,
   CircleUserRound,
-  House,
   Lock,
   LogIn,
   LucideIcon,
@@ -52,17 +51,6 @@ import {
 } from "lucide-react";
 
 const SidebarContent: MenuItem[] = [
-  {
-    heading: "Dashboard",
-    items: [
-      {
-        id: uniqueId(),
-        name: "Modern",
-        icon: House,
-        url: "/",
-      }
-    ],
-  },
   {
     heading: "Developer",
     items: [{ id: uniqueId(), name: "Developer Workspace", icon: Code2, items: [

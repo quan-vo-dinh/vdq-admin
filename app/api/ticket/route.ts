@@ -1,3 +1,4 @@
+import { withOwner } from "@/lib/auth/api";
 import { TicketType } from '@/app/(dashboard-layout)/types/apps/ticket'
 import { Chance } from 'chance'
 
@@ -107,7 +108,7 @@ let TicketData: TicketType[] = [
 let resetTickets = [...TicketData]
 
 // GET request to retrieve Ticket data
-export async function GET(req: Request) {
+async function handleGET(req: Request) {
   const isBrowserRefreshed = req.headers.get('browserrefreshed')
   try {
     if (isBrowserRefreshed === 'false') {
@@ -135,7 +136,7 @@ export async function GET(req: Request) {
 
 // DELETE endpoint for deleting a ticket
 // DELETE endpoint for deleting a ticket
-export async function DELETE(req: Request) {
+async function handleDELETE(req: Request) {
   try {
     const { id } = (await req.json()) as { id: number }
     const tickets = TicketData.filter((ticket) => ticket.Id !== id)
@@ -151,7 +152,7 @@ export async function DELETE(req: Request) {
 }
 
 // create endpoint for create a ticket
-export async function POST(req: Request) {
+async function handlePOST(req: Request) {
   try {
     const newTicket = (await req.json()) as TicketType
     console.log(newTicket)
@@ -165,3 +166,7 @@ export async function POST(req: Request) {
     })
   }
 }
+
+export const GET = withOwner(handleGET);
+export const DELETE = withOwner(handleDELETE);
+export const POST = withOwner(handlePOST);

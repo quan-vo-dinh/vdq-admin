@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { X } from 'lucide-react';
 import { currentUser } from "@/lib/profile";
 import { useLanguage } from "@/app/context/language-context";
+import { LogoutButton } from "@/app/components/auth/logout-button";
 export default function ProfileSheet() {
   const { t } = useLanguage();
 
@@ -106,6 +107,7 @@ export default function ProfileSheet() {
 
         {/* Footer */}
         <SheetFooter className="px-0 pb-6">
+          <LogoutButton />
           <div className="border-t border-dashed border-border w-full">
             <div className="rounded-sm pt-6 flex flex-col justify-center items-center gap-3">
               <div className="text-center">

@@ -1,0 +1,2 @@
+daily.dev integration: normalization, nullable fields, URL safety, cursor contract, cache expiry, request deduplication, credential handling, backoff/error states and bookmark migration passed.
+Developer Feed: search, combined filters, bookmarks filtering, empty results, sorting, source immutability, fixture links/covers passed.

@@ -1,0 +1,87 @@
+{
+  "tables": [],
+  "functions": [
+    {
+      "acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "rls_auto_enable",
+      "arguments": "",
+      "security_definer": true
+    }
+  ],
+  "event_triggers": [
+    {
+      "name": "issue_graphql_placeholder",
+      "enabled": "O",
+      "function": "set_graphql_placeholder"
+    },
+    {
+      "name": "pgrst_ddl_watch",
+      "enabled": "O",
+      "function": "pgrst_ddl_watch"
+    },
+    {
+      "name": "pgrst_drop_watch",
+      "enabled": "O",
+      "function": "pgrst_drop_watch"
+    },
+    {
+      "name": "issue_pg_cron_access",
+      "enabled": "O",
+      "function": "grant_pg_cron_access"
+    },
+    {
+      "name": "issue_pg_net_access",
+      "enabled": "O",
+      "function": "grant_pg_net_access"
+    },
+    {
+      "name": "issue_pg_graphql_access",
+      "enabled": "O",
+      "function": "grant_pg_graphql_access"
+    },
+    {
+      "name": "ensure_rls",
+      "enabled": "O",
+      "function": "rls_auto_enable"
+    }
+  ],
+  "server_version": "17.11",
+  "default_privileges": [
+    {
+      "acl": "{postgres=rwU/supabase_admin,anon=rwU/supabase_admin,authenticated=rwU/supabase_admin,service_role=rwU/supabase_admin}",
+      "owner": "supabase_admin",
+      "schema": "public",
+      "object_type": "S"
+    },
+    {
+      "acl": "{postgres=arwdDxtm/supabase_admin,anon=arwdDxtm/supabase_admin,authenticated=arwdDxtm/supabase_admin,service_role=arwdDxtm/supabase_admin}",
+      "owner": "supabase_admin",
+      "schema": "public",
+      "object_type": "r"
+    },
+    {
+      "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+      "owner": "supabase_admin",
+      "schema": "public",
+      "object_type": "f"
+    },
+    {
+      "acl": "{postgres=arwdDxtm/postgres,anon=Dxtm/postgres,authenticated=Dxtm/postgres,service_role=Dxtm/postgres}",
+      "owner": "postgres",
+      "schema": "public",
+      "object_type": "r"
+    },
+    {
+      "acl": "{postgres=rwU/postgres,anon=w/postgres,authenticated=w/postgres,service_role=w/postgres}",
+      "owner": "postgres",
+      "schema": "public",
+      "object_type": "S"
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "owner": "postgres",
+      "schema": "public",
+      "object_type": "f"
+    }
+  ]
+}

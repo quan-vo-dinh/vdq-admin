@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-20T07:36:07.985Z",
+  "command": "supabase db dump --linked --file OUTSIDE_GIT/cloud-schema.sql",
+  "target": "wcgdvsiiemurehkprvqw",
+  "schemaOnly": true,
+  "remoteWrites": false,
+  "connection": {
+    "hostname": "aws-0-ap-south-1.pooler.supabase.com",
+    "port": "5432",
+    "mode": "session/direct port"
+  },
+  "result": "PASS",
+  "bytes": 3704,
+  "sha256": "60cfbf8aa4b916b4948166fcde1c42946bb6fd4a3e215b32581adb1ecf50ba02"
+}

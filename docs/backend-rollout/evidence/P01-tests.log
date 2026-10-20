@@ -1,0 +1,35 @@
+$ node --test scripts/backend/*.test.mjs scripts/data/*.test.mjs
+TAP version 13
+# Subtest: missing, placeholder, secret and mismatched environment fail closed
+ok 1 - missing, placeholder, secret and mismatched environment fail closed
+  ---
+  duration_ms: 0.878917
+  type: 'test'
+  ...
+# Subtest: failed/empty type generation and exclusive env publication preserve existing files
+ok 2 - failed/empty type generation and exclusive env publication preserve existing files
+  ---
+  duration_ms: 1.654292
+  type: 'test'
+  ...
+# Subtest: encrypted export retains rich text, IDs, counts, all-day and transfers; tamper/wrong key fail
+ok 3 - encrypted export retains rich text, IDs, counts, all-day and transfers; tamper/wrong key fail
+  ---
+  duration_ms: 34.965875
+  type: 'test'
+  ...
+# Subtest: preflight refuses duplicate IDs, invalid transfer and full Today datasets
+ok 4 - preflight refuses duplicate IDs, invalid transfer and full Today datasets
+  ---
+  duration_ms: 0.274583
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 480.342042

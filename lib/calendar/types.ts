@@ -13,6 +13,7 @@ export type EventStatus = "planned" | "confirmed" | "completed" | "cancelled";
 export type EventCategory = "work" | "meeting" | "personal" | "learning";
 export interface CalendarEvent {
   id: string;
+  revision?: number;
   title: string;
   description: string;
   start: string;
@@ -37,6 +38,7 @@ export interface CalendarSettings {
   workDays: number[];
 }
 export interface CalendarData {
+  settingsRevision?: number;
   events: CalendarEvent[];
   settings: CalendarSettings;
 }

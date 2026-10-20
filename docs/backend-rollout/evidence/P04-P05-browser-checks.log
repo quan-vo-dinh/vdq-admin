@@ -1,0 +1,5 @@
+PASS Notes desktop create/save, conflict draft retained, reload, UUID deep link and second-tab refresh
+PASS Today Quick Note shared record, create/toggle/move, Activity and Calendar Agenda source, mobile 390x844
+PASS Calendar desktop/mobile create, all-day edit, settings save, ICS downloaded with CRLF and end-exclusive dates
+LIMIT native pointer drag did not produce a mutation; move/end-change semantics covered by unit and HTTP tests, no successful pointer drag claimed
+PASS removed only 4 browser fixture UUIDs via revision-checked APIs; real owner and settings retained

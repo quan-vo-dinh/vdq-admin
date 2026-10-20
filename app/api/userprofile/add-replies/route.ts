@@ -1,8 +1,9 @@
+import { withOwner } from "@/lib/auth/api";
 import { NextResponse } from 'next/server'
 import { posts } from '../userdata'
 import { Reply } from '@/app/(dashboard-layout)/types/apps/userprofile'
 
-export async function POST(req: Request) {
+async function handlePOST(req: Request) {
   try {
     const { postId, commentId, reply } = (await req.json()) as {
       postId: string
@@ -25,3 +26,5 @@ export async function POST(req: Request) {
     })
   }
 }
+
+export const POST = withOwner(handlePOST);

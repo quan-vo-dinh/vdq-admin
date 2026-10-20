@@ -1,0 +1,53 @@
+$ node --test scripts/backend/*.test.mjs scripts/data/*.test.mjs
+TAP version 13
+# Subtest: callback redirects remain internal including encoded and backslash attacks
+ok 1 - callback redirects remain internal including encoded and backslash attacks
+  ---
+  duration_ms: 0.645291
+  type: 'test'
+  ...
+# Subtest: cookie mutations require exact configured Origin and reject cross-site
+ok 2 - cookie mutations require exact configured Origin and reject cross-site
+  ---
+  duration_ms: 11.752791
+  type: 'test'
+  ...
+# Subtest: owner env absent or mismatched fails closed
+ok 3 - owner env absent or mismatched fails closed
+  ---
+  duration_ms: 0.090709
+  type: 'test'
+  ...
+# Subtest: missing, placeholder, secret and mismatched environment fail closed
+ok 4 - missing, placeholder, secret and mismatched environment fail closed
+  ---
+  duration_ms: 0.892459
+  type: 'test'
+  ...
+# Subtest: failed/empty type generation and exclusive env publication preserve existing files
+ok 5 - failed/empty type generation and exclusive env publication preserve existing files
+  ---
+  duration_ms: 2.329
+  type: 'test'
+  ...
+# Subtest: encrypted export retains rich text, IDs, counts, all-day and transfers; tamper/wrong key fail
+ok 6 - encrypted export retains rich text, IDs, counts, all-day and transfers; tamper/wrong key fail
+  ---
+  duration_ms: 16.379708
+  type: 'test'
+  ...
+# Subtest: preflight refuses duplicate IDs, invalid transfer and full Today datasets
+ok 7 - preflight refuses duplicate IDs, invalid transfer and full Today datasets
+  ---
+  duration_ms: 0.399084
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 502.99525

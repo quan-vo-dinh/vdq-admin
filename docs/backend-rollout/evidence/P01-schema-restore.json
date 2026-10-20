@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-10-20T07:41:20.616Z",
+  "source": "Cloud schema-only dump via linked session pooler",
+  "destination": "Disposable database in ready local Supabase container only",
+  "remoteWrites": false,
+  "scope": "Schema/tooling compatibility only; no Auth identities, business rows, grants parity or Storage restore acceptance",
+  "prerequisites": [
+    "Supabase-managed extensions and vault schemas",
+    "Supabase-managed supabase_realtime publication",
+    "Existing local Supabase roles; use local supabase_admin for extension installation"
+  ],
+  "earlierFixtureFailure": "Raw createdb lacks Supabase-managed extensions schema; corrected disposable fixture scaffold, dump unchanged",
+  "sha256": "60cfbf8aa4b916b4948166fcde1c42946bb6fd4a3e215b32581adb1ecf50ba02",
+  "restored": {
+    "public_tables": 0,
+    "platform_rls_function": 1,
+    "extensions": [
+      "pg_stat_statements",
+      "pgcrypto",
+      "plpgsql",
+      "supabase_vault",
+      "uuid-ossp"
+    ]
+  },
+  "result": "PASS",
+  "scratchDatabaseRemoved": true
+}

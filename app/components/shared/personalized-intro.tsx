@@ -60,5 +60,5 @@ export function usePersonalGreeting() {
   const jokes = language === "vi"
     ? ["Nạp cà phê, mở dashboard, giả vờ mọi thứ trong tầm kiểm soát.", "Pin người còn bao nhiêu? Dashboard vẫn đang chạy nhé.", "Khép bớt tab công việc, mở tab cuộc đời một chút.", "Bug để mai sửa. Gối đang chờ pull request của bạn."]
     : ["Coffee in, dashboard open, everything totally under control. Probably.", "How much battery do you have left? The dashboard is still going.", "Close a few work tabs. Open a little life instead.", "The bugs can wait. Your pillow is waiting for your pull request."];
-  return { title: `${period < 0 ? (language === "vi" ? "Chào" : "Hello") : (language === "vi" ? vi : en)[period]}, ${currentUser.nickname}`, subtitle: period < 0 ? "" : jokes[period], daytime: period === 0 || period === 1 };
+  return { title: `${period < 0 ? (language === "vi" ? "Chào" : "Hello") : (language === "vi" ? vi : en)[period]}, ${currentUser.nickname}`, subtitle: period < 0 ? "" : jokes[period], daytime: period === 0 || period === 1, period };
 }

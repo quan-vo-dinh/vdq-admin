@@ -1,0 +1,98 @@
+
+> main@0.1.0 test:developer /Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main
+> node scripts/test-developer.mjs
+
+TAP version 13
+# Subtest: time filters include both snapshot and start boundaries
+ok 1 - time filters include both snapshot and start boundaries
+  ---
+  duration_ms: 1.607792
+  type: 'test'
+  ...
+# Subtest: model/account/provider filters intersect and all latest reference models have demo observations
+ok 2 - model/account/provider filters intersect and all latest reference models have demo observations
+  ---
+  duration_ms: 4.267875
+  type: 'test'
+  ...
+# Subtest: provider and model totals reconcile with source sessions
+ok 3 - provider and model totals reconcile with source sessions
+  ---
+  duration_ms: 9.520292
+  type: 'test'
+  ...
+# Subtest: throughput is weighted by generation seconds and excludes missing timings
+ok 4 - throughput is weighted by generation seconds and excludes missing timings
+  ---
+  duration_ms: 0.235
+  type: 'test'
+  ...
+# Subtest: combined contributions equal account totals without deduplication claims
+ok 5 - combined contributions equal account totals without deduplication claims
+  ---
+  duration_ms: 1.356
+  type: 'test'
+  ...
+# Subtest: unknown quota remains null and stale work observation stays stale
+ok 6 - unknown quota remains null and stale work observation stays stale
+  ---
+  duration_ms: 0.088292
+  type: 'test'
+  ...
+# Subtest: reports reflect current inbox state, chosen period and coverage limitations
+not ok 7 - reports reflect current inbox state, chosen period and coverage limitations
+  ---
+  duration_ms: 8.1685
+  type: 'test'
+  location: '/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/scripts/test-developer.mjs:118:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /fictional/. Input:
+    
+    'ACTIVITY REPORT · 2026-09-17 → 2026-10-16\n' +
+      '\n' +
+      '348 contributions across 2 GitHub accounts.\n' +
+      '277 AI sessions, 1,607,682,947 observed tokens (input + output + cache, mutually exclusive in these totals).\n' +
+      'Current inbox: 8 unread notifications.\n' +
+      '\n' +
+      'Coverage: personal/work Codex; one Claude Code source, actual accounts unconfirmed. Claude chat unavailable. AI observations cover one device only.\n' +
+      '\n' +
+      'Quotas are independent. Tokens do not measure cost or productivity. Contributions are summed by date and account; activity across identities may overlap. No completion of work is inferred.\n' +
+      '\n' +
+      'Rule-based summary; no AI call. Snapshot: 16 October 2026, 09:00 GMT+7.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    ACTIVITY REPORT · 2026-09-17 → 2026-10-16
+    
+    348 contributions across 2 GitHub accounts.
+    277 AI sessions, 1,607,682,947 observed tokens (input + output + cache, mutually exclusive in these totals).
+    Current inbox: 8 unread notifications.
+    
+    Coverage: personal/work Codex; one Claude Code source, actual accounts unconfirmed. Claude chat unavailable. AI observations cover one device only.
+    
+    Quotas are independent. Tokens do not measure cost or productivity. Contributions are summed by date and account; activity across identities may overlap. No completion of work is inferred.
+    
+    Rule-based summary; no AI call. Snapshot: 16 October 2026, 09:00 GMT+7.
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/scripts/test-developer.mjs:125:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 6
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32.000375
+ ELIFECYCLE  Command failed with exit code 1.

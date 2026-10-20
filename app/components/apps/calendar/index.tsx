@@ -1,7 +1,9 @@
 "use client";
+import { useSearchParams } from "next/navigation";
+import { validDay } from "@/lib/today/model";
 import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { HeadingText } from "@/app/components/shared/heading-text";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { Suspense, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import {
   CalendarDays,
   CalendarRange,
@@ -71,17 +73,17 @@ function subscribeClock(callback: () => void) {
 }
 
 const viewOrder: CalendarView[] = ["agenda", "year", "month", "week", "day"];
-function CalendarWorkspace() {
+function CalendarWorkspace({ initialDate }: { initialDate?: string }) {
   const { events, settings, error, isLoading, busy, reload, updateEvent } =
     useCalendar();
   const { text, date: formatDate, views } = useCalendarLocale();
   const now = useSyncExternalStore(subscribeClock, nowInSaigon, () => "");
-  const [selectedDate, setDate] = useState<Date | null>(null);
+  const [selectedDate, setDate] = useState<Date | null>(() => initialDate ? fromKey(initialDate) : null);
   const date = useMemo(
     () => selectedDate ?? (now ? fromKey(now) : null),
     [selectedDate, now],
   );
-  const [view, setView] = useState<CalendarView>("week");
+  const [view, setView] = useState<CalendarView>(initialDate ? "day" : "week");
   const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>(
     ["work", "meeting", "personal", "learning"],
@@ -666,10 +668,15 @@ function CalendarWorkspace() {
     </div>
   );
 }
-export default function BigCalendar() {
+function CalendarEntry() {
+  const params = useSearchParams();
+  const rawDate = params.get("date");
+  const initialDate = validDay(rawDate) ? rawDate : undefined;
   return (
     <CalendarProvider>
-      <CalendarWorkspace />
+      <CalendarWorkspace key={initialDate} initialDate={initialDate} />
     </CalendarProvider>
   );
 }
+
+export default function BigCalendar() { return <Suspense fallback={<p>…</p>}><CalendarEntry /></Suspense>; }

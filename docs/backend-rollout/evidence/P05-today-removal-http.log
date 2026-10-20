@@ -1,0 +1,4 @@
+PASS /today: 404
+PASS /apps/notes: 200, sidebar has no /today link
+PASS /apps/calendar: 200, sidebar has no /today link
+PASS / retains /developer redirect (streamed Next redirect in this dev response)

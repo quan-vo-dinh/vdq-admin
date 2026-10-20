@@ -1,3 +1,4 @@
+import { withOwner } from "@/lib/auth/api";
 import { Chance } from 'chance'
 import { random } from 'lodash'
 import { sub } from 'date-fns'
@@ -257,7 +258,7 @@ const BlogPost: BlogPostType[] = [
   },
 ]
 
-export async function GET(req: Request) {
+async function handleGET(req: Request) {
   try {
     return NextResponse.json({ status: 200, data: BlogPost, msg: 'success' })
   } catch (error: unknown) {
@@ -265,7 +266,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
+async function handlePOST(req: Request) {
   try {
     const { postId, comment } = (await req.json()) as {
       postId: string | number
@@ -288,3 +289,6 @@ export async function POST(req: Request) {
     })
   }
 }
+
+export const GET = withOwner(handleGET);
+export const POST = withOwner(handlePOST);

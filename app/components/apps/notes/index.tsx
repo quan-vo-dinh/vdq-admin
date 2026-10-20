@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,11 +12,13 @@ import NotesSidebar from "./notes-sidebar";
 import NoteContent from "./note-content";
 import AddNotes from "./add-notes";
 
-export default function NotesApp() {
+function NotesWorkspace() {
+  const params = useSearchParams();
+  const initialNoteId = params.get("note");
   const [open, setOpen] = useState(false);
   const { language } = useLanguage();
   const text = (vi: string, en: string) => language === "vi" ? vi : en;
-  return <NotesProvider>
+  return <NotesProvider key={initialNoteId} initialNoteId={initialNoteId}>
     <Card className="notes-workspace overflow-hidden py-0!">
       <div className="flex h-[calc(100dvh-260px)] min-h-[560px] min-w-0">
         <div className="hidden h-full shrink-0 lg:block"><NotesSidebar /></div>
@@ -31,3 +34,5 @@ export default function NotesApp() {
     </Card>
   </NotesProvider>;
 }
+
+export default function NotesApp() { return <Suspense fallback={<p>…</p>}><NotesWorkspace /></Suspense>; }

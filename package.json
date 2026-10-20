@@ -12,11 +12,23 @@
     "test:finance": "node scripts/test-finance.mjs",
     "test:developer": "node scripts/test-developer.mjs",
     "test:notes": "node scripts/test-notes.mjs",
-    "test:notes:api": "node scripts/test-notes-api.mjs"
+    "test:notes:api": "node scripts/test-notes-api.mjs",
+    "test:today": "node scripts/test-today.mjs",
+    "test:backend-setup": "node --test scripts/backend/*.test.mjs scripts/data/*.test.mjs",
+    "backend:env:check": "node scripts/backend/check-env.mjs",
+    "backend:local:env": "node scripts/backend/local-env.mjs",
+    "backend:types": "node scripts/backend/generate-types.mjs",
+    "backend:local:start": "node --env-file-if-exists=.env.supabase.local scripts/backend/local-stack.mjs",
+    "backend:local:stop": "supabase stop",
+    "backend:local:reset": "node scripts/backend/reset-local.mjs",
+    "backend:local:smoke": "node scripts/backend/local-smoke.mjs",
+    "backend:cloud:smoke": "node --env-file=.env.cloud-tooling.local scripts/backend/cloud-smoke.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
     "@iconify/react": "6.0.2",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
     "@tanstack/react-table": "^8.21.3",
     "@tiptap/extension-bullet-list": "^3.22.3",
     "@tiptap/extension-code-block-lowlight": "^3.22.3",
@@ -48,6 +60,7 @@
     "react-dropzone": "^15.0.0",
     "react-syntax-highlighter": "^16.1.1",
     "recharts": "^3.8.0",
+    "server-only": "^0.0.1",
     "shadcn": "^4.3.0",
     "simplebar-react": "3.3.2",
     "swr": "^2.4.1",
@@ -65,7 +78,12 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.0",
+    "supabase": "2.121.0",
     "tailwindcss": "^4",
     "typescript": "^7.0.2"
+  },
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=22.23.2 <23"
   }
 }

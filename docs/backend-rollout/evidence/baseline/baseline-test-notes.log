@@ -1,0 +1,38 @@
+
+> main@0.1.0 test:notes /Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main
+> node scripts/test-notes.mjs
+
+TAP version 13
+# Subtest: Vietnam date/time conversion preserves midnight boundaries and leap dates
+ok 1 - Vietnam date/time conversion preserves midnight boundaries and leap dates
+  ---
+  duration_ms: 6.579208
+  type: 'test'
+  ...
+# Subtest: structured formatting and note search text survive normalization
+ok 2 - structured formatting and note search text survive normalization
+  ---
+  duration_ms: 2.350125
+  type: 'test'
+  ...
+# Subtest: rejects unsupported content, unsafe links, invalid metadata and oversized notes
+ok 3 - rejects unsupported content, unsafe links, invalid metadata and oversized notes
+  ---
+  duration_ms: 1.532792
+  type: 'test'
+  ...
+# Subtest: normalizes safe links and strips arbitrary markup attributes
+ok 4 - normalizes safe links and strips arbitrary markup attributes
+  ---
+  duration_ms: 0.2505
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 23.251

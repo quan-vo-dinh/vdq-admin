@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { ActivityPoint } from "@/lib/today/activity";
+import { useTodayLocale } from "@/app/components/today/shared";
 import { TrendingUp } from "lucide-react";
-import { Line, LineChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
+import { Line, LineChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
@@ -17,66 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const allChartData: Record<string, { date: string; newUser: number; existingUser: number }[]> = {
-  "Last 30 Days": [
-    { date: "Mar 30", newUser: 12, existingUser: 20 },
-    { date: "Apr 1", newUser: 18, existingUser: 25 },
-    { date: "Apr 2", newUser: 14, existingUser: 22 },
-    { date: "Apr 4", newUser: 22, existingUser: 30 },
-    { date: "Apr 5", newUser: 16, existingUser: 18 },
-    { date: "Apr 7", newUser: 20, existingUser: 24 },
-    { date: "Apr 9", newUser: 18, existingUser: 32 },
-    { date: "Apr 11", newUser: 26, existingUser: 22 },
-    { date: "Apr 12", newUser: 20, existingUser: 26 },
-    { date: "Apr 14", newUser: 30, existingUser: 20 },
-    { date: "Apr 15", newUser: 22, existingUser: 28 },
-    { date: "Apr 17", newUser: 26, existingUser: 22 },
-    { date: "Apr 19", newUser: 28, existingUser: 18 },
-    { date: "Apr 20", newUser: 24, existingUser: 24 },
-    { date: "Apr 22", newUser: 38, existingUser: 18 },
-    { date: "Apr 23", newUser: 22, existingUser: 26 },
-    { date: "Apr 24", newUser: 20, existingUser: 22 },
-    { date: "Apr 26", newUser: 24, existingUser: 20 },
-    { date: "Apr 27", newUser: 18, existingUser: 24 },
-    { date: "Apr 29", newUser: 22, existingUser: 20 },
-    { date: "May 1", newUser: 20, existingUser: 18 },
-    { date: "May 4", newUser: 24, existingUser: 22 },
-  ],
-  "Last 7 Days": [
-    { date: "Apr 28", newUser: 18, existingUser: 22 },
-    { date: "Apr 29", newUser: 22, existingUser: 20 },
-    { date: "Apr 30", newUser: 20, existingUser: 28 },
-    { date: "May 1", newUser: 30, existingUser: 18 },
-    { date: "May 2", newUser: 24, existingUser: 26 },
-    { date: "May 3", newUser: 32, existingUser: 20 },
-    { date: "May 4", newUser: 22, existingUser: 28 },
-  ],
-  "Last 90 Days": [
-    { date: "Feb 1", newUser: 14, existingUser: 22 },
-    { date: "Feb 15", newUser: 20, existingUser: 28 },
-    { date: "Mar 1", newUser: 18, existingUser: 24 },
-    { date: "Mar 15", newUser: 26, existingUser: 20 },
-    { date: "Mar 30", newUser: 22, existingUser: 30 },
-    { date: "Apr 14", newUser: 32, existingUser: 22 },
-    { date: "Apr 22", newUser: 38, existingUser: 18 },
-    { date: "Apr 29", newUser: 24, existingUser: 26 },
-    { date: "May 4", newUser: 28, existingUser: 20 },
-  ],
-};
-
-const xAxisLabels: Record<string, Set<string>> = {
-  "Last 30 Days": new Set(["Mar 30", "Apr 4", "Apr 9", "Apr 14", "Apr 19", "Apr 24", "Apr 29", "May 4"]),
-  "Last 7 Days": new Set(["Apr 28", "Apr 29", "Apr 30", "May 1", "May 2", "May 3", "May 4"]),
-  "Last 90 Days": new Set(["Feb 1", "Feb 15", "Mar 1", "Mar 15", "Mar 30", "Apr 14", "Apr 29", "May 4"]),
-};
-
-const chartConfig = {
-  newUser: { label: "New User", color: "var(--color-primary)" },
-  existingUser: { label: "Existing User", color: "color-mix(in srgb, var(--primary) 60%, transparent)" },
-} satisfies ChartConfig;
-
-const periodOptions = ["Last 30 Days", "Last 7 Days", "Last 90 Days"];
 
 function useAnimatedNumber(target: number, duration = 450) {
   const [display, setDisplay] = useState(0);
@@ -137,11 +79,20 @@ function AnimatedTooltipContent({ active, payload, label, hideLabel = false, con
   );
 }
 
-export default function TotalSales() {
-  const [period, setPeriod] = useState(periodOptions[0]);
-
-  const chartData = allChartData[period];
-  const visibleLabels = xAxisLabels[period];
+export default function TotalSales({ chartData, period, onPeriodChange }: {
+  chartData: ActivityPoint[];
+  period: number;
+  onPeriodChange: (days: number) => void;
+}) {
+  const { text, date } = useTodayLocale();
+  const chartConfig = {
+    completed: { label: text("Đã hoàn thành", "Completed"), color: "var(--color-primary)" },
+    planned: { label: text("Đã lên kế hoạch", "Planned"), color: "color-mix(in srgb, var(--primary) 60%, transparent)" },
+  } satisfies ChartConfig;
+  const planned = chartData.reduce((total, point) => total + point.planned, 0);
+  const completed = chartData.reduce((total, point) => total + point.completed, 0);
+  const max = Math.max(3, ...chartData.map(point => point.planned));
+  const visibleLabels = new Set(chartData.filter((_, i) => i % Math.max(1, Math.ceil(period / 7)) === 0 || i === chartData.length - 1).map(point => point.date));
 
   return (
     <DashboardCard className="flex flex-col gap-0!">
@@ -149,7 +100,7 @@ export default function TotalSales() {
       <CardHeader className="border-b border-border">
         <CardTitle className="flex items-center gap-2">
           <TrendingUp size={16} className="text-muted-foreground" />
-          Sales Overview
+          {text("Nhịp làm việc của bin", "bin’s work rhythm")}
         </CardTitle>
       </CardHeader>
 
@@ -157,24 +108,24 @@ export default function TotalSales() {
         {/* Stats row + period selector */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex flex-col gap-1">
-            <span className="text-base font-normal text-foreground leading-6">Total Sales</span>
+            <span className="text-base font-normal text-foreground leading-6">{text("Việc ưu tiên đã hoàn thành", "Completed priorities")}</span>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-2xl font-semibold tracking-[-0.3px] text-foreground leading-8">
-                $12,450.00
+                {completed}/{planned}
               </span>
-              <span className="text-sm font-medium text-chart-2">+22%</span>
-              <span className="text-sm font-normal text-muted-foreground">vs last month</span>
+              <span className="text-sm font-medium text-chart-2">{planned ? `${Math.round(completed / planned * 100)}%` : "—"}</span>
+              <span className="text-sm font-normal text-muted-foreground">{text(`trong ${period} ngày`, `in ${period} days`)}</span>
             </div>
           </div>
 
-          <Select value={period} onValueChange={(v) => v && setPeriod(v)}>
+          <Select value={String(period)} onValueChange={(v) => v && onPeriodChange(Number(v))}>
             <SelectTrigger className="h-auto! w-fit text-sm font-medium text-foreground border-border shadow-[0px_1px_2px_rgba(0,0,0,0.05)] cursor-pointer gap-1.5 px-3">
-              <SelectValue />
+              <SelectValue>{text(`${period} ngày gần đây`, `Last ${period} days`)}</SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {periodOptions.map((opt) => (
-                <SelectItem key={opt} value={opt} className="cursor-pointer">
-                  {opt}
+              {[7, 30, 90].map((opt) => (
+                <SelectItem key={opt} value={String(opt)} className="cursor-pointer">
+                  {text(`${opt} ngày gần đây`, `Last ${opt} days`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -199,16 +150,16 @@ export default function TotalSales() {
               tickMargin={10}
               interval={0}
               tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
-              tickFormatter={(v) => (visibleLabels.has(v) ? v : "")}
+              tickFormatter={(v) => (visibleLabels.has(v) ? date(`${v}T12:00:00+07:00`, { day: "2-digit", month: "2-digit" }) : "")}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
               tickMargin={4}
               tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
-              ticks={[0, 10, 20, 30, 40]}
-              domain={[0, 40]}
-              tickFormatter={(v) => (v === 0 ? "0" : `${v}k`)}
+              ticks={Array.from({ length: max + 1 }, (_, i) => i)}
+              domain={[0, max]}
+              allowDecimals={false}
             />
             <ChartTooltip
               cursor={{
@@ -218,15 +169,9 @@ export default function TotalSales() {
               }}
               content={<AnimatedTooltipContent config={chartConfig} />}
             />
-            <ReferenceLine
-              x="Apr 22"
-              stroke="var(--border)"
-              strokeWidth={1}
-              strokeDasharray="4 4"
-            />
-            {/* New User — solid primary */}
+            {/* Completed priorities — original solid line */}
             <Line
-              dataKey="newUser"
+              dataKey="completed"
               type="linear"
               stroke="var(--color-primary)"
               strokeWidth={1.5}
@@ -237,9 +182,9 @@ export default function TotalSales() {
               animationDuration={700}
               animationEasing="ease-out"
             />
-            {/* Existing User — dashed muted */}
+            {/* Planned priorities — original dashed line */}
             <Line
-              dataKey="existingUser"
+              dataKey="planned"
               type="linear"
               stroke="color-mix(in srgb, var(--primary) 60%, transparent)"
               strokeWidth={1.5}
@@ -253,6 +198,7 @@ export default function TotalSales() {
             />
           </LineChart>
         </ChartContainer>
+        <p className="text-xs leading-relaxed text-muted-foreground">{text("Theo ngày được xếp việc và trạng thái hiện tại. Ngày chưa có việc hiển thị 0.", "By assigned day and current status. Days without priorities show zero.")}</p>
       </CardContent>
     </DashboardCard>
   );

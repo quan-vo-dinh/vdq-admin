@@ -1,8 +1,9 @@
+import { withOwner } from "@/lib/auth/api";
 import type { NextRequest } from "next/server";
 import { getDailyFeed } from "@/lib/developer/feed/server";
 import { FeedError } from "@/lib/developer/feed/service";
 import type { FeedSource } from "@/lib/developer/feed/model";
-export async function GET(request: NextRequest) {
+async function handleGET(request: NextRequest) {
   const headers = { "Cache-Control": "private, no-store" };
   // This workspace has no owner authentication yet. Production requires an explicit
   // opt-in after the deployment is protected by an authenticated gateway.
@@ -40,3 +41,5 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export const GET = withOwner<NextRequest>(handleGET);

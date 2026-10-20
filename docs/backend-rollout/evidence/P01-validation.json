@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-10-20T07:45:07.622Z",
+  "newTests": {
+    "pass": 4,
+    "fail": 0
+  },
+  "scopedLint": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "build": "PASS",
+  "fullLint": {
+    "errors": 21,
+    "warnings": 45,
+    "sameAsBaseline": true
+  },
+  "clientAssetsSecretScan": {
+    "assetsScanned": 96,
+    "knownSecretValuesCompared": 1,
+    "findingsByFileOnly": [],
+    "cloudPublicKeyBundled": false
+  },
+  "newFilesTrailingWhitespace": [],
+  "localStackStopped": true,
+  "cliRemoteLinked": true,
+  "cloudMigrationsApplied": false,
+  "cloudApiSmoke": "PASS",
+  "cloudCliReadOnlyAccess": "VERIFIED",
+  "cloudDbDump": "PASS_SESSION_POOLER",
+  "schemaRestoreLocal": "PASS_SUPABASE_SCAFFOLD",
+  "gateP00": "PASS",
+  "gateP01": "PASS_SETUP_TOOLING",
+  "cloudSchemaRestoreReceipt": "P01-schema-restore.json",
+  "finalGate": "P00_PASS_P01_PASS_SETUP_TOOLING"
+}

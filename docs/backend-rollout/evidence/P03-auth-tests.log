@@ -1,0 +1,17 @@
+PASS controlled local bootstrap verifies provider identity and is repeatable
+PASS anonymous Next API returns JSON 401
+PASS all legacy API boundaries deny anonymous access
+PASS owner session verified via Auth + registry + GitHub identity
+PASS non-owner cannot access Next API or dashboard
+PASS anonymous page redirects to login
+PASS owner private page renders existing shell
+PASS fake JWT cookie denied
+PASS mutations require exact Origin even for owner; no arbitrary code read
+PASS direct Data API owner allowed/non-owner and anon denied; private schema hidden
+PASS disabled registry immediately blocks Next and direct Data API
+PASS registry/env mismatch fails closed
+PASS proxy refreshes expired session and returns new cookies without shared cache
+PASS callback error and bad next cannot redirect outside app
+PASS logout rejects cross-origin and clears session cookies
+15 local auth integration checks PASS. Synthetic identities only; GitHub OAuth remains unverified.
+Local synthetic auth identities/registry removed. No cloud writes.

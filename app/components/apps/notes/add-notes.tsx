@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ export default function AddNotes() {
   const { addNote } = useContext(NotesContext);
   const { language } = useLanguage();
   const text = (vi: string, en: string) => language === "vi" ? vi : en;
+  const createId = useRef("");
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<NoteDraft>({ title: "", color: "primary", content: plainDocument(), localTime: "" });
   const [saving, setSaving] = useState(false);
@@ -21,13 +22,13 @@ export default function AddNotes() {
     setSaving(true); setError("");
     try {
       const { localTime, ...note } = draft;
-      await addNote({ ...note, id: 0, deleted: false, datef: noteTimestamp(localTime) });
+      await addNote({ ...note, id: createId.current, deleted: false, datef: noteTimestamp(localTime) });
       setOpen(false);
     } catch { setError(text("Chưa tạo được ghi chú. Kiểm tra ngày giờ và thử lại.", "Could not create note. Check the date and time and try again.")); }
     finally { setSaving(false); }
   };
   return <Dialog open={open} onOpenChange={value => { if (!saving) setOpen(value); }}>
-    <Button onClick={() => { setDraft({ title: "", color: "primary", content: plainDocument(), localTime: noteDateTime(new Date().toISOString()) }); setError(""); setOpen(true); }}><Plus data-icon="inline-start" />{text("Thêm ghi chú", "Add note")}</Button>
+    <Button onClick={() => { createId.current = crypto.randomUUID(); setDraft({ title: "", color: "primary", content: plainDocument(), localTime: noteDateTime(new Date().toISOString()) }); setError(""); setOpen(true); }}><Plus data-icon="inline-start" />{text("Thêm ghi chú", "Add note")}</Button>
     <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-3xl">
       <DialogHeader><DialogTitle>{text("Ghi chú mới", "New note")}</DialogTitle><DialogDescription>{text("Chọn ngày giờ và viết nội dung của bạn.", "Choose a date and time and write your note.")}</DialogDescription></DialogHeader>
       {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}

@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-10-20T07:41:59.314Z",
+  "images": {
+    "db": "public.ecr.aws/supabase/postgres:17.11.0.003",
+    "auth": "public.ecr.aws/supabase/gotrue:v2.197.0",
+    "rest": "public.ecr.aws/supabase/postgrest:v14.18",
+    "storage": "public.ecr.aws/supabase/storage-api:v1.80.2"
+  },
+  "scratchDatabasesRemaining": [],
+  "localEnvKeyStillMatches": true,
+  "reason": "supabase link caches cloud service versions in ignored .temp; local restarted and smoke tested with these versions too."
+}

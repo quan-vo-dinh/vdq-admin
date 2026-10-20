@@ -1,0 +1,9 @@
+PASS four concurrent Today creates: three commits, completed still occupies slot
+PASS move into full day rolls back source; stale moves/toggles/deletes conflict; retry create same UUID
+PASS direct Today insert/move columns and revision tampering denied
+PASS Calendar timed UTC+7 roundtrip, overlap from preceding month, CAS and resize/move payload
+PASS all-day dates end exclusive and window excludes touching boundary
+PASS settings persist and stale settings cannot overwrite
+PASS Notes renderer normalizes unsafe direct Data API content
+PASS anonymous Notes/Today/Calendar requests denied
+8/8 local domain integration groups PASS

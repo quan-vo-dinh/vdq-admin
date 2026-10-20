@@ -17,7 +17,7 @@ const vietnamese: Record<string, string> = {
   "Finance Overview": "Tổng quan tài chính", "Transactions": "Giao dịch", "Budgets": "Ngân sách",
   "Savings Goals": "Mục tiêu tiết kiệm", "Cash Flow": "Dòng tiền",
   "Big Calendar": "Lịch & kế hoạch",
-  "Dashboard": "Bảng điều khiển", "Modern": "Tổng quan", "Pages": "Trang", "Apps": "Ứng dụng",
+  "Dashboard": "Bảng điều khiển", "Modern": "Tổng quan", "My Today": "Hôm nay của bin", "Refresh": "Làm mới", "Pages": "Trang", "Apps": "Ứng dụng",
   "User Profile": "Hồ sơ cá nhân", "Notes": "Ghi chú", "Blogs": "Bài viết", "Blog Listing": "Danh sách bài viết",
   "Blog Detail": "Chi tiết bài viết", "Blog Edit": "Sửa bài viết", "Blog Create": "Tạo bài viết",
   "Manage Blog": "Quản lý bài viết", "Tickets": "Yêu cầu hỗ trợ", "Auth": "Xác thực",

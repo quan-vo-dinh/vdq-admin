@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-20T07:45:38.231777+00:00",
+  "head": "f896a52d165fbe09f2d0e39c3863087c3ae9ecae",
+  "branch": "main",
+  "baselineFileCount": 595,
+  "unchangedBaselineFileCount": 587,
+  "changedBaselineFiles": [
+    ".env.example",
+    ".gitignore",
+    "docs/backend-rollout/README.md",
+    "docs/backend-rollout/USER_SETUP.md",
+    "docs/backend-rollout/phase-00-inventory-preservation.md",
+    "docs/backend-rollout/phase-01-supabase-environments.md",
+    "package.json",
+    "pnpm-lock.yaml"
+  ],
+  "missingBaselineFiles": [],
+  "unexpectedChangedBaselineFiles": [],
+  "sourceSnapshots": [
+    {
+      "source": ".data/calendar.json",
+      "sha256": "188fe57d9475031a1cb371bbde658c5931ca434a65fd57cd9a2f216953af3bd2",
+      "matches_export": true
+    },
+    {
+      "source": ".data/today.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "matches_export": true
+    }
+  ],
+  "deliverableSecretScan": {
+    "filesScanned": 60,
+    "findingsByFileOnly": []
+  },
+  "result": "PASS"
+}

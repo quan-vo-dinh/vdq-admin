@@ -1,0 +1,20 @@
+{
+  "verified": true,
+  "classification": "demo",
+  "datasets": [
+    {
+      "domain": "calendar",
+      "counts": {
+        "records": 12
+      },
+      "sha256": "188fe57d9475031a1cb371bbde658c5931ca434a65fd57cd9a2f216953af3bd2"
+    },
+    {
+      "domain": "today",
+      "counts": {
+        "records": 0
+      },
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ]
+}

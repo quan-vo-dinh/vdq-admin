@@ -37,3 +37,20 @@ next-env.d.ts
 
 # Local calendar persistence
 /.data/
+
+# Backend rollout: all real envs, backups, credentials and local CLI state
+.env.*
+!.env.example
+/supabase/.temp/
+/supabase/.branches/
+/backups/
+/exports/
+*.dump
+*.dump.gz
+*.sql.gz
+*.backup
+*.age
+*.gpg
+*.enc.json
+/test-results/
+/playwright-report/

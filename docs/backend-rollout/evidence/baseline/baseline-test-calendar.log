@@ -1,0 +1,98 @@
+
+> main@0.1.0 test:calendar /Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main
+> node scripts/test-calendar.mjs
+
+TAP version 13
+# Subtest: valid event is trimmed; invalid enums and empty titles are rejected
+ok 1 - valid event is trimmed; invalid enums and empty titles are rejected
+  ---
+  duration_ms: 1.449834
+  type: 'test'
+  ...
+# Subtest: calendar datetime validation rejects impossible dates and invalid ranges
+ok 2 - calendar datetime validation rejects impossible dates and invalid ranges
+  ---
+  duration_ms: 0.174875
+  type: 'test'
+  ...
+# Subtest: all-day end is exclusive and must use midnight
+ok 3 - all-day end is exclusive and must use midnight
+  ---
+  duration_ms: 0.205333
+  type: 'test'
+  ...
+# Subtest: overnight events appear on both dates and stop at midnight
+ok 4 - overnight events appear on both dates and stop at midnight
+  ---
+  duration_ms: 0.066916
+  type: 'test'
+  ...
+# Subtest: adjacent events do not conflict
+ok 5 - adjacent events do not conflict
+  ---
+  duration_ms: 0.063125
+  type: 'test'
+  ...
+# Subtest: chained overlaps share a cluster and receive distinct columns where needed
+ok 6 - chained overlaps share a cluster and receive distinct columns where needed
+  ---
+  duration_ms: 0.9455
+  type: 'test'
+  ...
+# Subtest: time grid clips events to displayed hours and omits out-of-range events
+ok 7 - time grid clips events to displayed hours and omits out-of-range events
+  ---
+  duration_ms: 0.074167
+  type: 'test'
+  ...
+# Subtest: month navigation handles month ends and leap years without skipping
+ok 8 - month navigation handles month ends and leap years without skipping
+  ---
+  duration_ms: 0.639625
+  type: 'test'
+  ...
+# Subtest: new event at 23:00 ends at midnight the following day
+ok 9 - new event at 23:00 ends at midnight the following day
+  ---
+  duration_ms: 1.008167
+  type: 'test'
+  ...
+# Subtest: moving an overnight event preserves duration across month boundaries
+ok 10 - moving an overnight event preserves duration across month boundaries
+  ---
+  duration_ms: 0.583875
+  type: 'test'
+  ...
+# Subtest: moving an all-day event preserves exclusive end and ignores target hour
+ok 11 - moving an all-day event preserves exclusive end and ignores target hour
+  ---
+  duration_ms: 0.195333
+  type: 'test'
+  ...
+# Subtest: settings reject reversed hours, no work days and invalid badge styles
+ok 12 - settings reject reversed hours, no work days and invalid badge styles
+  ---
+  duration_ms: 0.139959
+  type: 'test'
+  ...
+# Subtest: ICS converts GMT+7 to UTC and escapes text
+ok 13 - ICS converts GMT+7 to UTC and escapes text
+  ---
+  duration_ms: 0.349667
+  type: 'test'
+  ...
+# Subtest: ICS preserves all-day dates and folds Unicode at 75 bytes
+ok 14 - ICS preserves all-day dates and folds Unicode at 75 bytes
+  ---
+  duration_ms: 0.356292
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17.992833

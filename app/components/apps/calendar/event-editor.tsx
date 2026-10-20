@@ -1,5 +1,5 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Copy, Trash2, AlertTriangle, CalendarPlus, Check } from "lucide-react";
 import {
   Dialog,
@@ -62,6 +62,7 @@ export function EventEditor({
   const { text, categories, statuses, priorities, colors } =
     useCalendarLocale();
   const { events, addEvent, updateEvent, deleteEvent, busy } = useCalendar();
+  const createId = useRef("");
   const [draft, setDraft] = useState(initial);
   const [error, setError] = useState("");
   const [invalid, setInvalid] = useState(false);
@@ -90,7 +91,7 @@ export function EventEditor({
     }
     try {
       if (draft.id) await updateEvent(draft as CalendarEvent);
-      else await addEvent(draft);
+      else { createId.current ||= crypto.randomUUID(); await addEvent(draft, createId.current); }
       onSaved(text("Đã lưu vào lịch.", "Saved to your calendar."));
       onClose();
     } catch {
@@ -477,7 +478,7 @@ export function EventEditor({
                 disabled={busy}
                 onClick={async () => {
                   try {
-                    await deleteEvent(draft.id!);
+                    await deleteEvent(draft.id!, draft.revision);
                     onSaved(text("Đã xóa kế hoạch.", "Plan deleted."));
                     onClose();
                   } catch {

@@ -43,19 +43,20 @@ function useCalendarData() {
   }
   return {
     events: data?.events ?? [],
+    settingsRevision: data?.settingsRevision,
     settings: data?.settings ?? defaultSettings,
     error: error as Error | undefined,
     isLoading,
     busy,
     reload: () => mutate(),
-    addEvent: (event: EventInput) =>
-      change(() => postFetcher("/api/calendar", event)),
+    addEvent: (event: EventInput, id: string) =>
+      change(() => postFetcher("/api/calendar", { ...event, id })),
     updateEvent: (event: CalendarEvent) =>
-      change(() => putFetcher("/api/calendar", event)),
-    deleteEvent: (id: string) =>
-      change(() => deleteFetcher("/api/calendar", { id })),
-    saveSettings: (settings: CalendarSettings) =>
-      change(() => patchFetcher("/api/calendar", settings)),
+      change(() => putFetcher("/api/calendar", { ...event, expectedRevision: event.revision })),
+    deleteEvent: (id: string, expectedRevision?: number) =>
+      change(() => deleteFetcher("/api/calendar", { id, expectedRevision: expectedRevision ?? data?.events.find(e => e.id === id)?.revision })),
+    saveSettings: (settings: CalendarSettings, expectedRevision?: number) =>
+      change(() => patchFetcher("/api/calendar", { ...settings, expectedRevision })),
   };
 }
 const CalendarContext = createContext<ReturnType<
