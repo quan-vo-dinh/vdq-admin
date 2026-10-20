@@ -519,7 +519,7 @@ const ManageBlogTable = () => {
             </div>
           ) : null}
           <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent size="sm" >
               <DialogHeader>
                 <DialogTitle>Confirm Deletion</DialogTitle>
               </DialogHeader>

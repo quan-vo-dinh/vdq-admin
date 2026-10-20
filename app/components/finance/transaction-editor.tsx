@@ -36,14 +36,15 @@ export function TransactionEditor({
   onClose: () => void;
 }) {
   const { text } = useFinanceLocale();
-  const { data, update, notify } = useFinance();
+  const { data, action, busy, notify } = useFinance();
+  const [createId] = useState(() => crypto.randomUUID());
   const [kind, setKind] = useState<TransactionKind>(initial?.kind ?? "expense");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [amount, setAmount] = useState(initial?.amount ?? 0);
   const [date, setDate] = useState(initial?.date ?? data!.asOf);
-  const [account, setAccount] = useState(initial?.account ?? "bank");
+  const [account, setAccount] = useState(initial?.account ?? data?.accounts.find(a=>!a.archivedAt)?.id ?? "");
   const [destination, setDestination] = useState(
-    initial?.destination ?? "saving",
+    initial?.destination ?? data?.accounts.filter(a=>!a.archivedAt)[1]?.id ?? "",
   );
   const [category, setCategory] = useState(initial?.category ?? "food");
   const [error, setError] = useState("");
@@ -54,12 +55,12 @@ export function TransactionEditor({
           { value: "salary", label: text("Lương thực nhận") },
           { value: "freelance", label: text("Thu nhập khác") },
         ]
-      : data.budgets.map((b) => ({ value: b.id, label: b.name }));
+      : data.budgets.filter(b=>!b.archivedAt || b.id===initial?.category).map((b) => ({ value: b.id, label: b.name }));
   const selectedCategory = categories.some((c) => c.value === category)
     ? category
-    : categories[0].value;
-  const accounts = data.accounts.map((a) => ({ value: a.id, label: a.name }));
-  function save() {
+    : categories[0]?.value ?? "";
+  const accounts = data.accounts.filter(a=>!a.archivedAt || a.id===initial?.account).map((a) => ({ value: a.id, label: a.name }));
+  async function save() {
     if (
       !description.trim() ||
       !Number.isSafeInteger(amount) ||
@@ -75,7 +76,7 @@ export function TransactionEditor({
       return;
     }
     const row: Transaction = {
-      id: initial?.id ?? crypto.randomUUID(),
+      id: initial?.id ?? createId,
       description: description.trim(),
       amount,
       date,
@@ -85,12 +86,14 @@ export function TransactionEditor({
       destination: kind === "transfer" ? destination : undefined,
       source: "manual",
     };
-    update((d) => ({
-      ...d,
-      transactions: initial
-        ? d.transactions.map((t) => (t.id === initial.id ? row : t))
-        : [...d.transactions, row],
-    }));
+    try {
+      await action('transactions', initial ? 'PATCH' : 'POST', {
+        id: row.id, expectedRevision: initial?.revision, date, description: row.description,
+        amount, kind, account_id: account, destination_account_id: row.destination ?? null,
+        category_id: kind === 'transfer' ? null : data!.categories?.find(c=>c.code===selectedCategory)?.id,
+        source: 'manual',
+      });
+    } catch (e) { setError(e instanceof Error ? e.message : 'Không lưu được.'); return; }
     notify(
       initial
         ? "Đã cập nhật giao dịch."
@@ -105,10 +108,10 @@ export function TransactionEditor({
         if (!open) onClose();
       }}
     >
-      <DialogContent
+      <DialogContent size="md"
         data-readable-feature data-finance-typography
         closeLabel={text("Đóng")}
-        className="max-h-[90dvh] overflow-y-auto sm:max-w-lg"
+        className="max-h-[90dvh] overflow-y-auto "
       >
         <DialogHeader>
           <DialogTitle>
@@ -214,7 +217,7 @@ export function TransactionEditor({
             <Button type="button" variant="outline" onClick={onClose}>
               {text("Hủy")}
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={busy || !accounts.length}>
               {initial ? text("Lưu thay đổi") : text("Thêm giao dịch")}
             </Button>
           </DialogFooter>

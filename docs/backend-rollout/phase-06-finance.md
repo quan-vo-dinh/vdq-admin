@@ -1,6 +1,6 @@
 # P06 — Finance thật, giữ phép tính đúng
 
-Bản tinh gọn v2, 2026-10-20. Chưa triển khai. Phụ thuộc P05. Tiếp: [P07](phase-07-learning.md). Đây là phase lớn; có thể bàn giao sau 6A rồi tiếp 6B, không phải làm mọi thứ trong một phiên.
+Bản tinh gọn v2, 2026-10-20. Đã triển khai local; gate CSV browser còn chờ quyền upload Chrome. [Evidence](evidence/P06.md). Phụ thuộc P05. Tiếp: [P07](phase-07-learning.md). Đây là phase lớn; có thể bàn giao sau 6A rồi tiếp 6B, không phải làm mọi thứ trong một phiên.
 
 ## Đầu ra cần đạt
 
@@ -32,10 +32,10 @@ Không setup cloud mới. User sẽ nhập số dư thật/ngày đầu kỳ sau
 
 ## Kiểm tra bắt buộc và gate
 
-- [ ] CRUD transaction còn sau reload; transfer/refund/balance/net expense đúng fixtures; category/FK/amount/date/owner bị chặn khi sai.
-- [ ] Money round-trip và aggregate trong phạm vi hỗ trợ đúng, vượt safe chart range xử lý rõ; không bắt buộc một bộ BigInt framework cho mọi domain.
-- [ ] Revision edit/delete; CSV atomic + same-batch retry + two legitimate identical transactions.
-- [ ] Budget từng tháng, goal allocation và bills không tự chuyển tiền; reports đủ range, asOf thực đúng ngày.
+- [x] CRUD transaction còn sau reload; transfer/refund/balance/net expense đúng fixtures; category/FK/amount/date/owner bị chặn khi sai.
+- [x] Money round-trip và aggregate trong phạm vi hỗ trợ đúng, vượt safe chart range xử lý rõ; không bắt buộc một bộ BigInt framework cho mọi domain.
+- [x] Revision edit/delete; CSV atomic + same-batch retry + two legitimate identical transactions.
+- [x] Budget từng tháng, goal allocation và bills không tự chuyển tiền; reports đủ range, asOf thực đúng ngày.
 - [ ] Chạy test:finance + API/SQL checks thêm đúng phần mới, browser editor/CSV/budget/goal/reports, lint/build cuối thay đổi frontend.
 - [ ] Sau 6A có thể bàn giao CRUD/API đã đạt; chưa đánh dấu toàn P06 PASS cho đến khi 6B đạt.
 

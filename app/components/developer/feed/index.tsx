@@ -527,8 +527,8 @@ export function DeveloperFeed() {
             if (!open) setSelected(null);
           }}
         >
-          <DialogContent
-            className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl"
+          <DialogContent size="lg"
+            className="max-h-[90dvh] overflow-y-auto "
             closeLabel={text("Đóng", "Close")}
           >
             {selected && (

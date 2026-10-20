@@ -42,8 +42,8 @@ export function ConnectionDetails({
         if (!open) onClose();
       }}
     >
-      <DialogContent
-        className="max-h-[85dvh] overflow-y-auto sm:max-w-xl"
+      <DialogContent size="lg"
+        className="max-h-[85dvh] overflow-y-auto "
         closeLabel={text("Đóng", "Close")}
       >
         <DialogHeader>

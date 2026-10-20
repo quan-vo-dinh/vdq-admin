@@ -1,0 +1,122 @@
+-- Finance uses VND integers; views cast numeric to text BEFORE JSON serialization.
+create table public.finance_accounts (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),name text not null check(length(btrim(name)) between 1 and 80), opening numeric(18,0) not null default 0, note text not null default '' check(length(note)<=500), archived_at timestamptz);
+alter table public.finance_accounts enable row level security;
+revoke all on public.finance_accounts from public,anon,authenticated;
+grant select on public.finance_accounts to authenticated;
+create policy owner_only on public.finance_accounts to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_accounts for each row execute function private.bump_revision();
+grant insert(id,name,opening,note,archived_at), update(name,opening,note,archived_at) on public.finance_accounts to authenticated;
+grant delete on public.finance_accounts to authenticated;
+create view public.finance_accounts_dto with (security_invoker=true) as select id,owner_id,created_at,updated_at,revision,name,note,archived_at,opening::text as opening from public.finance_accounts;
+grant select on public.finance_accounts_dto to authenticated;
+create table public.finance_categories (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),code text not null check(code ~ '^[a-z][a-z0-9_-]{0,39}$'), name text not null check(length(btrim(name)) between 1 and 80), kind text not null check(kind in ('income','expense')), archived_at timestamptz, unique(owner_id,code));
+alter table public.finance_categories enable row level security;
+revoke all on public.finance_categories from public,anon,authenticated;
+grant select on public.finance_categories to authenticated;
+create policy owner_only on public.finance_categories to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_categories for each row execute function private.bump_revision();
+grant insert(id,code,name,kind,archived_at), update(code,name,kind,archived_at) on public.finance_categories to authenticated;
+grant delete on public.finance_categories to authenticated;
+create table public.finance_budgets (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),category_id uuid not null, name text not null check(length(btrim(name)) between 1 and 80), default_limit numeric(18,0) not null default 0 check(default_limit>=0), fixed boolean not null default false, unique(owner_id,category_id), foreign key(owner_id,category_id) references public.finance_categories(owner_id,id));
+alter table public.finance_budgets enable row level security;
+revoke all on public.finance_budgets from public,anon,authenticated;
+grant select on public.finance_budgets to authenticated;
+create policy owner_only on public.finance_budgets to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_budgets for each row execute function private.bump_revision();
+grant insert(id,category_id,name,default_limit,fixed), update(category_id,name,default_limit,fixed) on public.finance_budgets to authenticated;
+grant delete on public.finance_budgets to authenticated;
+create view public.finance_budgets_dto with (security_invoker=true) as select id,owner_id,created_at,updated_at,revision,category_id,name,fixed,default_limit::text as default_limit from public.finance_budgets;
+grant select on public.finance_budgets_dto to authenticated;
+create table public.finance_budget_months (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),budget_id uuid not null, month date not null check(extract(day from month)=1), limit_amount numeric(18,0) not null check(limit_amount>=0), foreign key(owner_id,budget_id) references public.finance_budgets(owner_id,id), unique(owner_id,budget_id,month));
+alter table public.finance_budget_months enable row level security;
+revoke all on public.finance_budget_months from public,anon,authenticated;
+grant select on public.finance_budget_months to authenticated;
+create policy owner_only on public.finance_budget_months to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_budget_months for each row execute function private.bump_revision();
+grant insert(id,budget_id,month,limit_amount), update(budget_id,month,limit_amount) on public.finance_budget_months to authenticated;
+grant delete on public.finance_budget_months to authenticated;
+create view public.finance_budget_months_dto with (security_invoker=true) as select id,owner_id,created_at,updated_at,revision,budget_id,month,limit_amount::text as limit_amount from public.finance_budget_months;
+grant select on public.finance_budget_months_dto to authenticated;
+create table public.finance_goals (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),name text not null check(length(btrim(name)) between 1 and 80), target numeric(18,0) not null check(target>0), allocated numeric(18,0) not null default 0 check(allocated>=0 and allocated<=target), monthly numeric(18,0) not null default 0 check(monthly>=0), deadline date not null, priority text not null check(priority in ('high','normal')), visual text not null check(visual in ('emergency','bike','phone','move','study','travel')), image_path text check(image_path is null));
+alter table public.finance_goals enable row level security;
+revoke all on public.finance_goals from public,anon,authenticated;
+grant select on public.finance_goals to authenticated;
+create policy owner_only on public.finance_goals to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_goals for each row execute function private.bump_revision();
+grant insert(id,name,target,allocated,monthly,deadline,priority,visual), update(name,target,allocated,monthly,deadline,priority,visual) on public.finance_goals to authenticated;
+grant delete on public.finance_goals to authenticated;
+create view public.finance_goals_dto with (security_invoker=true) as select id,owner_id,created_at,updated_at,revision,name,deadline,priority,visual,image_path,target::text as target,allocated::text as allocated,monthly::text as monthly from public.finance_goals;
+grant select on public.finance_goals_dto to authenticated;
+create table public.finance_bills (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),name text not null check(length(btrim(name)) between 1 and 80), due_on date not null, amount numeric(18,0) not null check(amount>0));
+alter table public.finance_bills enable row level security;
+revoke all on public.finance_bills from public,anon,authenticated;
+grant select on public.finance_bills to authenticated;
+create policy owner_only on public.finance_bills to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_bills for each row execute function private.bump_revision();
+grant insert(id,name,due_on,amount), update(name,due_on,amount) on public.finance_bills to authenticated;
+grant delete on public.finance_bills to authenticated;
+create view public.finance_bills_dto with (security_invoker=true) as select id,owner_id,created_at,updated_at,revision,name,due_on,amount::text as amount from public.finance_bills;
+grant select on public.finance_bills_dto to authenticated;
+create table public.finance_settings (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),starts_on date not null default (now() at time zone 'Asia/Ho_Chi_Minh')::date, unique(owner_id));
+alter table public.finance_settings enable row level security;
+revoke all on public.finance_settings from public,anon,authenticated;
+grant select on public.finance_settings to authenticated;
+create policy owner_only on public.finance_settings to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_settings for each row execute function private.bump_revision();
+grant insert(id,starts_on), update(starts_on) on public.finance_settings to authenticated;
+create table public.finance_import_batches (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),payload_hash text not null, result integer not null check(result between 1 and 1000));
+alter table public.finance_import_batches enable row level security;
+revoke all on public.finance_import_batches from public,anon,authenticated;
+grant select on public.finance_import_batches to authenticated;
+create policy owner_only on public.finance_import_batches to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_import_batches for each row execute function private.bump_revision();
+create table public.finance_transactions (id uuid primary key, owner_id uuid not null default auth.uid() references auth.users(id), created_at timestamptz not null default now(), updated_at timestamptz not null default now(), revision integer not null default 1 check(revision>0), unique(owner_id,id),date date not null, description text not null check(length(btrim(description)) between 1 and 150), amount numeric(18,0) not null check(amount>0), kind text not null check(kind in ('income','expense','refund','transfer')), account_id uuid not null, destination_account_id uuid, category_id uuid, source text not null check(source in ('manual','csv')), batch_id uuid, row_index integer, foreign key(owner_id,account_id) references public.finance_accounts(owner_id,id), foreign key(owner_id,destination_account_id) references public.finance_accounts(owner_id,id), foreign key(owner_id,category_id) references public.finance_categories(owner_id,id), foreign key(owner_id,batch_id) references public.finance_import_batches(owner_id,id), check((kind='transfer' and category_id is null and destination_account_id is not null and account_id<>destination_account_id) or (kind<>'transfer' and category_id is not null and destination_account_id is null)), check((batch_id is null and row_index is null) or (batch_id is not null and row_index>=0)), unique(owner_id,batch_id,row_index));
+alter table public.finance_transactions enable row level security;
+revoke all on public.finance_transactions from public,anon,authenticated;
+grant select on public.finance_transactions to authenticated;
+create policy owner_only on public.finance_transactions to authenticated using(owner_id=(select auth.uid()) and (select private.is_owner())) with check(owner_id=(select auth.uid()) and (select private.is_owner()));
+create trigger revision before update on public.finance_transactions for each row execute function private.bump_revision();
+grant insert(id,date,description,amount,kind,account_id,destination_account_id,category_id,source), update(date,description,amount,kind,account_id,destination_account_id,category_id,source) on public.finance_transactions to authenticated;
+grant delete on public.finance_transactions to authenticated;
+create view public.finance_transactions_dto with (security_invoker=true) as select id,owner_id,created_at,updated_at,revision,date,description,kind,account_id,destination_account_id,category_id,source,batch_id,row_index,amount::text as amount from public.finance_transactions;
+grant select on public.finance_transactions_dto to authenticated;
+
+create index on public.finance_transactions(owner_id,date,id);
+create function private.finance_transaction_guard() returns trigger language plpgsql set search_path='' as $$
+declare k text; a timestamptz; start_date date; begin
+ select starts_on into start_date from public.finance_settings where owner_id=new.owner_id;
+ if new.date > (now() at time zone 'Asia/Ho_Chi_Minh')::date or new.date < start_date then raise check_violation using message='invalid date'; end if;
+ select archived_at into a from public.finance_accounts where owner_id=new.owner_id and id=new.account_id for share;
+ if a is not null then raise check_violation using message='archived account'; end if;
+ if new.destination_account_id is not null then
+ select archived_at into a from public.finance_accounts where owner_id=new.owner_id and id=new.destination_account_id for share;
+ if a is not null then raise check_violation; end if;
+ end if;
+ if new.kind<>'transfer' then
+ select kind,archived_at into k,a from public.finance_categories where owner_id=new.owner_id and id=new.category_id for share;
+ if k is distinct from (case when new.kind='income' then 'income' else 'expense' end) or a is not null then raise check_violation using message='category kind'; end if;
+ end if;
+ return new;
+end $$;
+create trigger transaction_guard before insert or update on public.finance_transactions for each row execute function private.finance_transaction_guard();
+-- One batch transaction. Security definer is limited to the enabled owner and explicit owner predicates.
+create function public.finance_import(p_id uuid,p_rows jsonb) returns integer language plpgsql security definer set search_path='' as $$
+declare r public.finance_import_batches; h text; n integer; begin
+ if not private.is_owner() then raise insufficient_privilege; end if;
+ if jsonb_typeof(p_rows)<>'array' or jsonb_array_length(p_rows) not between 1 and 1000 or octet_length(p_rows::text)>1000000 then raise check_violation; end if;
+ h:=encode(extensions.digest(p_rows::text,'sha256'),'hex');
+ perform pg_advisory_xact_lock(hashtextextended(auth.uid()::text||p_id::text,0));
+ select * into r from public.finance_import_batches where owner_id=auth.uid() and id=p_id;
+ if found then
+ if r.payload_hash<>h then raise exception 'conflict'; end if;
+ return r.result;
+ end if;
+ n:=jsonb_array_length(p_rows);
+ insert into public.finance_import_batches(id,payload_hash,result) values(p_id,h,n);
+ insert into public.finance_transactions(id,date,description,amount,kind,account_id,destination_account_id,category_id,source,batch_id,row_index)
+ select (v->>'id')::uuid,(v->>'date')::date,v->>'description',(v->>'amount')::numeric,v->>'kind',(v->>'account_id')::uuid,(v->>'destination_account_id')::uuid,(v->>'category_id')::uuid,'csv',p_id,(i-1)::integer from jsonb_array_elements(p_rows) with ordinality as x(v,i);
+ if exists(select 1 from public.finance_transactions where owner_id=auth.uid() and batch_id=p_id and amount>1000000000) then raise check_violation; end if;
+ return n;
+end $$;
+revoke all on function public.finance_import(uuid,jsonb) from public,anon,authenticated;
+grant execute on function public.finance_import(uuid,jsonb) to authenticated;

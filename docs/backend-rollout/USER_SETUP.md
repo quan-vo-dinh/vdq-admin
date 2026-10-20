@@ -118,6 +118,18 @@ không có email/password fallback trong UI hoặc runtime app.
 - Đính chính theo user: không có trang Today. `/today` và menu đã xóa; không cần setup hoặc nghiệm thu module này.
   Schema/API Today local còn lại là lịch sử, phải rà loại khỏi migration cloud trước P11.
 
+## U06/U07 — Finance và Learning
+
+- [x] Schema/API/UI P06/P07 đã triển khai và test local; không cần account/env/cloud setup mới.
+- [x] Finance cấu hình tài khoản/số dư đầu kỳ, khoản dự kiến và startsOn trong nút “Tài khoản & khoản dự kiến”.
+  User nhập dữ liệu thật sau P11; hiện không import mock balances/transactions/streaks.
+- [x] Learning tại `/apps/tickets` dùng DB; không cần tài khoản ngoài.
+- [ ] **Chỉ phục vụ browser QA CSV P06:** Chrome → `chrome://extensions` → ChatGPT → Details →
+  bật **Allow access to file URLs** rồi báo đã bật. Extension đã từ chối `setFiles`; user đã trả lời sẽ bật.
+  API/SQL CSV đã PASS, full P06 chưa PASS cho đến khi browser import/reload được kiểm chứng.
+- [ ] Ảnh goal riêng vẫn thuộc P08/U08; hiện chọn biểu tượng được lưu, file image control tạm disabled
+  với thông báo P08. Không lưu base64 vào database.
+
 ## U08 — P08: Storage
 
 - [ ] Chưa cần bật upload ngoài scope; chỉ bucket private cho ảnh goal, avatar nếu UI hiện có hỗ trợ chọn ảnh.

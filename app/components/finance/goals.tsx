@@ -62,14 +62,15 @@ function GoalEditor({
   onClose: () => void;
 }) {
   const { text, money } = useFinanceLocale();
-  const { data: loaded, update, notify } = useFinance();
+  const { data: loaded, action, busy, notify } = useFinance();
   const data = loaded!,
     totals = overview(data);
+  const [createId] = useState(() => crypto.randomUUID());
   const [name, setName] = useState(initial?.name ?? "");
   const [target, setTarget] = useState(initial?.target ?? 10_000_000);
   const [allocated, setAllocated] = useState(initial?.allocated ?? 0);
   const [monthly, setMonthly] = useState(initial?.monthly ?? 500_000);
-  const [deadline, setDeadline] = useState(initial?.deadline ?? "2027-10-01");
+  const [deadline, setDeadline] = useState(initial?.deadline ?? data.asOf);
   const [visual, setVisual] = useState(initial?.visual ?? "study");
   const [image, setImage] = useState(initial?.image ?? "");
   const [imageError, setImageError] = useState("");
@@ -89,10 +90,10 @@ function GoalEditor({
         if (!v) onClose();
       }}
     >
-      <DialogContent
+      <DialogContent size="md"
         data-readable-feature data-finance-typography
         closeLabel={text("Đóng")}
-        className="max-h-[90dvh] overflow-y-auto sm:max-w-lg"
+        className="max-h-[90dvh] overflow-y-auto "
       >
         <DialogHeader>
           <DialogTitle>
@@ -109,7 +110,7 @@ function GoalEditor({
           </DialogDescription>
         </DialogHeader>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             if (readingImage) return;
             if (
@@ -127,7 +128,7 @@ function GoalEditor({
               return;
             }
             const goal: Goal = {
-              id: initial?.id ?? crypto.randomUUID(),
+              id: initial?.id ?? createId,
               name: name.trim(),
               target,
               allocated,
@@ -137,12 +138,8 @@ function GoalEditor({
               visual,
               image: image || undefined,
             };
-            update((d) => ({
-              ...d,
-              goals: initial
-                ? d.goals.map((g) => (g.id === initial.id ? goal : g))
-                : [...d.goals, goal],
-            }));
+            try {await action('goals',initial?'PATCH':'POST',{...goal, expectedRevision:initial?.revision});}
+            catch(e) {setError(e instanceof Error?e.message:'Không lưu được.');return;}
             notify("Đã lưu mục tiêu và tính lại phần tiền chưa phân bổ.");
             onClose();
           }}
@@ -170,6 +167,8 @@ function GoalEditor({
               <FieldLabel htmlFor="goal-image">{text("Ảnh riêng cho mục tiêu")}</FieldLabel>
               <Input
                 id="goal-image"
+                disabled
+                title="Ảnh riêng sẽ được lưu qua Storage ở P08"
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 aria-invalid={Boolean(imageError)}
@@ -192,7 +191,7 @@ function GoalEditor({
                   reader.readAsDataURL(file);
                 }}
               />
-              <FieldDescription>{text("Dùng ảnh có sẵn hoặc chọn ảnh JPG, PNG, WebP của bạn (tối đa 2 MB).")}</FieldDescription>
+              <FieldDescription>{text("Biểu tượng có sẵn được lưu ngay. Ảnh riêng sẽ được nối Storage ở P08.")}</FieldDescription>
               {imageError && <FieldError>{text(imageError)}</FieldError>}
               {image && (
                 <div className="finance-goal-image-preview">
@@ -240,7 +239,7 @@ function GoalEditor({
             <Button type="button" variant="outline" onClick={onClose}>
               {text("Hủy")}
             </Button>
-            <Button type="submit" disabled={readingImage}>{text("Lưu mục tiêu")}</Button>
+            <Button type="submit" disabled={readingImage || busy}>{text("Lưu mục tiêu")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -249,9 +248,10 @@ function GoalEditor({
 }
 export function GoalsPage() {
   const { text, money, date, message, goalName } = useFinanceLocale();
-  const { data: loaded, update, notify } = useFinance();
+  const { data: loaded, action, busy, notify } = useFinance();
   const data = loaded!,
     totals = overview(data);
+  const [mutationError, setMutationError] = useState("");
   const [editor, setEditor] = useState<Goal | "new">();
   const [funding, setFunding] = useState<Goal>();
   const [amount, setAmount] = useState(500_000);
@@ -441,7 +441,8 @@ export function GoalsPage() {
             if (!v) setFunding(undefined);
           }}
         >
-          <DialogContent data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
+          <DialogContent size="sm" data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
+            {mutationError && <p role="alert">{mutationError}</p>}
             <DialogHeader>
               <DialogTitle>
                 <FinanceHeading as="span">
@@ -455,17 +456,11 @@ export function GoalsPage() {
             </DialogHeader>
             <form
               className="flex flex-col gap-5"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 if (amount <= 0 || amount > fundLimit) return;
-                update((d) => ({
-                  ...d,
-                  goals: d.goals.map((g) =>
-                    g.id === funding.id
-                      ? { ...g, allocated: g.allocated + amount }
-                      : g,
-                  ),
-                }));
+                try {await action('goals','PATCH',{id:funding.id,expectedRevision:funding.revision,allocated:funding.allocated+amount});}
+                catch(e) {setMutationError(e instanceof Error?e.message:"Không lưu được.");return;}
                 notify(
                   message("Đã dành thêm {0} cho {1}.", [
                     { money: amount },
@@ -494,7 +489,7 @@ export function GoalsPage() {
                 </Button>
                 <Button
                   type="submit"
-                  disabled={amount <= 0 || amount > fundLimit}
+                  disabled={busy || amount <= 0 || amount > fundLimit}
                 >
                   {text("Xác nhận phân bổ")}
                 </Button>
@@ -510,7 +505,8 @@ export function GoalsPage() {
             if (!v) setDeleting(undefined);
           }}
         >
-          <DialogContent data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
+          <DialogContent size="sm" data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
+            {mutationError && <p role="alert">{mutationError}</p>}
             <DialogHeader>
               <DialogTitle>
                 <FinanceHeading as="span">{text("Bỏ mục tiêu này?")}</FinanceHeading>
@@ -528,11 +524,9 @@ export function GoalsPage() {
               </Button>
               <Button
                 variant="destructive"
-                onClick={() => {
-                  update((d) => ({
-                    ...d,
-                    goals: d.goals.filter((g) => g.id !== deleting.id),
-                  }));
+                disabled={busy}
+                onClick={async () => {
+                  try {await action('goals','DELETE',{id:deleting.id,expectedRevision:deleting.revision});} catch(e) {setMutationError(e instanceof Error?e.message:"Không lưu được.");return;}
                   notify("Đã bỏ mục tiêu và giải phóng phần phân bổ.");
                   setDeleting(undefined);
                 }}

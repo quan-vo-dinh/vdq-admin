@@ -71,9 +71,9 @@ export function SettingsDialog({
         if (!v && !busy) onClose();
       }}
     >
-      <DialogContent
+      <DialogContent size="md"
         data-readable-feature
-        className="sm:max-w-lg max-h-[90dvh] overflow-y-auto"
+        className=" max-h-[90dvh] overflow-y-auto"
         showCloseButton={!busy}
       >
         <form onSubmit={save} className="flex flex-col gap-5">

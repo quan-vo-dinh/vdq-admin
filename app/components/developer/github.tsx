@@ -148,7 +148,7 @@ export function GitHubAnalytics() {
           if (!open) setSelected(null);
         }}
       >
-        <DialogContent>
+        <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>{selected}</DialogTitle>
             <DialogDescription>

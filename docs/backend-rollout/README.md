@@ -1,6 +1,6 @@
 # Backend rollout — kế hoạch tinh gọn v2
 
-Cập nhật 2026-10-20 theo ưu tiên triển khai nhanh của user. P00/P01 đã PASS. Phiên P02/P03 ngày 2026-10-20: **P02 và P03 PASS local**, gồm GitHub cá nhân login/logout/relogin thật, owner bootstrap và signup đã đóng. Xem [bàn giao](HANDOFF.md), [P02 evidence](evidence/P02.md), [P03 evidence](evidence/P03.md). **P04/P05 PASS local**: Notes và Calendar lưu DB; xem [P04 evidence](evidence/P04.md), [P05 evidence](evidence/P05.md). Tiếp theo P06; P06–P12 chưa triển khai. Không có cloud migration/deploy.
+Cập nhật 2026-10-20 theo ưu tiên triển khai nhanh của user. P00/P01 đã PASS. Phiên P02/P03 ngày 2026-10-20: **P02 và P03 PASS local**, gồm GitHub cá nhân login/logout/relogin thật, owner bootstrap và signup đã đóng. Xem [bàn giao](HANDOFF.md), [P02 evidence](evidence/P02.md), [P03 evidence](evidence/P03.md). **P04/P05 PASS local**: Notes và Calendar lưu DB; xem [P04 evidence](evidence/P04.md), [P05 evidence](evidence/P05.md). **P06 đã triển khai; còn gate CSV browser do quyền upload Chrome**, xem [P06 evidence](evidence/P06.md). **P07 PASS local**, xem [P07 evidence](evidence/P07.md). Sau khi đóng gate P06, tiếp theo P08; P08–P12 chưa triển khai. Không có cloud migration/deploy.
 
 ## Phạm vi giữ nguyên
 
@@ -48,7 +48,7 @@ Evidence P00/P01 là lịch sử, giữ nguyên. Bộ phase v2 là chỉ dẫn t
 | [P11](phase-11-production-deployment.md) | **Web/backend production dùng được** | P10 |
 | [P12](phase-12-mobile-future.md) | PWA, APK nếu cần — tương lai | P11 |
 
-Không gộp mọi phase cho một phiên. Mốc tiếp theo là P06 Finance; P06 có thể bàn giao theo 6A/6B thay vì thêm framework để làm tất cả một lượt.
+Không gộp mọi phase cho một phiên. P06/P07 đã được triển khai trong phiên user giao cả hai phase. Còn xác minh CSV browser của P06; sau đó tới P08.
 
 ## Nguyên tắc thực thi v2
 

@@ -1,6 +1,6 @@
 # P07 — Learning habits và check-ins
 
-Bản tinh gọn v2, 2026-10-20. Chưa triển khai. Phụ thuộc P06. Tiếp: [P08](phase-08-profile-preferences-storage.md).
+Bản tinh gọn v2, 2026-10-20. PASS local (implementation/gates); [evidence](evidence/P07.md). Gate CSV browser P06 đang chờ riêng. Phụ thuộc P06. Tiếp: [P08](phase-08-profile-preferences-storage.md).
 
 ## Đầu ra cần đạt
 
@@ -23,10 +23,10 @@ Không setup tài khoản ngoài. User tạo habit thật sau deploy; không ch�
 
 ## Kiểm tra bắt buộc và gate
 
-- [ ] Create/edit/archive và check-in/undo còn sau reload/tab khác.
-- [ ] Một entry/ngày, archived deny, stale undo không xóa entry mới sửa; owner/non-owner policy.
-- [ ] Streak gap/hôm nay/hôm qua và ngày qua tháng/năm theo helper hiện có; minutes 1..1440.
-- [ ] Module test/DB invariant mới, browser luồng chính history/check-in, lint/build cuối frontend change. Không chạy lại Finance/Notes nếu không chạm shared code.
+- [x] Create/edit/archive và check-in/undo còn sau reload/tab khác.
+- [x] Một entry/ngày, archived deny, stale undo không xóa entry mới sửa; owner/non-owner policy.
+- [x] Streak gap/hôm nay/hôm qua và ngày qua tháng/năm theo helper hiện có; minutes 1..1440.
+- [x] Module test/DB invariant mới, browser luồng chính history/check-in, lint/build cuối frontend change. Không chạy lại Finance/Notes nếu không chạm shared code.
 
 ## Hoãn / rollback
 

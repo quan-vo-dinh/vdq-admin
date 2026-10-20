@@ -25,7 +25,8 @@ import { FinanceHeading } from "./heading";
 
 export function BudgetsPage() {
   const { text } = useFinanceLocale();
-  const { month, update, notify } = useFinance();
+  const { month, action, busy, notify } = useFinance();
+  const [error, setError] = useState("");
   const [editing, setEditing] = useState<Budget>();
   const [limit, setLimit] = useState(0);
   const [view, setView] = useState<"bars" | "radar">("bars");
@@ -74,7 +75,7 @@ export function BudgetsPage() {
             if (!open) setEditing(undefined);
           }}
         >
-          <DialogContent data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
+          <DialogContent size="sm" data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
             <DialogHeader>
               <DialogTitle>
                 <FinanceHeading as="span">
@@ -88,23 +89,19 @@ export function BudgetsPage() {
             </DialogHeader>
             <form
               className="flex flex-col gap-4"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                update((d) => ({
-                  ...d,
-                  budgets: d.budgets.map((b) =>
-                    b.id === editing.id
-                      ? {
-                          ...b,
-                          monthlyLimits: { ...b.monthlyLimits, [month]: limit },
-                        }
-                      : b,
-                  ),
-                }));
+                try {
+                  let budgetId = editing.resourceId;
+                  if (!budgetId) {const result = await action('budgets','POST',{id:editing.categoryId,category_id:editing.categoryId,name:editing.name,default_limit:0,fixed:editing.fixed});budgetId=result.id;setEditing({...editing,resourceId:budgetId});}
+                  const row = editing.monthRows?.find(r=>r.month===month+'-01');
+                  await action('budget_months',row?'PATCH':'POST',{id:row?.id??(budgetId!.slice(0,24)+month.replace('-','').padEnd(12,'0')),expectedRevision:row?.revision,budget_id:budgetId,month:month+'-01',limit_amount:limit});
+                } catch(e) {setError(e instanceof Error?e.message:'Không lưu được.');return;}
                 notify("Đã cập nhật hạn mức.");
                 setEditing(undefined);
               }}
             >
+              {error && <p role="alert">{error}</p>}
               <FieldGroup>
                 <MoneyInput
                   id="budget-limit"
@@ -122,7 +119,7 @@ export function BudgetsPage() {
                 >
                   {text("Hủy")}
                 </Button>
-                <Button type="submit">{text("Lưu hạn mức")}</Button>
+                <Button type="submit" disabled={busy}>{text("Lưu hạn mức")}</Button>
               </DialogFooter>
             </form>
           </DialogContent>

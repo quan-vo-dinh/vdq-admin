@@ -1,0 +1,9 @@
+PASS Finance persisted CRUD, stable create UUID, text money, transfer/refund fixtures
+PASS Finance CAS concurrent edit/stale delete, category/date/transfer/money guards
+PASS CSV quoted/CRLF, identical legitimate rows, atomic rollback, batch retry/hash conflict
+PASS archived categories retain expense/report history
+PASS 1000-row atomic import, same-batch retry, reports exceed PostgREST 1000-row cap
+PASS monthly budget isolation, goal/bill earmark, numeric(18,0) exact view and safe range rejection
+PASS Learning create/edit/archive/resume/check-in/undo persistence, one/day, minutes, archived, stale undo/direct write deny
+PASS anonymous API denial and private/no-store responses
+Cleaned only explicit fixture UUIDs; owner/settings untouched.

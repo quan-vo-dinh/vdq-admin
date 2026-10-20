@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useFinance } from "@/app/context/finance-context";
 import {
-  csvTemplate,
+
   downloadCsv,
   parseFinanceCsv,
   transactionKey,
@@ -32,7 +32,9 @@ type Parsed = ReturnType<typeof parseFinanceCsv>[number] & {
 };
 export function ImportDialog({ onClose }: { onClose: () => void }) {
   const { text, money, message } = useFinanceLocale();
-  const { data, update, notify } = useFinance();
+  const { data, action, busy, notify } = useFinance();
+  const [batchId, setBatchId] = useState(() => crypto.randomUUID());
+  const [csv, setCsv] = useState("");
   const [parsed, setParsed] = useState<ReturnType<typeof parseFinanceCsv>>([]);
   const [error, setError] = useState("");
   const [filename, setFilename] = useState("");
@@ -46,7 +48,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
       return { ...p, duplicate };
     });
   }, [parsed, data]);
-  const valid = rows.filter((r) => !r.error && !r.duplicate);
+  const valid = rows.filter((r) => !r.error);
   const columns: ColumnDef<Parsed>[] = [
     { accessorKey: "line", header: text("Dòng") },
     { id: "date", header: text("Ngày"), accessorFn: (r) => r.row.date },
@@ -66,7 +68,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
       cell: ({ row: { original: r } }) => (
         <Badge variant={r.error ? "destructive" : "outline"}>
           {text(r.error) ||
-            (r.duplicate ? text("Bỏ qua · trùng") : text("Sẵn sàng"))}
+            (r.duplicate ? text("Cảnh báo · giống giao dịch khác") : text("Sẵn sàng"))}
         </Badge>
       ),
     },
@@ -78,10 +80,10 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
         if (!v) onClose();
       }}
     >
-      <DialogContent
+      <DialogContent size="xl"
         data-readable-feature data-finance-typography
         closeLabel={text("Đóng")}
-        className="max-h-[90dvh] overflow-y-auto sm:max-w-3xl"
+        className="max-h-[90dvh] overflow-y-auto "
       >
         <DialogHeader>
           <DialogTitle>
@@ -97,7 +99,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => downloadCsv("finance-template.csv", csvTemplate)}
+            onClick={() => downloadCsv("finance-template.csv", `date,description,amount,kind,category,account,destination\n${data!.asOf},Bua trua,55000,expense,food,${data!.accounts.find(a=>!a.archivedAt)?.id??'TAO_TAI_KHOAN_TRUOC'},\n`)}
           >
             <Download data-icon="inline-start" />
             {text("Tải định dạng CSV")}
@@ -128,7 +130,8 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
                 }
                 setReading(true);
                 try {
-                  setParsed(parseFinanceCsv(await file.text(), data!));
+                  const content = await file.text(); setCsv(content); setBatchId(crypto.randomUUID());
+                  setParsed(parseFinanceCsv(content, data!));
                 } catch (err) {
                   setError(
                     err instanceof Error ? err.message : "Không đọc được file.",
@@ -142,7 +145,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
         </FieldGroup>
         <p className="text-sm text-muted-foreground">
           {text(
-            "Ngày YYYY-MM-DD từ 01/09 đến 15/10/2026; tiền VND nguyên, dương. Mã tài khoản: bank, saving, cash. Danh mục: food, home, transport, shopping, learning, fun, other; thu nhập: salary, freelance.",
+            `Ngày YYYY-MM-DD từ ${data!.startsOn} đến ${data!.asOf}; VND nguyên dương, tối đa 1 tỷ. Mã tài khoản: ${data!.accounts.map(a=>a.id).join(', ')}. Danh mục: ${data!.budgets.map(b=>b.id).join(', ')}, salary, freelance.`,
           )}
         </p>
         {error && (
@@ -169,7 +172,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             />
             <p className="text-sm text-muted-foreground">
               {text(
-                "Bỏ qua dòng lỗi và dòng trùng ngày, số tiền, nội dung, loại, tài khoản. Kiểm tra kỹ các giao dịch giống nhau có thể là hai khoản riêng biệt.",
+                "Một dòng lỗi sẽ chặn toàn bộ lượt nhập. Dòng giống nhau chỉ là cảnh báo; cả hai vẫn được nhập.",
               )}
             </p>
           </>
@@ -179,15 +182,10 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             {text("Hủy")}
           </Button>
           <Button
-            disabled={!valid.length || reading}
-            onClick={() => {
-              update((d) => ({
-                ...d,
-                transactions: [
-                  ...d.transactions,
-                  ...valid.map((r) => ({ ...r.row, id: crypto.randomUUID() })),
-                ],
-              }));
+            disabled={!valid.length || reading || busy || rows.some(r=>r.error)}
+            onClick={async () => {
+              try { await action('import', 'POST', {id: batchId, csv}); }
+              catch(e) {setError(e instanceof Error ? e.message : 'Không nhập được.'); return;}
               notify(
                 message("Đã nhập {0} giao dịch CSV.", [
                   valid.length,

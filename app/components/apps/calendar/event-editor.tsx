@@ -120,9 +120,9 @@ export function EventEditor({
         if (!open && !busy) onClose();
       }}
     >
-      <DialogContent
+      <DialogContent size="lg"
         data-readable-feature
-        className="calendar-theme max-h-[92dvh] overflow-y-auto sm:max-w-xl"
+        className="calendar-theme max-h-[92dvh] overflow-y-auto "
         showCloseButton={!busy}
       >
         <form onSubmit={submit} className="flex flex-col gap-5">

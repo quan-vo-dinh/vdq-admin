@@ -162,7 +162,7 @@ export function DeveloperInbox() {
           if (!open) setSelected(null);
         }}
       >
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent size="md" >
           <DialogHeader>
             <DialogTitle>{selected?.title}</DialogTitle>
             <DialogDescription>

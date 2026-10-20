@@ -221,7 +221,7 @@ const UserProfile = () => {
       </div>
 
       <Dialog open={openModal} onOpenChange={setOpenModal}>
-        <DialogContent className='max-w-2xl'>
+        <DialogContent size="lg" >
           <DialogHeader>
             <DialogTitle className='mb-4'>
               {modalType === 'personal'

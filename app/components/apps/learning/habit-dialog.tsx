@@ -32,10 +32,12 @@ export function HabitDialog({
 }: {
   editor: LearningEditor;
   onClose: () => void;
-  onSave: (values: HabitValues) => void;
+  onSave: (values: HabitValues, id: string, date: string) => Promise<void>;
 }) {
   const { t } = useLearningLocale();
-  const { data } = useLearning();
+  const { data, failure, busy } = useLearning();
+  const [createId] = useState(() => crypto.randomUUID());
+  const [date] = useState(data.today);
   const entry = editor.habit?.entries.find((e) => e.date === data.today);
   const [title, setTitle] = useState(editor.habit?.title ?? "");
   const [intention, setIntention] = useState(editor.habit?.intention ?? "");
@@ -59,7 +61,7 @@ export function HabitDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent closeLabel={t("Đóng", "Close")}>
+      <DialogContent size="md" closeLabel={t("Đóng", "Close")}>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -69,7 +71,7 @@ export function HabitDialog({
                 intention: intention.trim(),
                 minutes: Number(minutes),
                 note: note.trim(),
-              });
+              }, createId, date);
           }}
         >
           <DialogHeader>
@@ -89,6 +91,7 @@ export function HabitDialog({
                   )}
             </DialogDescription>
           </DialogHeader>
+          {failure && <p role="alert">{failure}</p>}
           <FieldGroup className="my-6">
             {!checking && (
               <>
@@ -182,7 +185,7 @@ export function HabitDialog({
             </Button>
             <Button
               type="submit"
-              disabled={!validMinutes || (!checking && !title.trim())}
+              disabled={busy || !validMinutes || (!checking && !title.trim())}
             >
               {checking ? (
                 <Check data-icon="inline-start" />

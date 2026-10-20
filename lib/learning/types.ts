@@ -1,6 +1,7 @@
-export type CheckIn = { date: string; minutes: number; note: string };
+export type CheckIn = { id?: string; revision?: number; date: string; minutes: number; note: string };
 export type LearningHabit = {
   id: string;
+  revision?: number;
   title: string;
   intention: string;
   minutes: number;

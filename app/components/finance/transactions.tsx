@@ -63,13 +63,14 @@ import {
 export function TransactionsPage() {
   const { text, money, date, locale, transactionDescription } =
     useFinanceLocale();
-  const { data: loaded, month, update, notify } = useFinance();
+  const { data: loaded, month, action, notify } = useFinance();
   const data = loaded!;
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState("all");
   const [account, setAccount] = useState("all");
   const [category, setCategory] = useState("all");
   const [editor, setEditor] = useState<Transaction>();
+  const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState<Transaction>();
   const [importing, setImporting] = useState(false);
   const stats = monthlyTotals(data.transactions, month);
@@ -240,7 +241,7 @@ export function TransactionsPage() {
           className="finance-ledger"
           title={text("Sổ giao dịch")}
           icon={ReceiptText}
-          description={text("Kỳ {0} · Dữ liệu có đến 15/10/2026", [
+          description={text(`Kỳ {0} · Dữ liệu có đến ${data.asOf}`, [
             month.split("-").reverse().join("/"),
           ])}
         >
@@ -353,7 +354,7 @@ export function TransactionsPage() {
             if (!open) setDeleting(undefined);
           }}
         >
-          <DialogContent data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
+          <DialogContent size="sm" data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
             <DialogHeader>
               <DialogTitle>
                 <FinanceHeading as="span">{text("Xóa giao dịch này?")}</FinanceHeading>
@@ -367,19 +368,15 @@ export function TransactionsPage() {
                   )}
               </DialogDescription>
             </DialogHeader>
+            {deleteError && <p role="alert">{deleteError}</p>}
             <DialogFooter>
               <Button variant="outline" onClick={() => setDeleting(undefined)}>
                 {text("Giữ lại")}
               </Button>
               <Button
                 variant="destructive"
-                onClick={() => {
-                  update((d) => ({
-                    ...d,
-                    transactions: d.transactions.filter(
-                      (t) => t.id !== deleting.id,
-                    ),
-                  }));
+                onClick={async () => {
+                  try {await action('transactions','DELETE',{id:deleting.id,expectedRevision:deleting.revision});} catch(e) {setDeleteError(e instanceof Error?e.message:'Không xóa được.');return;}
                   notify("Đã xóa giao dịch.");
                   setDeleting(undefined);
                 }}

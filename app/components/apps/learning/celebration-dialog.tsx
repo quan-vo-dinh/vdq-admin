@@ -29,7 +29,7 @@ export function CelebrationDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent
+      <DialogContent size="sm"
         className="learning-celebration"
         closeLabel={t("Đóng", "Close")}
       >

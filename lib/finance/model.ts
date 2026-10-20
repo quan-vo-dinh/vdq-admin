@@ -1,6 +1,7 @@
 export type TransactionKind = "expense" | "income" | "transfer" | "refund";
 export type Transaction = {
   id: string;
+  revision?: number;
   date: string;
   description: string;
   amount: number;
@@ -12,21 +13,29 @@ export type Transaction = {
 };
 export type Account = {
   id: string;
+  revision?: number;
   name: string;
   opening: number;
   note: string;
+  archivedAt?: string | null;
 };
 export type Budget = {
+  archivedAt?: string | null;
   id: string;
+  revision?: number;
   name: string;
   limit: number;
   fixed: boolean;
+  resourceId?: string;
+  categoryId?: string;
+  monthRows?: {id: string; month: string; revision: number}[];
   monthlyLimits?: Record<string, number>;
 };
 export const budgetLimit = (budget: Budget, month: string) =>
   budget.monthlyLimits?.[month] ?? budget.limit;
 export type Goal = {
   id: string;
+  revision?: number;
   name: string;
   target: number;
   allocated: number;
@@ -44,13 +53,15 @@ export type GoalVisual =
   | "study"
   | "travel";
 export type FinanceData = {
+  settings?: {id: string; starts_on: string; revision: number};
+  categories?: {id: string; code: string; name: string; kind: string; archived_at: string | null; revision: number}[];
   asOf: string;
   startsOn: string;
   transactions: Transaction[];
   accounts: Account[];
   budgets: Budget[];
   goals: Goal[];
-  bills: { id: string; name: string; date: string; amount: number }[];
+  bills: { id: string; revision?: number; name: string; date: string; amount: number }[];
 };
 export const kindLabels: Record<TransactionKind, string> = {
   expense: "Chi tiêu",

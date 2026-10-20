@@ -1,106 +1,32 @@
 "use client";
-import {
-  createContext,
-  useContext,
-  useState,
-  useSyncExternalStore,
-  type ReactNode,
-} from "react";
-import {
-  todayKey,
-  streaks,
-  milestones,
-  withCheckIn,
-} from "@/lib/learning/model";
-import { createLearningDemo } from "@/lib/learning/demo";
-import type { LearningHabit, HabitValues } from "@/lib/learning/types";
-function subscribe(callback: () => void) {
-  const timer = setInterval(callback, 15_000);
-  return () => clearInterval(timer);
+import {createContext,useContext,useEffect,useRef,useState,useSyncExternalStore,type ReactNode} from 'react';
+import useSWR from 'swr';
+import {getFetcher} from '@/app/api/global-fetcher';
+import {todayKey,streaks,milestones} from '@/lib/learning/model';
+import type {LearningData,HabitValues} from '@/lib/learning/types';
+function subscribe(callback:()=>void){const timer=setInterval(callback,15000);return()=>clearInterval(timer);}
+function useLearningState(){
+ const today=useSyncExternalStore(subscribe,todayKey,todayKey);
+ const {data:loaded,error,mutate,isLoading}=useSWR<LearningData & {today:string}>('/api/learning/habits',getFetcher);
+ useEffect(()=>{void mutate();},[today,mutate]);
+ const [busy,setBusy]=useState(false),[failure,setFailure]=useState('');const lock=useRef(false);
+ const data=loaded??{version:1 as const,today,habits:[]};
+ async function action(resource:string,method:string,body:Record<string,unknown>){
+  if(lock.current)throw new Error('Đang lưu.');lock.current=true;setBusy(true);setFailure('');
+  try{const r=await fetch('/api/learning/'+resource,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status===409?'Dữ liệu/ngày đã thay đổi. Bản nháp được giữ; tải lại rồi mở lại để cập nhật.':'Không lưu được buổi học.');const next=await r.json();await mutate(next,false);return next as typeof data;}
+  catch(e){setFailure(e instanceof Error?e.message:'Không lưu được.');throw e;}finally{lock.current=false;setBusy(false);}
+ }
+ async function createHabit(values:HabitValues,id:string){await action('habits','POST',{...values,id});}
+ async function editHabit(id:string,values:HabitValues,expectedRevision?:number){await action('habits','PATCH',{...values,id,expectedRevision});}
+ async function setArchived(id:string,archived:boolean,expectedRevision?:number){await action('habits','PATCH',{id,archived,expectedRevision});}
+ async function undoCheckIn(id:string,entry:{id?:string;revision?:number;date:string}) {await action('checkins','DELETE',{id:entry.id,habitId:id,date:entry.date,expectedRevision:entry.revision,minutes:1,note:''});}
+ async function checkIn(id:string,minutes:number,note:string,entry:{id?:string;revision?:number}|undefined,date:string,createId:string){
+  const next=await action('checkins','POST',{id:entry?.id??createId,habitId:id,date,expectedRevision:entry?.revision??0,minutes,note});
+  const h=next.habits.find(h=>h.id===id)!;const days=streaks(h.entries,next.today).current;
+  return entry?null:{title:h.title,days,milestone:milestones.includes(days)||days%365===0};
+ }
+ return {data:{...data,today},error,failure,isLoading,loaded:!!loaded,busy,createHabit,editHabit,setArchived,undoCheckIn,checkIn};
 }
-// UI prototype only: changes live in this provider and reset on a full reload.
-function useLearningState() {
-  const today = useSyncExternalStore(subscribe, todayKey, todayKey);
-  const [state, setState] = useState(() => createLearningDemo(today));
-  function change(
-    id: string,
-    transform: (habit: LearningHabit) => LearningHabit,
-  ) {
-    setState((previous) => ({
-      ...previous,
-      habits: previous.habits.map((h) => (h.id === id ? transform(h) : h)),
-    }));
-  }
-  function createHabit(values: HabitValues) {
-    const habit: LearningHabit = {
-      id: crypto.randomUUID(),
-      title: values.title,
-      intention: values.intention,
-      minutes: values.minutes,
-      created: today,
-      archived: false,
-      entries: [],
-    };
-    setState((previous) => ({
-      ...previous,
-      habits: [...previous.habits, habit],
-    }));
-  }
-  function editHabit(id: string, values: HabitValues) {
-    change(id, (h) => ({
-      ...h,
-      title: values.title,
-      intention: values.intention,
-      minutes: values.minutes,
-    }));
-  }
-  function setArchived(id: string, archived: boolean) {
-    change(id, (h) => ({ ...h, archived }));
-  }
-  function undoCheckIn(id: string) {
-    change(id, (h) => ({
-      ...h,
-      entries: h.entries.filter((e) => e.date !== today),
-    }));
-  }
-  function checkIn(id: string, minutes: number, note: string) {
-    const habit = state.habits.find((h) => h.id === id);
-    if (!habit) return null;
-    const existed = habit.entries.some((e) => e.date === today);
-    const next = withCheckIn(habit, today, minutes, note);
-    change(id, (h) => withCheckIn(h, today, minutes, note));
-    const days = streaks(next.entries, today).current;
-    return existed
-      ? null
-      : {
-          title: habit.title,
-          days,
-          milestone: milestones.includes(days) || days % 365 === 0,
-        };
-  }
-  return {
-    data: { ...state, today },
-    createHabit,
-    editHabit,
-    setArchived,
-    undoCheckIn,
-    checkIn,
-  };
-}
-const LearningContext = createContext<ReturnType<
-  typeof useLearningState
-> | null>(null);
-export function LearningProvider({ children }: { children: ReactNode }) {
-  const state = useLearningState();
-  return (
-    <LearningContext.Provider value={state}>
-      {children}
-    </LearningContext.Provider>
-  );
-}
-export function useLearning() {
-  const context = useContext(LearningContext);
-  if (!context)
-    throw new Error("useLearning must be used inside LearningProvider");
-  return context;
-}
+const LearningContext=createContext<ReturnType<typeof useLearningState>|null>(null);
+export function LearningProvider({children}:{children:ReactNode}){const state=useLearningState();return <LearningContext.Provider value={state}>{children}</LearningContext.Provider>;}
+export function useLearning(){const context=useContext(LearningContext);if(!context)throw new Error('LearningProvider required');return context;}

@@ -21,7 +21,7 @@ try {
       "--skipLibCheck",
       "--outDir",
       temporary,
-      ...["model", "demo", "csv", "i18n", "messages"].map(
+      ...["model", "demo", "csv", "i18n", "messages", "wire"].map(
         (name) => `lib/finance/${name}.ts`,
       ),
     ],
@@ -36,6 +36,7 @@ try {
     forecast,
     budgetLimit,
   } = require(join(temporary, "model.js"));
+  const {financeWire,financeNumbers}=require(join(temporary,"wire.js"));
   const { financeDemo } = require(join(temporary, "demo.js"));
   const {
     csvTemplate,
@@ -223,6 +224,13 @@ try {
       { ...data.transactions[0], description: "=1+1" },
     ]);
     assert.ok(text.includes('"\'=1+1"'));
+  });
+  test("money DTO text round-trip and unsafe UI rejection", () => {
+    const sample={accounts:[{opening:-1000000}],transactions:[{amount:1000000000}],budgets:[{limit:100,monthlyLimits:{"2026-10":200}}],goals:[{target:300,allocated:100,monthly:20}]};
+    const wire=financeWire(sample);
+    assert.equal(wire.accounts[0].opening,"-1000000");assert.equal(wire.budgets[0].monthlyLimits["2026-10"],"200");
+    assert.deepEqual(financeNumbers(wire),sample);
+    assert.throws(()=>financeNumbers({amount:"999999999999999999"}));assert.throws(()=>financeNumbers({amount:"1.1"}));
   });
 } finally {
   rmSync(temporary, { recursive: true, force: true });

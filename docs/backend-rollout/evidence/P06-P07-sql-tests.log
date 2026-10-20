@@ -1,0 +1,6 @@
+Connecting to local database...
+psql:/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/finance_learning.test.sql:2: NOTICE:  extension "pgtap" already exists, skipping
+/Users/vodinhquan/Developer/Personal/next-shadcn-dashboard-main/supabase/tests/finance_learning.test.sql .. ok
+All tests successful.
+Files=1, Tests=31,  0 wallclock secs ( 0.01 usr +  0.01 sys =  0.02 CPU)
+Result: PASS

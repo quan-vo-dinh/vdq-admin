@@ -454,29 +454,24 @@ export function PlanBadge() {
 }
 export function MonthPicker() {
   const { text, date } = useFinanceLocale();
-  const { month, setMonth } = useFinance();
+  const { month, setMonth, data } = useFinance();
+  const start = (data?.startsOn ?? month).slice(0,7), end = (data?.asOf ?? month).slice(0,7);
+  const months:string[]=[];
+  for(let cursor=start;cursor<=end;){months.push(cursor);const d=new Date(cursor+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+1);cursor=d.toISOString().slice(0,7);}
+  const shift=(amount:number)=>{const d=new Date(month+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+amount);setMonth(d.toISOString().slice(0,7));};
   return (
     <ButtonGroup aria-label={text("Kỳ báo cáo")}>
       <Button
         variant="outline"
         size="icon"
         aria-label={text("Kỳ trước")}
-        disabled={month === "2026-09"}
-        onClick={() => setMonth("2026-09")}
+        disabled={month <= start}
+        onClick={() => shift(-1)}
       >
         <ChevronLeft />
       </Button>
       <Select
-        items={[
-          {
-            value: "2026-09",
-            label: date("2026-09-01", { month: "long", year: "numeric" }),
-          },
-          {
-            value: "2026-10",
-            label: date("2026-10-01", { month: "long", year: "numeric" }),
-          },
-        ]}
+        items={months.map(m=>({value:m,label:date(m+'-01',{month:'long',year:'numeric'})}))}
         value={month}
         onValueChange={(v) => {
           if (v) setMonth(v);
@@ -488,7 +483,7 @@ export function MonthPicker() {
         </SelectTrigger>
         <SelectContent data-finance-typography>
           <SelectGroup>
-            {["2026-09", "2026-10"].map((m) => (
+            {months.map((m) => (
               <SelectItem key={m} value={m}>
                 {date(`${m}-01`, { month: "long", year: "numeric" })}
               </SelectItem>
@@ -500,8 +495,8 @@ export function MonthPicker() {
         variant="outline"
         size="icon"
         aria-label={text("Kỳ sau")}
-        disabled={month === "2026-10"}
-        onClick={() => setMonth("2026-10")}
+        disabled={month >= end}
+        onClick={() => shift(1)}
       >
         <ChevronRight />
       </Button>

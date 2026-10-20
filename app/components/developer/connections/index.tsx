@@ -328,7 +328,7 @@ export function DeveloperConnections() {
           if (!open) setRemoving(null);
         }}
       >
-        <DialogContent closeLabel={text("Đóng", "Close")}>
+        <DialogContent size="sm" closeLabel={text("Đóng", "Close")}>
           <DialogHeader>
             <DialogTitle>
               {text("Xóa thiết lập này?", "Remove this setup?")}

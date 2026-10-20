@@ -102,7 +102,7 @@ function QuickTools() {
           }
         }}
       >
-        <DialogContent className={cn("max-h-[85vh] overflow-y-auto", activePanel === "sources" ? "sm:max-w-5xl" : "sm:max-w-2xl")}
+        <DialogContent size={activePanel === "sources" ? "xl" : "lg"} className="max-h-[85vh] overflow-y-auto"
           closeLabel={text("Đóng", "Close")}>
           <DialogHeader>
             <DialogTitle>

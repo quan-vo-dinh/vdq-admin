@@ -103,7 +103,7 @@ export function HabitList({
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => setArchived(h.id, false)}
+                        onClick={async () => {try {await setArchived(h.id, false, h.revision);} catch {}}}
                       >
                         {t("Học tiếp", "Resume")}
                       </Button>

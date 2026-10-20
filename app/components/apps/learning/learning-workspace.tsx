@@ -33,15 +33,16 @@ import { CelebrationDialog } from "./celebration-dialog";
 import type { LearningEditor, Celebration } from "./types";
 export function LearningWorkspace() {
   const { t, language } = useLearningLocale();
-  const { data, createHabit, editHabit, checkIn, undoCheckIn, setArchived } =
+  const { data, error, failure, isLoading, loaded, busy, createHabit, editHabit, checkIn, undoCheckIn, setArchived } =
     useLearning();
   const { today } = data;
   const [editor, setEditor] = useState<LearningEditor | null>(null);
   const [archive, setArchive] = useState<LearningHabit | null>(null);
   const [celebration, setCelebration] = useState<Celebration | null>(null);
   const [notice, setNotice] = useState("");
-  function undo(h: LearningHabit) {
-    undoCheckIn(h.id);
+  async function undo(h: LearningHabit) {
+    const entry=h.entries.find(e=>e.date===today); if(!entry)return;
+    try {await undoCheckIn(h.id,entry);} catch {return;}
     setNotice(
       t(
         "Đã hoàn tác điểm danh hôm nay. Chuỗi được tính lại.",
@@ -49,9 +50,10 @@ export function LearningWorkspace() {
       ),
     );
   }
-  function save(values: HabitValues) {
+  async function save(values: HabitValues, createId: string, date: string) {
+    try {
     if (editor?.kind === "check") {
-      const result = checkIn(editor.habit.id, values.minutes, values.note);
+      const result = await checkIn(editor.habit.id, values.minutes, values.note, editor.habit.entries.find(e=>e.date===date), date, createId);
       if (result) setCelebration(result);
       else
         setNotice(
@@ -60,12 +62,17 @@ export function LearningWorkspace() {
             "Today's learning session updated.",
           ),
         );
-    } else if (editor?.kind === "edit") editHabit(editor.habit.id, values);
-    else createHabit(values);
+    } else if (editor?.kind === "edit") await editHabit(editor.habit.id, values, editor.habit.revision);
+    else await createHabit(values,createId);
     setEditor(null);
+    } catch {return;}
   }
+  if (!loaded) return <p role={error?'alert':'status'}>{error?'Không tải được dữ liệu Learning. Thử tải lại trang.':'Đang tải Learning…'}</p>;
   return (
     <div className="learning-page flex flex-col gap-6">
+      {(failure || error) && <p role="alert">{failure || "Không tải được dữ liệu Learning."}</p>}
+      {isLoading && <p role="status">Đang tải…</p>}
+      <fieldset disabled={busy || isLoading || !!error} className="contents">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -141,7 +148,7 @@ export function LearningWorkspace() {
           if (!open) setArchive(null);
         }}
       >
-        <DialogContent closeLabel={t("Đóng", "Close")}>
+        <DialogContent size="sm" closeLabel={t("Đóng", "Close")}>
           <DialogHeader>
             <DialogTitle>
               {t("Tạm dừng mục học?", "Pause this learning habit?")}
@@ -158,8 +165,8 @@ export function LearningWorkspace() {
               {t("Tiếp tục học", "Keep learning")}
             </Button>
             <Button
-              onClick={() => {
-                if (archive) setArchived(archive.id, true);
+              onClick={async () => {
+                try {if (archive) await setArchived(archive.id, true, archive.revision);} catch {return;}
                 setArchive(null);
               }}
             >
@@ -168,6 +175,7 @@ export function LearningWorkspace() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </fieldset>
       <CelebrationDialog
         celebration={celebration}
         onClose={() => setCelebration(null)}

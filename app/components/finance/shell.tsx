@@ -18,6 +18,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFinance } from "@/app/context/finance-context";
+import { ApiError } from "@/app/api/global-fetcher";
+import { FinanceManage } from "./manage";
 import { TransactionEditor } from "./transaction-editor";
 
 const links = [
@@ -83,7 +85,8 @@ export function FinanceShell({ children }: { children: ReactNode }) {
           <FinanceBreadcrumb />
         </Suspense>
         <div className="flex shrink-0 items-center gap-2">
-          <Button disabled={!data} size="sm" onClick={() => setAdding(true)}>
+          <FinanceManage />
+          <Button disabled={!data || !data.accounts.some(a=>!a.archivedAt)} size="sm" onClick={() => setAdding(true)}>
             <Plus data-icon="inline-start" />
             {text("Ghi giao dịch")}
           </Button>
@@ -104,6 +107,7 @@ export function FinanceShell({ children }: { children: ReactNode }) {
           </AlertDescription>
         </Alert>
       )}
+      {error && <Alert variant="destructive"><AlertDescription>{error instanceof ApiError && error.code === 'money_outside_ui_range' ? 'Tổng tiền vượt phạm vi biểu đồ hỗ trợ (tổng trị tuyệt đối tối đa khoảng 2,25 triệu tỷ VND). Dữ liệu DB được giữ nguyên.' : 'Không tải được dữ liệu mới. Hãy thử tải lại.'} <Button variant="outline" size="sm" onClick={reload}>Tải lại</Button></AlertDescription></Alert>}
       {error && !data ? (
         <Alert variant="destructive">
           <AlertDescription>

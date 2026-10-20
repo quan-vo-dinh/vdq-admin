@@ -33,6 +33,220 @@ export type Database = {
                   Relationships: [
 
                   ]
+                },"finance_accounts": {
+                  Row: {
+                    "archived_at": string | null,"created_at": string,"id": string,"name": string,"note": string,"opening": number,"owner_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"created_at"?: string,"id": string,"name": string,"note"?: string,"opening"?: number,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"created_at"?: string,"id"?: string,"name"?: string,"note"?: string,"opening"?: number,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"finance_bills": {
+                  Row: {
+                    "amount": number,"created_at": string,"due_on": string,"id": string,"name": string,"owner_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount": number,"created_at"?: string,"due_on": string,"id": string,"name": string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "amount"?: number,"created_at"?: string,"due_on"?: string,"id"?: string,"name"?: string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"finance_budget_months": {
+                  Row: {
+                    "budget_id": string,"created_at": string,"id": string,"limit_amount": number,"month": string,"owner_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "budget_id": string,"created_at"?: string,"id": string,"limit_amount": number,"month": string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "budget_id"?: string,"created_at"?: string,"id"?: string,"limit_amount"?: number,"month"?: string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "finance_budget_months_owner_id_budget_id_fkey"
+      columns: ["owner_id","budget_id"]
+isOneToOne: false
+      referencedRelation: "finance_budgets"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_budget_months_owner_id_budget_id_fkey"
+      columns: ["owner_id","budget_id"]
+isOneToOne: false
+      referencedRelation: "finance_budgets_dto"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                },"finance_budgets": {
+                  Row: {
+                    "category_id": string,"created_at": string,"default_limit": number,"fixed": boolean,"id": string,"name": string,"owner_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "category_id": string,"created_at"?: string,"default_limit"?: number,"fixed"?: boolean,"id": string,"name": string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "category_id"?: string,"created_at"?: string,"default_limit"?: number,"fixed"?: boolean,"id"?: string,"name"?: string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "finance_budgets_owner_id_category_id_fkey"
+      columns: ["owner_id","category_id"]
+isOneToOne: true
+      referencedRelation: "finance_categories"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                },"finance_categories": {
+                  Row: {
+                    "archived_at": string | null,"code": string,"created_at": string,"id": string,"kind": string,"name": string,"owner_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"code": string,"created_at"?: string,"id": string,"kind": string,"name": string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"code"?: string,"created_at"?: string,"id"?: string,"kind"?: string,"name"?: string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"finance_goals": {
+                  Row: {
+                    "allocated": number,"created_at": string,"deadline": string,"id": string,"image_path": string | null,"monthly": number,"name": string,"owner_id": string,"priority": string,"revision": number,"target": number,"updated_at": string,"visual": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "allocated"?: number,"created_at"?: string,"deadline": string,"id": string,"image_path"?: string | null,"monthly"?: number,"name": string,"owner_id"?: string,"priority": string,"revision"?: number,"target": number,"updated_at"?: string,"visual": string
+                  }
+                  Update: {
+                    "allocated"?: number,"created_at"?: string,"deadline"?: string,"id"?: string,"image_path"?: string | null,"monthly"?: number,"name"?: string,"owner_id"?: string,"priority"?: string,"revision"?: number,"target"?: number,"updated_at"?: string,"visual"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"finance_import_batches": {
+                  Row: {
+                    "created_at": string,"id": string,"owner_id": string,"payload_hash": string,"result": number,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id": string,"owner_id"?: string,"payload_hash": string,"result": number,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"owner_id"?: string,"payload_hash"?: string,"result"?: number,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"finance_settings": {
+                  Row: {
+                    "created_at": string,"id": string,"owner_id": string,"revision": number,"starts_on": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id": string,"owner_id"?: string,"revision"?: number,"starts_on"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"owner_id"?: string,"revision"?: number,"starts_on"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"finance_transactions": {
+                  Row: {
+                    "account_id": string,"amount": number,"batch_id": string | null,"category_id": string | null,"created_at": string,"date": string,"description": string,"destination_account_id": string | null,"id": string,"kind": string,"owner_id": string,"revision": number,"row_index": number | null,"source": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_id": string,"amount": number,"batch_id"?: string | null,"category_id"?: string | null,"created_at"?: string,"date": string,"description": string,"destination_account_id"?: string | null,"id": string,"kind": string,"owner_id"?: string,"revision"?: number,"row_index"?: number | null,"source": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "account_id"?: string,"amount"?: number,"batch_id"?: string | null,"category_id"?: string | null,"created_at"?: string,"date"?: string,"description"?: string,"destination_account_id"?: string | null,"id"?: string,"kind"?: string,"owner_id"?: string,"revision"?: number,"row_index"?: number | null,"source"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "finance_transactions_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_batch_id_fkey"
+      columns: ["owner_id","batch_id"]
+isOneToOne: false
+      referencedRelation: "finance_import_batches"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_category_id_fkey"
+      columns: ["owner_id","category_id"]
+isOneToOne: false
+      referencedRelation: "finance_categories"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_destination_account_id_fkey"
+      columns: ["owner_id","destination_account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_destination_account_id_fkey"
+      columns: ["owner_id","destination_account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                },"learning_checkins": {
+                  Row: {
+                    "checked_on": string,"created_at": string,"habit_id": string,"id": string,"minutes": number,"note": string,"owner_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "checked_on": string,"created_at"?: string,"habit_id": string,"id": string,"minutes": number,"note"?: string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "checked_on"?: string,"created_at"?: string,"habit_id"?: string,"id"?: string,"minutes"?: number,"note"?: string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "learning_checkins_owner_id_habit_id_fkey"
+      columns: ["owner_id","habit_id"]
+isOneToOne: false
+      referencedRelation: "learning_habits"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                },"learning_habits": {
+                  Row: {
+                    "archived": boolean,"created_at": string,"id": string,"intention": string,"owner_id": string,"revision": number,"started_on": string,"target_minutes": number,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived"?: boolean,"created_at"?: string,"id": string,"intention"?: string,"owner_id"?: string,"revision"?: number,"started_on"?: string,"target_minutes": number,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "archived"?: boolean,"created_at"?: string,"id"?: string,"intention"?: string,"owner_id"?: string,"revision"?: number,"started_on"?: string,"target_minutes"?: number,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
                 },"notes": {
                   Row: {
                     "color": string,"content": NonNullable<Json>,"created_at": string,"id": string,"note_at": string,"owner_id": string,"revision": number,"title": string,"updated_at": string
@@ -64,7 +278,145 @@ export type Database = {
                 }
           }
           Views: {
-            [_ in never]: never
+            "finance_accounts_dto": {
+                  Row: {
+                    "archived_at": string | null,"created_at": string | null,"id": string | null,"name": string | null,"note": string | null,"opening": string | null,"owner_id": string | null,"revision": number | null,"updated_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "archived_at"?: string | null,"created_at"?: string | null,"id"?: string | null,"name"?: string | null,"note"?: string | null,"opening"?: never,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                         }
+                        Update: {
+                           "archived_at"?: string | null,"created_at"?: string | null,"id"?: string | null,"name"?: string | null,"note"?: string | null,"opening"?: never,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                         }
+                        Relationships: [
+
+                  ]
+                },"finance_bills_dto": {
+                  Row: {
+                    "amount": string | null,"created_at": string | null,"due_on": string | null,"id": string | null,"name": string | null,"owner_id": string | null,"revision": number | null,"updated_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "amount"?: never,"created_at"?: string | null,"due_on"?: string | null,"id"?: string | null,"name"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                         }
+                        Update: {
+                           "amount"?: never,"created_at"?: string | null,"due_on"?: string | null,"id"?: string | null,"name"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                         }
+                        Relationships: [
+
+                  ]
+                },"finance_budget_months_dto": {
+                  Row: {
+                    "budget_id": string | null,"created_at": string | null,"id": string | null,"limit_amount": string | null,"month": string | null,"owner_id": string | null,"revision": number | null,"updated_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "budget_id"?: string | null,"created_at"?: string | null,"id"?: string | null,"limit_amount"?: never,"month"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                         }
+                        Update: {
+                           "budget_id"?: string | null,"created_at"?: string | null,"id"?: string | null,"limit_amount"?: never,"month"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "finance_budget_months_owner_id_budget_id_fkey"
+      columns: ["owner_id","budget_id"]
+isOneToOne: false
+      referencedRelation: "finance_budgets"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_budget_months_owner_id_budget_id_fkey"
+      columns: ["owner_id","budget_id"]
+isOneToOne: false
+      referencedRelation: "finance_budgets_dto"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                },"finance_budgets_dto": {
+                  Row: {
+                    "category_id": string | null,"created_at": string | null,"default_limit": string | null,"fixed": boolean | null,"id": string | null,"name": string | null,"owner_id": string | null,"revision": number | null,"updated_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "category_id"?: string | null,"created_at"?: string | null,"default_limit"?: never,"fixed"?: boolean | null,"id"?: string | null,"name"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                         }
+                        Update: {
+                           "category_id"?: string | null,"created_at"?: string | null,"default_limit"?: never,"fixed"?: boolean | null,"id"?: string | null,"name"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "finance_budgets_owner_id_category_id_fkey"
+      columns: ["owner_id","category_id"]
+isOneToOne: true
+      referencedRelation: "finance_categories"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                },"finance_goals_dto": {
+                  Row: {
+                    "allocated": string | null,"created_at": string | null,"deadline": string | null,"id": string | null,"image_path": string | null,"monthly": string | null,"name": string | null,"owner_id": string | null,"priority": string | null,"revision": number | null,"target": string | null,"updated_at": string | null,"visual": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "allocated"?: never,"created_at"?: string | null,"deadline"?: string | null,"id"?: string | null,"image_path"?: string | null,"monthly"?: never,"name"?: string | null,"owner_id"?: string | null,"priority"?: string | null,"revision"?: number | null,"target"?: never,"updated_at"?: string | null,"visual"?: string | null
+                         }
+                        Update: {
+                           "allocated"?: never,"created_at"?: string | null,"deadline"?: string | null,"id"?: string | null,"image_path"?: string | null,"monthly"?: never,"name"?: string | null,"owner_id"?: string | null,"priority"?: string | null,"revision"?: number | null,"target"?: never,"updated_at"?: string | null,"visual"?: string | null
+                         }
+                        Relationships: [
+
+                  ]
+                },"finance_transactions_dto": {
+                  Row: {
+                    "account_id": string | null,"amount": string | null,"batch_id": string | null,"category_id": string | null,"created_at": string | null,"date": string | null,"description": string | null,"destination_account_id": string | null,"id": string | null,"kind": string | null,"owner_id": string | null,"revision": number | null,"row_index": number | null,"source": string | null,"updated_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "account_id"?: string | null,"amount"?: never,"batch_id"?: string | null,"category_id"?: string | null,"created_at"?: string | null,"date"?: string | null,"description"?: string | null,"destination_account_id"?: string | null,"id"?: string | null,"kind"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"row_index"?: number | null,"source"?: string | null,"updated_at"?: string | null
+                         }
+                        Update: {
+                           "account_id"?: string | null,"amount"?: never,"batch_id"?: string | null,"category_id"?: string | null,"created_at"?: string | null,"date"?: string | null,"description"?: string | null,"destination_account_id"?: string | null,"id"?: string | null,"kind"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"row_index"?: number | null,"source"?: string | null,"updated_at"?: string | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "finance_transactions_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_batch_id_fkey"
+      columns: ["owner_id","batch_id"]
+isOneToOne: false
+      referencedRelation: "finance_import_batches"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_category_id_fkey"
+      columns: ["owner_id","category_id"]
+isOneToOne: false
+      referencedRelation: "finance_categories"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_destination_account_id_fkey"
+      columns: ["owner_id","destination_account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_destination_account_id_fkey"
+      columns: ["owner_id","destination_account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                }
           }
           Functions: {
             "assert_owner":
@@ -91,6 +443,12 @@ export type Database = {
         isOneToOne: true
         isSetofReturn: false
       } },
+"finance_import":
+{ Args: { "p_id": string,"p_rows": Json }; Returns: number
+                           },
+"learning_checkin":
+{ Args: { "p_date": string,"p_habit": string,"p_id": string,"p_minutes": number,"p_note": string,"p_revision": number,"p_undo": boolean }; Returns: undefined
+                           },
 "move_today":
 { Args: { "p_date": string,"p_id": string,"p_revision": number }; Returns: {
               "category": string,

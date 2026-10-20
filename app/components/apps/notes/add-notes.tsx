@@ -29,7 +29,7 @@ export default function AddNotes() {
   };
   return <Dialog open={open} onOpenChange={value => { if (!saving) setOpen(value); }}>
     <Button onClick={() => { createId.current = crypto.randomUUID(); setDraft({ title: "", color: "primary", content: plainDocument(), localTime: noteDateTime(new Date().toISOString()) }); setError(""); setOpen(true); }}><Plus data-icon="inline-start" />{text("Thêm ghi chú", "Add note")}</Button>
-    <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-3xl">
+    <DialogContent size="lg" className="max-h-[90dvh] overflow-y-auto ">
       <DialogHeader><DialogTitle>{text("Ghi chú mới", "New note")}</DialogTitle><DialogDescription>{text("Chọn ngày giờ và viết nội dung của bạn.", "Choose a date and time and write your note.")}</DialogDescription></DialogHeader>
       {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
       <NoteFields draft={draft} onChange={patch => setDraft(previous => ({ ...previous, ...patch }))} prefix="new-note" />

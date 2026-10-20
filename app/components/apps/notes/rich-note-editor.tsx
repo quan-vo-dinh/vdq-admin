@@ -53,7 +53,7 @@ export function RichNoteEditor({ content, onChange }: { content: JSONContent; on
     </div>
     <EditorContent editor={editor} className={styles.editorSurface} />
     <Dialog open={linkOpen} onOpenChange={setLinkOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent size="sm" >
         <DialogHeader><DialogTitle>{text("Liên kết", "Link")}</DialogTitle><DialogDescription>{text("Dán địa chỉ https://, http:// hoặc mailto:. Để trống để gỡ liên kết.", "Use https://, http:// or mailto:. Leave empty to remove the link.")}</DialogDescription></DialogHeader>
         <Field><FieldLabel htmlFor="note-link">URL</FieldLabel><Input id="note-link" value={href} onChange={e => setHref(e.target.value)} placeholder="https://" aria-invalid={!!href && !safeNoteLink(href.trim())} /></Field>
         <DialogFooter><Button type="button" disabled={!!href.trim() && !safeNoteLink(href.trim())} onClick={() => {

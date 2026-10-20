@@ -1,68 +1,29 @@
 "use client";
-import { createContext, useContext, useState, type ReactNode } from "react";
-import useSWR from "swr";
-import { getFetcher } from "@/app/api/global-fetcher";
-import type { FinanceData } from "@/lib/finance/model";
-
-import type { FinanceMessage } from "@/lib/finance/i18n";
-
-type FinanceContextValue = {
-  data: FinanceData | undefined;
-  error: Error | undefined;
-  month: string;
-  setMonth: (month: string) => void;
-  update: (transform: (data: FinanceData) => FinanceData) => void;
-  reload: () => void;
-  notice: string | FinanceMessage;
-  notify: (message: string | FinanceMessage) => void;
-};
-const FinanceContext = createContext<FinanceContextValue | null>(null);
-export function FinanceProvider({
-  children,
-  initialData,
-}: {
-  children: ReactNode;
-  initialData: FinanceData;
-}) {
-  const {
-    data: initial,
-    error,
-    mutate,
-  } = useSWR<FinanceData, Error>("/api/finance", getFetcher, {
-    revalidateOnFocus: false,
-    fallbackData: initialData,
-  });
-  const [edited, setEdited] = useState<FinanceData>();
-  const [month, setMonth] = useState("2026-10");
-  const [notice, notify] = useState<string | FinanceMessage>("");
-  const data = edited ?? initial;
-  function update(transform: (value: FinanceData) => FinanceData) {
-    setEdited((previous) => {
-      const current = previous ?? initial;
-      return current ? transform(current) : current;
-    });
-  }
-  return (
-    <FinanceContext.Provider
-      value={{
-        data,
-        error,
-        month,
-        setMonth,
-        update,
-        notice,
-        notify,
-        reload: () => {
-          void mutate();
-        },
-      }}
-    >
-      {children}
-    </FinanceContext.Provider>
-  );
+import { createContext, useContext, useRef, useState, type ReactNode } from 'react';
+import useSWR from 'swr';
+import { getFetcher } from '@/app/api/global-fetcher';
+import type { FinanceData } from '@/lib/finance/model';
+import type { FinanceMessage } from '@/lib/finance/i18n';
+import { financeNumbers } from '@/lib/finance/wire';
+import { todayKey } from '@/lib/learning/model';
+function useFinanceState() {
+ const {data,error,mutate}=useSWR<FinanceData,Error>('/api/finance',async url=>financeNumbers(await getFetcher(url)) as FinanceData,{refreshInterval:60000});
+ const [month,setMonth]=useState(()=>todayKey().slice(0,7));
+ const [notice,notify]=useState<string|FinanceMessage>('');
+ const [busy,setBusy]=useState(false);const lock=useRef(false);
+ async function action(resource:string,method:string,values:Record<string,unknown>) {
+  if(lock.current) throw new Error('Đang lưu, vui lòng chờ.');
+  lock.current=true;setBusy(true);
+  try {
+   const body=Object.fromEntries(Object.entries(values).map(([k,v])=>[k,['opening','amount','default_limit','limit_amount','target','allocated','monthly'].includes(k)?String(v):v]));
+   const r=await fetch(`/api/finance/${resource}`,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+   if(!r.ok) {const e=await r.json(); throw new Error(r.status===409?'Dữ liệu đã thay đổi. Giữ bản nháp; tải lại dữ liệu trước khi sửa tiếp.':`Không lưu được (${e.code}).`);}
+   const result=await r.json();await mutate();return result;
+  } catch(e) {notify(e instanceof Error?e.message:'Không lưu được.');throw e;}
+  finally {lock.current=false;setBusy(false);}
+ }
+ return {data,error,month,setMonth,notice,notify,busy,action,reload:()=>{void mutate();}};
 }
-export function useFinance() {
-  const context = useContext(FinanceContext);
-  if (!context) throw new Error("FinanceProvider is required");
-  return context;
-}
+const FinanceContext=createContext<ReturnType<typeof useFinanceState>|null>(null);
+export function FinanceProvider({children}:{children:ReactNode}) {const state=useFinanceState();return <FinanceContext.Provider value={state}>{children}</FinanceContext.Provider>;}
+export function useFinance(){const value=useContext(FinanceContext);if(!value)throw new Error('FinanceProvider is required');return value;}
