@@ -1,4 +1,5 @@
 "use client";
+import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { HeadingText } from "@/app/components/shared/heading-text";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import {
@@ -295,11 +296,12 @@ function CalendarWorkspace() {
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl tracking-tight"><HeadingText>Big Calendar</HeadingText></h1>
+              <h1 className="text-xl tracking-tight"><HeadingText>{text("Lịch của bin", "bin’s calendar")}</HeadingText></h1>
               <Badge variant="secondary">
                 {text("Không gian cá nhân", "Personal workspace")}
               </Badge>
             </div>
+            <PersonalizedIntro taglineOnly />
           </div>
         </div>
         <div className="flex items-center gap-2">

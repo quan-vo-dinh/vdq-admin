@@ -5,6 +5,9 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 export type Language = "vi" | "en";
 
 const vietnamese: Record<string, string> = {
+  "Developer": "Developer", "Developer Workspace": "Developer",
+  "Developer Overview": "Tổng quan developer", "AI Usage": "Sử dụng AI", "GitHub Analytics": "Phân tích GitHub",
+  "Developer Inbox": "Hộp thư developer", "Developer Reports": "Báo cáo developer", "Data Sources": "Nguồn dữ liệu",
   "Ascending": "Tăng dần", "Descending": "Giảm dần", "Sort": "Sắp xếp",
   "item": "mục", "items": "mục", "Page": "Trang", "Previous page": "Trang trước", "Next page": "Trang sau",
   "Personal Finance": "Tài chính cá nhân", "My Finances": "Quản lý tài chính",

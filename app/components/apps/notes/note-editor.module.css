@@ -1,0 +1,23 @@
+
+/* Scoped rich-text document styles. */
+.body.body { height: auto; min-height: 220px; border: 0 !important; font-weight: 400 !important; padding: 1rem; outline: none; font-size: .875rem; line-height: 1.75; overflow-wrap: anywhere; }
+.body.body > * + * { margin-top: .65rem; }
+.body.body h1 { font-size: 1.5rem; font-weight: 600; line-height: 1.4; }
+.body.body h2 { font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
+.body.body h3 { font-size: 1.1rem; font-weight: 600; }
+.body.body ul { list-style: disc; padding-inline-start: 1.5rem; }
+.body.body ol { list-style: decimal; padding-inline-start: 1.5rem; }
+.body.body blockquote { border-inline-start: 3px solid var(--border); padding-inline-start: 1rem; color: var(--muted-foreground); }
+.body.body pre { border-radius: .375rem; padding: .75rem; background: var(--muted); font-family: monospace; white-space: pre-wrap; }
+.body.body :not(pre) > code { border-radius: .25rem; padding: .1rem .25rem; background: var(--muted); font-family: monospace; }
+.body.body a { color: var(--primary); text-decoration: underline; }
+.body.body hr { margin-block: 1rem; border-color: var(--border); }
+.body.body p { min-height: 1.5em; }
+
+.noteContent { display: flex; min-height: 100%; flex-direction: column; }
+.fields { flex: 1; }
+.contentField { display: flex; flex: 1; flex-direction: column; }
+.editorFrame { display: flex; min-height: 260px; flex: 1; flex-direction: column; }
+.editorToolbar { flex-shrink: 0; }
+.editorSurface { display: flex; min-height: 220px; flex: 1; }
+.editorSurface .body.body { width: 100%; flex: 1; }

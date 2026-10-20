@@ -18,7 +18,9 @@ const Notes = () => {
     <StyleAwareWrapper
       lyraClassName="flex flex-col p-px gap-px bg-border"
     >
-      <BreadcrumbComp title="Notes app" items={BCrumb} />
+      <div className="bg-background [&_[aria-label=Breadcrumb]]:hidden sm:[&_[aria-label=Breadcrumb]]:flex">
+        <BreadcrumbComp title="Notes app" items={BCrumb} />
+      </div>
       <StyleDivider />
       <NotesApp />
     </StyleAwareWrapper>

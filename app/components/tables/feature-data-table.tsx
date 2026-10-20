@@ -28,11 +28,13 @@ export function FeatureDataTable<T>({
   columns,
   empty,
   label,
+  scrollRows = false,
 }: {
   data: T[];
   columns: ColumnDef<T>[];
   empty: ReactNode;
   label: string;
+  scrollRows?: boolean;
 }) {
   const { t, language } = useLanguage();
   const number = (value: number) =>
@@ -62,7 +64,7 @@ export function FeatureDataTable<T>({
       onPaginationChange: setPagination,
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
+      getPaginationRowModel: scrollRows ? undefined : getPaginationRowModel(),
       autoResetPageIndex: false,
     });
     instance.setOptions((options) => ({
@@ -74,7 +76,7 @@ export function FeatureDataTable<T>({
       },
     }));
     return instance;
-  }, [data, columns, sorting, pagination]);
+  }, [data, columns, sorting, pagination, scrollRows]);
   if (!data.length) return empty;
   return (
     <div className="feature-data-table flex min-w-0 flex-col gap-3">
@@ -120,7 +122,7 @@ export function FeatureDataTable<T>({
           ))}
         </TableBody>
       </Table>
-      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+      {!scrollRows && <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
         <span>
           {number(data.length)} {t(data.length === 1 ? "item" : "items")} ·{" "}
           {t("Page")} {number(table.getState().pagination.pageIndex + 1)}/
@@ -146,7 +148,7 @@ export function FeatureDataTable<T>({
             <ChevronRight />
           </Button>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

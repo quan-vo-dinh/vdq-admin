@@ -1,149 +1,61 @@
 "use client";
-import { HeadingText } from "@/app/components/shared/heading-text";
-import { Trash2 } from "lucide-react";
-import React, { useState, useContext, useEffect } from "react";
-import { NotesType } from "../../../(dashboard-layout)/types/apps/notes";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
-import { NotesContext } from "@/app/context/notes-context/index";
-import AnimatedItem from "../../animated-components/list-animation";
-import PlaceholdersInput from "@/app/components/animated-components/animatedinput-placeholder";
-import { Button } from "@/components/ui/button";
-import { SearchIcon } from "lucide-react";
+import { useContext, useId, useState } from "react";
+import { Search, Trash2, CalendarDays, X } from "lucide-react";
+import { NotesContext } from "@/app/context/notes-context";
 import { useLanguage } from "@/app/context/language-context";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { noteDay, noteDateTime, noteText } from "@/lib/notes/model";
+import { cn } from "@/lib/utils";
+import type { NotesType } from "@/app/(dashboard-layout)/types/apps/notes";
 
-const Notelist = () => {
-  const { notes, selectNote, deleteNote } = useContext(NotesContext);
-  const { language, t } = useLanguage();
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [activeNoteId, setActiveNoteId] = useState<any | null>(null);
-
-  useEffect(() => {
-    if (notes.length > 0) {
-      // Set the first note as active
-      const firstNoteId = notes[0].id;
-      setActiveNoteId(firstNoteId);
-    }
-  }, [notes]);
-
-  const filterNotes = (notes: NotesType[], nSearch: string) => {
-    if (nSearch !== "")
-      return notes.filter(
-        (t) =>
-          !t.deleted &&
-          (t.title ?? "")
-            .toLocaleLowerCase()
-            .concat(" ")
-            .includes(nSearch.toLocaleLowerCase())
-      );
-    return notes.filter((t) => !t.deleted);
-  };
-
-  const filteredNotes = filterNotes(notes, searchTerm);
-  const handleNoteClick = (noteId: number) => {
-    setActiveNoteId(noteId);
-    selectNote(noteId);
-  };
-
-  type NoteColor =
-    | "primary"
-    | "destructive"
-    | "chart-3"
-    | "chart-4"
-    | "chart-2"
-    | "secondary";
-
-
-
-  const colorClasses: Record<NoteColor, string> = {
-    primary: "bg-primary/5  text-primary border border-primary/20",
-    destructive: "bg-destructive/5  text-primary border border-destructive/20",
-    "chart-3": "bg-chart-3/5  text-primary  border border-chart-3/20",
-    "chart-4": "bg-chart-4/5 text-primary border border-chart-4/20",
-    "chart-2": "bg-chart-2/5 text-primary  border border-chart-2/20",
-    secondary: "bg-secondary/5 text-primary  border border-secondary/20",
-  };
-
-  return (
-    <>
-      <div className="overflow-hidden">
-        <div className="relative w-full">
-
-          <SearchIcon size={16} className="absolute left-2 top-1/2 -translate-y-1/2  text-muted-foreground" />
-
-          <PlaceholdersInput
-            value={searchTerm}
-            className="pl-8!"
-            onChange={setSearchTerm}
-            placeholders={[
-              t("Search Notes..."),
-              t("Find Your Notes..."),
-              t("Look up Notes..."),
-            ]}
-          />
-        </div>
-        <h6 className="text-base mt-6"><HeadingText>{t("All Notes")}</HeadingText></h6>
-        <div className="flex flex-col gap-3 mt-4">
-          {filteredNotes && filteredNotes.length ? (
-            filteredNotes.map((note, index) => (
-              <div key={note.id}>
-                <AnimatedItem index={index}>
-                  <div
-                    className={`cursor-pointer relative p-4 rounded-xl   ${colorClasses[note.color as NoteColor] ||
-                      "bg-chart-5/5"
-                      } 
-                  ${activeNoteId === note.id ? "scale-100" : "scale-95"
-                      } transition-transform duration-200`}
-                    onClick={() => handleNoteClick(note.id)}
-                  >
-                    <h6 className={`text-base truncate text-primary`}><HeadingText>
-                      {note.title}
-                    </HeadingText></h6>
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs">
-                        {new Date(note.datef ?? "").toLocaleDateString(language === "vi" ? "vi-VN" : "en-US")}
-                      </p>
-                      <div>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger
-                              render={
-                                <Button
-                                  variant={"ghost"}
-                                  className={
-                                    "hover:text-destructive hover:bg-destructive/12 text-black dark:text-white dark:hover:text-destructive dark:hover:bg-destructive/12"
-                                  }
-                                  size="icon"
-                                  onClick={() => deleteNote(note.id)}
-                                  aria-label={t("Delete note")}
-                                />
-                              }
-                            >
-                              <Trash2 size={18} />
-                            </TooltipTrigger>
-                            <TooltipContent>{t("Delete")}</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    </div>
-                  </div>
-                </AnimatedItem>
-              </div>
-            ))
-          ) : (
-            <Alert variant="destructive">
-              <AlertTitle>{t("No Notes Found!")}</AlertTitle>
-            </Alert>
-          )}
-        </div>
-      </div>
-    </>
-  );
-};
-export default Notelist;
+export default function Notelist({ onSelect }: { onSelect?: () => void }) {
+  const { notes, loading, selectedNoteId, selectNote, deleteNote } = useContext(NotesContext);
+  const { language } = useLanguage();
+  const text = (vi: string, en: string) => language === "vi" ? vi : en;
+  const filterId = useId();
+  const [query, setQuery] = useState("");
+  const [range, setRange] = useState("all");
+  const [date, setDate] = useState("");
+  const [today, setToday] = useState("");
+  const [deleting, setDeleting] = useState<NotesType | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const filtered = notes.filter(note => {
+    const day = noteDay(note.datef);
+    const start = today ? new Date(Date.parse(`${today}T00:00:00Z`) - 6 * 86400000).toISOString().slice(0, 10) : "";
+    return !note.deleted && (!date || day === date) && (date || range === "all" || (range === "today" ? day === today : day >= start && day <= today)) && `${note.title} ${noteText(note.content)}`.toLocaleLowerCase().includes(query.toLocaleLowerCase());
+  });
+  const groups = Map.groupBy(filtered, note => noteDay(note.datef));
+  const dayLabel = (day: string) => day ? new Intl.DateTimeFormat(language === "vi" ? "vi-VN" : "en-GB", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${day}T12:00:00+07:00`)) : text("Chưa có ngày", "Undated");
+  return <div className="flex h-full min-h-0 flex-col gap-4">
+    <div className="flex shrink-0 flex-col gap-3">
+      <div className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input aria-label={text("Tìm ghi chú", "Search notes")} placeholder={text("Tìm tiêu đề, nội dung…", "Search title, content…")} className="pl-9" value={query} onChange={e => setQuery(e.target.value)} /></div>
+      <ToggleGroup variant="outline" value={[date ? "" : range]} onValueChange={value => { if (value[0]) { setRange(value[0]); setDate(""); setToday(noteDay(new Date().toISOString())); } }} aria-label={text("Khoảng ngày", "Date range")}>
+        <ToggleGroupItem value="all">{text("Tất cả", "All")}</ToggleGroupItem><ToggleGroupItem value="today">{text("Hôm nay", "Today")}</ToggleGroupItem><ToggleGroupItem value="week">{text("7 ngày", "7 days")}</ToggleGroupItem>
+      </ToggleGroup>
+      <Field><FieldLabel htmlFor={filterId} className="flex items-center gap-2"><CalendarDays className="size-3" />{text("Theo ngày", "By date")}</FieldLabel><div className="flex items-center gap-1"><Input id={filterId} type="date" value={date} onInput={e => setDate(e.currentTarget.value)} />{date && <Button variant="ghost" size="icon-sm" aria-label={text("Xóa lọc ngày", "Clear date filter")} onClick={() => { setDate(""); setRange("all"); }}><X /></Button>}</div></Field>
+      <span className="text-xs text-muted-foreground">{filtered.length} {text("ghi chú", "notes")}</span>
+    </div>
+    {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
+    <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto pr-1">
+      {loading ? <Skeleton className="h-40" /> : filtered.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">{text("Không có ghi chú phù hợp", "No matching notes")}</p> : [...groups].map(([day, entries]) => <section key={day} className="flex flex-col gap-2">
+        <h3 className="text-xs font-medium text-muted-foreground">{dayLabel(day)}</h3>
+        {entries.map(note => <div key={note.id} className={cn("flex min-w-0 items-start gap-1 rounded-md border border-border p-3", selectedNoteId === note.id && "bg-accent")} style={{ borderInlineStartWidth: 3, borderInlineStartColor: `var(--${note.color ?? "primary"})` }}>
+          <button type="button" className="flex min-w-0 flex-1 flex-col gap-1 text-left" aria-pressed={selectedNoteId === note.id} onClick={() => { selectNote(note.id); onSelect?.(); }}>
+            <span className="w-full truncate text-sm font-medium">{note.title}</span>
+            <span className="line-clamp-2 text-xs text-muted-foreground">{noteText(note.content) || text("Chưa có nội dung", "No content yet")}</span>
+            <time dateTime={note.datef} className="text-xs text-muted-foreground">{noteDateTime(note.datef).slice(11)} · GMT+7</time>
+          </button>
+          <Button variant="ghost" size="icon-sm" aria-label={`${text("Xóa", "Delete")} ${note.title}`} onClick={() => { setDeleting(note); setError(""); }}><Trash2 /></Button>
+        </div>)}
+      </section>)}
+    </div>
+    <Dialog open={!!deleting} onOpenChange={open => { if (!open && !busy) setDeleting(null); }}><DialogContent><DialogHeader><DialogTitle>{text("Xóa ghi chú?", "Delete note?")}</DialogTitle><DialogDescription>{deleting?.title}</DialogDescription></DialogHeader><DialogFooter><Button variant="outline" disabled={busy} onClick={() => setDeleting(null)}>{text("Hủy", "Cancel")}</Button><Button variant="destructive" disabled={busy} onClick={async () => { if (!deleting) return; setBusy(true); try { await deleteNote(deleting.id); setDeleting(null); } catch { setError(text("Chưa xóa được ghi chú. Hãy thử lại.", "Could not delete. Please try again.")); setDeleting(null); } finally { setBusy(false); } }}>{text("Xóa", "Delete")}</Button></DialogFooter></DialogContent></Dialog>
+  </div>;
+}

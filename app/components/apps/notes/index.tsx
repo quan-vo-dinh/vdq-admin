@@ -1,134 +1,33 @@
 "use client";
-import { HeadingText } from "@/app/components/shared/heading-text";
-import React, { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
-import NotesSidebar from "@/app/components/apps/notes/notes-sidebar";
-import NoteContent from "@/app/components/apps/notes/note-content";
-import AddNotes from "@/app/components/apps/notes/add-notes";
+import { useState } from "react";
 import { Menu } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { NotesProvider } from "@/app/context/notes-context/index";
-
-import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { mutate } from "swr";
-import { usePathname } from "next/navigation";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { NotesProvider } from "@/app/context/notes-context";
 import { useLanguage } from "@/app/context/language-context";
+import { HeadingText } from "@/app/components/shared/heading-text";
+import NotesSidebar from "./notes-sidebar";
+import NoteContent from "./note-content";
+import AddNotes from "./add-notes";
 
-interface colorsType {
-  lineColor: string;
-  disp: string | any;
-  id: number;
-}
-
-const NotesApp = () => {
-  const { t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
-  const handleClose = () => setIsOpen(false);
-
-  const location = usePathname();
-
-  // Reset Notes on browser refresh
-  const handleResetTickets = async () => {
-    const response = await fetch("/api/notes", {
-      method: "GET",
-      headers: {
-        broserRefreshed: "true",
-      },
-    });
-    const result = await response.json();
-    await mutate("/api/notes");
-  };
-
-  useEffect(() => {
-    const isPageRefreshed = sessionStorage.getItem("isPageRefreshed");
-    if (isPageRefreshed === "true") {
-      console.log("page refreshed");
-      sessionStorage.removeItem("isPageRefreshed");
-      handleResetTickets();
-    }
-  }, [location]);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      sessionStorage.setItem("isPageRefreshed", "true");
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-
-  const colorvariation: colorsType[] = [
-    {
-      id: 1,
-      lineColor: "chart-4",
-      disp: "chart-4",
-    },
-    {
-      id: 2,
-      lineColor: "primary",
-      disp: "primary",
-    },
-    {
-      id: 3,
-      lineColor: "destructive",
-      disp: "destructive",
-    },
-    {
-      id: 4,
-      lineColor: "chart-2",
-      disp: "chart-2",
-    },
-    {
-      id: 5,
-      lineColor: "chart-3",
-      disp: "chart-3",
-    },
-  ];
-
-  return (
-    <>
-      <NotesProvider>
-        <Card className="py-0! overflow-hidden">
-          <div className="flex min-h-[600px] h-[calc(100vh-300px)]">
-            {/* NOTES SIDEBAR */}
-            <div>
-              <Sheet open={isOpen} onOpenChange={handleClose}>
-                <SheetContent
-                  side="left"
-                  showCloseButton={false}
-                  className="!max-w-[320px] !sm:max-w-[320px] w-full h-full lg:z-0 lg:hidden block"
-                >
-                  <NotesSidebar />
-                </SheetContent>
-              </Sheet>
-              <div className="w-full h-full lg:block hidden">
-                <NotesSidebar />
-              </div>
-            </div>
-
-            {/* NOTES CONTENT */}
-            <div className="w-full">
-              <div className="flex justify-between items-center border-b border-border py-4 px-6">
-                <div className="flex gap-3 items-center">
-                  <Button
-                    variant="ghost"
-                    onClick={() => setIsOpen(true)}
-                    className="!h-8 !w-8 !rounded-md  justify-center items-center  p-0 lg:!hidden flex  border border-border"
-                  >
-                    <Menu size={18} />
-                  </Button>
-                  <h6 className="text-base"><HeadingText>{t("Edit Note")}</HeadingText></h6>
-                </div>
-                <AddNotes colors={colorvariation} />
-              </div>
-              <NoteContent />
-            </div>
+export default function NotesApp() {
+  const [open, setOpen] = useState(false);
+  const { language } = useLanguage();
+  const text = (vi: string, en: string) => language === "vi" ? vi : en;
+  return <NotesProvider>
+    <Card className="notes-workspace overflow-hidden py-0!">
+      <div className="flex h-[calc(100dvh-260px)] min-h-[560px] min-w-0">
+        <div className="hidden h-full shrink-0 lg:block"><NotesSidebar /></div>
+        <Sheet open={open} onOpenChange={setOpen}><SheetContent side="left" className="w-80 p-0 sm:max-w-80"><SheetHeader className="sr-only"><SheetTitle>{text("Danh sách ghi chú", "Notes list")}</SheetTitle></SheetHeader><NotesSidebar onSelect={() => setOpen(false)} /></SheetContent></Sheet>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-6">
+            <div className="flex items-center gap-2"><Button variant="ghost" size="icon-sm" aria-label={text("Mở danh sách ghi chú", "Open notes list")} className="lg:hidden" onClick={() => setOpen(true)}><Menu /></Button><h2 className="text-base font-medium"><HeadingText>{text("Ghi chú theo ngày", "Daily notes")}</HeadingText></h2></div>
+            <AddNotes />
           </div>
-        </Card>
-      </NotesProvider>
-    </>
-  );
-};
-
-export default NotesApp;
+          <div className="min-h-0 flex-1 overflow-y-auto"><NoteContent /></div>
+        </div>
+      </div>
+    </Card>
+  </NotesProvider>;
+}

@@ -1,103 +1,38 @@
 "use client";
-import { HeadingText } from "@/app/components/shared/heading-text";
-import * as React from "react";
 import { useContext, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+import { Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
-import { NotesContext } from "@/app/context/notes-context/index";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { NotesContext } from "@/app/context/notes-context";
 import { useLanguage } from "@/app/context/language-context";
+import { noteDateTime, noteTimestamp, plainDocument } from "@/lib/notes/model";
+import { NoteFields, type NoteDraft } from "./note-fields";
 
-interface ColorOption {
-  lineColor: string;
-  disp: string;
-  id: number;
-}
-
-interface Props {
-  colors: ColorOption[];
-}
-
-const AddNotes = ({ colors }: Props) => {
+export default function AddNotes() {
   const { addNote } = useContext(NotesContext);
-  const { t } = useLanguage();
-
-  const [openNoteModal, setOpenNoteModal] = useState(false);
-  const [scolor, setScolor] = useState<string>("primary");
-  const [title, setTitle] = useState("");
-
-  const setColor = (color: string) => {
-    setScolor(color);
+  const { language } = useLanguage();
+  const text = (vi: string, en: string) => language === "vi" ? vi : en;
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<NoteDraft>({ title: "", color: "primary", content: plainDocument(), localTime: "" });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const save = async () => {
+    setSaving(true); setError("");
+    try {
+      const { localTime, ...note } = draft;
+      await addNote({ ...note, id: 0, deleted: false, datef: noteTimestamp(localTime) });
+      setOpen(false);
+    } catch { setError(text("Chưa tạo được ghi chú. Kiểm tra ngày giờ và thử lại.", "Could not create note. Check the date and time and try again.")); }
+    finally { setSaving(false); }
   };
-
-  const handleSave = () => {
-    addNote({
-      title,
-      color: scolor,
-      id: 0,
-      deleted: false,
-    });
-    setOpenNoteModal(false);
-    setTitle("");
-  };
-
-  return (
-    <Dialog open={openNoteModal} onOpenChange={setOpenNoteModal}>
-      <DialogTrigger render={<Button />}>
-        {t("Add Note")}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-lg rtl:[&_[data-slot=dialog-close]]:left-2 rtl:[&_[data-slot=dialog-close]]:right-auto">
-        <DialogHeader>
-          <DialogTitle>{t("Add New Note")}</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-2">
-          <Textarea
-            rows={5}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full"
-            placeholder={t("Write your note here...")}
-          />
-          <h6 className="text-base pt-4"><HeadingText>{t("Change Note Color")}</HeadingText></h6>
-          <div className="flex gap-2 items-center">
-            {colors?.map((color) => (
-              <div
-                key={color.disp}
-                onClick={() => setColor(color.disp)}
-                className={`h-7 w-7 flex justify-center items-center rounded-full cursor-pointer bg-${color.disp}`}
-              >
-                {scolor === color.disp && (
-                  <Check size={18} className="text-white" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <DialogFooter className="pt-4">
-          <Button disabled={!title} onClick={handleSave} >
-            {t("Save")}
-          </Button>
-          <Button
-            variant="destructive"
-
-            onClick={() => setOpenNoteModal(false)}
-          >
-            {t("Close")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-export default AddNotes;
+  return <Dialog open={open} onOpenChange={value => { if (!saving) setOpen(value); }}>
+    <Button onClick={() => { setDraft({ title: "", color: "primary", content: plainDocument(), localTime: noteDateTime(new Date().toISOString()) }); setError(""); setOpen(true); }}><Plus data-icon="inline-start" />{text("Thêm ghi chú", "Add note")}</Button>
+    <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-3xl">
+      <DialogHeader><DialogTitle>{text("Ghi chú mới", "New note")}</DialogTitle><DialogDescription>{text("Chọn ngày giờ và viết nội dung của bạn.", "Choose a date and time and write your note.")}</DialogDescription></DialogHeader>
+      {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
+      <NoteFields draft={draft} onChange={patch => setDraft(previous => ({ ...previous, ...patch }))} prefix="new-note" />
+      <DialogFooter><Button variant="outline" disabled={saving} onClick={() => setOpen(false)}>{text("Hủy", "Cancel")}</Button><Button disabled={saving || !draft.title?.trim() || !draft.localTime} onClick={save}>{saving ? text("Đang lưu…", "Saving…") : text("Tạo ghi chú", "Create note")}</Button></DialogFooter>
+    </DialogContent>
+  </Dialog>;
+}

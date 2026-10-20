@@ -1,16 +1,5 @@
 "use client";
-import React from "react";
 import Notelist from "./notes-list";
-
-
-const NotesSidebar = () => {
-  return (
-    <>
-      <div className="w-80 border-e border-border p-6 h-full">
-        <Notelist />
-      </div>
-    </>
-  );
-};
-
-export default NotesSidebar;
+export default function NotesSidebar({ onSelect }: { onSelect?: () => void }) {
+  return <div className="h-full w-80 min-w-0 border-e border-border p-4"><Notelist onSelect={onSelect} /></div>;
+}

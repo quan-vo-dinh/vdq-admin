@@ -14,7 +14,6 @@ import {
   Trash2,
   Wallet,
   CheckCircle2,
-  Flag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -340,18 +339,13 @@ export function GoalsPage() {
                   </CardAction>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                  <div className="finance-goal-status flex flex-wrap gap-1.5">
-                    {g.priority === "high" && (
-                      <FinanceBadge tone="goal" icon={Flag}>
-                        {text("Ưu tiên cao")}
-                      </FinanceBadge>
-                    )}
-                    {left === 0 && (
+                  {left === 0 && (
+                    <div className="finance-goal-status flex flex-wrap gap-1.5">
                       <FinanceBadge tone="income" icon={CheckCircle2}>
                         {text("Đã đủ mục tiêu")}
                       </FinanceBadge>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   <div className="finance-goal-amount">
                     <div>
                       <p

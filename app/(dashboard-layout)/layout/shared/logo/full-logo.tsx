@@ -2,28 +2,22 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+
 const FullLogo = () => {
   return (
-
-    <Link href={'/'} className="max-w-[40px] block lg:max-w-[120px] overflow-hidden">
-      {/* Dark Logo   */}
+    <Link href="/" aria-label="vodinhquan dashboard" className="flex min-w-0 items-center gap-2 overflow-hidden">
       <Image
-        src={'/images/logos/darklogo.svg'}
-        alt='logo'
-        width={100}
+        src="/images/logos/logoicon.svg"
+        alt=""
+        width={32}
         height={32}
-        className='block dark:hidden max-w-[120px] rtl:scale-x-[-1]'
+        className="size-8 shrink-0"
       />
-      {/* Light Logo  */}
-      <Image
-        src={'/images/logos/whitelogo.svg'}
-        alt='logo'
-        width={100}
-        height={32}
-        className='hidden dark:block max-w-[120px] rtl:scale-x-[-1]'
-      />
+      <span className="flex min-w-0 flex-col leading-tight group-data-[state=collapsed]:hidden">
+        <span className="text-base font-semibold text-foreground">vodinhquan</span>
+        <span className="text-xs text-muted-foreground">dashboard</span>
+      </span>
     </Link>
-
   )
 }
 

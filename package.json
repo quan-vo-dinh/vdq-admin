@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "eslint",
     "test:calendar": "node scripts/test-calendar.mjs",
-    "test:finance": "node scripts/test-finance.mjs"
+    "test:finance": "node scripts/test-finance.mjs",
+    "test:developer": "node scripts/test-developer.mjs",
+    "test:notes": "node scripts/test-notes.mjs",
+    "test:notes:api": "node scripts/test-notes-api.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
@@ -39,6 +42,7 @@
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.9.17",
     "react": "19.2.5",
+    "react-activity-calendar": "^3.2.1",
     "react-day-picker": "^10.0.1",
     "react-dom": "19.2.5",
     "react-dropzone": "^15.0.0",

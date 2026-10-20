@@ -1,128 +1,43 @@
-import { NotesType } from '@/app/(dashboard-layout)/types/apps/notes'
-import { NextResponse } from 'next/server'
+import type { NotesType } from '@/app/(dashboard-layout)/types/apps/notes';
+import { parseNoteUpdate, plainDocument } from '@/lib/notes/model';
+import { NextResponse } from 'next/server';
 
-let NotesData: NotesType[] = [
-  {
-    id: 1,
-    color: 'primary',
-    title:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    datef: '2023-06-03T23:28:56.782Z',
-    deleted: false,
-  },
-  {
-    id: 2,
-    color: 'destructive',
-    title:
-      'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,',
-    datef: '2023-06-02T23:28:56.782Z',
-    deleted: false,
-  },
-  {
-    id: 3,
-    color: 'chart-4',
-    title:
-      'consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?',
-    datef: '2023-06-01T23:28:56.782Z',
-    deleted: false,
-  },
-  {
-    id: 4,
-    color: 'chart-3',
-    title:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    datef: '2023-06-03T23:28:56.782Z',
-    deleted: false,
-  },
-]
+const seeds = [
+  { title: 'Nhật ký làm việc', text: 'Mục tiêu hôm nay\nHoàn thiện dashboard và ghi lại những quyết định đáng nhớ.', color: 'primary', datef: '2026-10-20T08:30:00+07:00' },
+  { title: 'Ý tưởng cho phiên code tiếp theo', text: 'Tách công việc lớn thành các bước nhỏ.\nĐể lại thời gian kiểm tra giao diện trên điện thoại.', color: 'chart-2', datef: '2026-10-20T14:00:00+07:00' },
+  { title: 'Ghi chú buổi họp', text: 'Các điểm cần làm rõ\nPhạm vi, mốc bàn giao và người phụ trách.', color: 'chart-4', datef: '2026-10-19T15:15:00+07:00' },
+  { title: 'Cuối tuần nạp lại pin', text: 'Đọc một chương sách, đi bộ và đóng bớt tab trong đầu.', color: 'chart-3', datef: '2026-10-18T09:00:00+07:00' },
+];
+let notes: NotesType[] = seeds.map((note, index) => ({ ...note, id: index + 1, deleted: false, content: plainDocument(note.text), createdAt: new Date(note.datef).toISOString(), updatedAt: new Date(note.datef).toISOString() }));
+let nextId = 5;
+const response = () => NextResponse.json({ status: 200, msg: 'Success', data: notes });
+const failure = (error: unknown) => NextResponse.json({ msg: error instanceof Error ? error.message : 'Invalid request' }, { status: 400 });
 
-const resetNotes = [...NotesData]
-
-// GET request to retrieve Notes data
-// GET request to retrieve Notes data
-export async function GET(req: Request) {
-  const isBrowserRefreshed = req.headers.get('browserrefreshed')
-  try {
-    if (isBrowserRefreshed === 'false') {
-      return NextResponse.json({ status: 200, msg: 'Success', data: NotesData })
-    } else {
-      NotesData = resetNotes
-      return NextResponse.json({ status: 200, msg: 'Success', data: NotesData })
-    }
-  } catch (error: unknown) {
-    return NextResponse.json({
-      status: 400,
-      msg: 'Internal server error',
-      error,
-    })
-  }
-}
-
-// DELETE endpoint for deleting a note
-export async function DELETE(req: Request) {
-  try {
-    const { id } = (await req.json()) as { id: string | number }
-    // Assuming id comes as string from client based on original code parsing logic
-    const noteId = typeof id === 'string' ? parseInt(id, 10) : id
-    const remainingNotes = NotesData.filter((note) => note.id !== noteId)
-    NotesData = remainingNotes
-    return NextResponse.json({ status: 200, msg: 'Success', data: NotesData })
-  } catch (error: unknown) {
-    return NextResponse.json({
-      status: 400,
-      msg: 'Internal server error',
-      error,
-    })
-  }
-}
-
-//  POST endpoint for adding a new note
-const currentDate = new Date()
+export async function GET() { return response(); }
 export async function POST(req: Request) {
   try {
-    const { title, color } = (await req.json()) as {
-      title: string
-      color: string
-    }
-    const newNote = {
-      id: NotesData.length + 1,
-      title,
-      color,
-      deleted: false,
-      datef: currentDate.toISOString(),
-    }
-    NotesData.push(newNote)
-    return NextResponse.json({ status: 200, msg: 'Success', data: NotesData })
-  } catch (error: unknown) {
-    return NextResponse.json({
-      status: 400,
-      msg: 'Internal server error',
-      error,
-    })
-  }
+    const update = parseNoteUpdate(await req.json());
+    if (!update.title) throw new Error('Title is required');
+    const now = new Date().toISOString();
+    notes = [...notes, { ...update, id: nextId++, deleted: false, content: update.content ?? plainDocument(), datef: update.datef ?? now, createdAt: now, updatedAt: now }];
+    return response();
+  } catch (error) { return failure(error); }
 }
-
-// PUT endpoint for updating a note
 export async function PUT(req: Request) {
   try {
-    const { id, title, color } = (await req.json()) as {
-      id: number
-      title: string
-      color: string
-    }
-    const index = NotesData.findIndex((note) => note.id === id)
-
-    if (index !== -1) {
-      NotesData[index] = { ...NotesData[index], title, color }
-      return NextResponse.json({ status: 200, msg: 'Success', data: NotesData })
-    } else {
-      return NextResponse.json({ status: 404, msg: 'Note not found' })
-    }
-  } catch (error: unknown) {
-    return NextResponse.json({
-      status: 400,
-      msg: 'Internal server error',
-      error,
-    })
-  }
+    const body = await req.json();
+    const index = notes.findIndex(note => note.id === body.id);
+    if (index === -1) return NextResponse.json({ msg: 'Note not found' }, { status: 404 });
+    const update = parseNoteUpdate(body);
+    notes = notes.map((note, i) => i === index ? { ...note, ...update, updatedAt: new Date().toISOString() } : note);
+    return response();
+  } catch (error) { return failure(error); }
+}
+export async function DELETE(req: Request) {
+  try {
+    const { id } = await req.json();
+    if (!notes.some(note => note.id === id)) return NextResponse.json({ msg: 'Note not found' }, { status: 404 });
+    notes = notes.filter(note => note.id !== id);
+    return response();
+  } catch (error) { return failure(error); }
 }

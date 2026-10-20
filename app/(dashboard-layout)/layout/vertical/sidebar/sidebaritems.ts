@@ -37,6 +37,7 @@ export interface MenuItem {
 import { uniqueId } from "lodash";
 import {
   BookOpen,
+  Code2,
   CalendarRange,
   CircleUserRound,
   House,
@@ -62,6 +63,13 @@ const SidebarContent: MenuItem[] = [
         url: "/",
       }
     ],
+  },
+  {
+    heading: "Developer",
+    items: [{ id: uniqueId(), name: "Developer Workspace", icon: Code2, items: [
+      { id: uniqueId(), name: "Developer Overview", url: "/developer" },
+      { id: uniqueId(), name: "AI Usage", url: "/developer/ai" },
+    ] }],
   },
   {
     heading: "Personal Finance",

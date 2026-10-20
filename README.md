@@ -89,6 +89,16 @@ Validation: `pnpm test:finance`, scoped ESLint and `pnpm build`. Current scope: 
 
 Hướng dẫn nhanh tiếng Việt: [docs/huong-dan-su-dung-finance.md](docs/huong-dan-su-dung-finance.md).
 
+## Developer Workspace
+
+Open [http://localhost:3000/developer](http://localhost:3000/developer), or **Developer → Developer Workspace** in the sidebar.
+
+Two UI pages: **Overview** and **AI Usage**, using the Modern home dashboard's 12-column layout, shared DashboardCard, section dividers, chart/summary row and three metric cards. Contributions and a searchable/sortable Inbox are tabs on Overview; reports and source coverage open in dialogs. Old Developer URLs redirect into these views. Local colored Claude, Codex, ChatGPT/OpenAI and GitHub logos work in light and dark themes. The MIT `react-activity-calendar` heatmap, model-level tokens/throughput, filters, export and session-only read actions remain available. VI/EN is supported.
+
+`/api/developer` supplies fictional data dated **16 October 2026, 09:00 GMT+7** through SWR/context. Model names follow the official catalogs checked at that date; token counts and measured output tok/s are illustrative. Quotas remain separate, stale/partial/missing observations stay visible, and no live accounts are connected. Export a rule-based `.txt` report for 1/7/30 days. Browser reload resets frontend session edits.
+
+Details and validation: [docs/personal-developer-ui.md](docs/personal-developer-ui.md). Run `pnpm test:developer`, scoped ESLint and `pnpm build`.
+
 ## Folder Structure
 
 Dashboard headings share `HeadingText` (`app/components/shared/heading-text.tsx`) and `animated-text-02`. `CardTitle` and `DialogTitle` apply it automatically; raw page headings compose it explicitly. The theme gradient preserves icons/actions and supports reduced motion.

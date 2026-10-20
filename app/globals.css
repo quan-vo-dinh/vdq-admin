@@ -866,3 +866,26 @@ html.dark {
   .finance-simulator .finance-page-intro { flex-wrap:wrap; }
   .finance-simulator .finance-page-intro > div:last-child { width:100%; min-width:0; justify-content:flex-start; }
 }
+
+/* Developer charts opt out of the template's global 18rem chart height. */
+.developer-workspace { min-width: 0; }
+.developer-workspace [data-slot="card"].cn-card { min-width: 0; border: 1px solid var(--border); }
+.developer-workspace [data-slot="card-content"] { min-width: 0; }
+.developer-workspace [data-slot="chart"].developer-chart { width: 100%; height: 16rem; }
+.developer-workspace [data-slot="chart"].developer-donut { width: 100%; height: 14rem; }
+.developer-workspace [data-slot="chart"].developer-quota-chart { width: 8rem; height: 8rem; }
+.developer-workspace .developer-heatmap { width: 100%; max-width: 100%; }
+.developer-workspace .developer-heatmap rect[role="button"] { cursor: pointer; }
+.developer-workspace .developer-heatmap rect[role="button"]:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+.developer-workspace [data-slot="tabs-content"][hidden] { display: none; }
+
+.developer-workspace [data-slot="chart"].developer-model-chart { width: 100%; height: 20rem; }
+
+/* Same bordered 12-column composition as the Modern home dashboard. */
+.developer-board > * { min-width: 0; }
+.developer-board [data-slot="card"].cn-card { border: 0; }
+.developer-board [data-slot="card-header"],
+.developer-board [data-slot="card-content"] { min-width: 0; }
+.developer-board > [id="activity"] [data-slot="card-content"],
+.developer-board > [id="activity"] [data-slot="card-header"] { padding-inline: 0; }
+.developer-board > [id="activity"] [data-slot="card-footer"] { margin-top: 1rem; padding: .75rem 0; background: transparent; }

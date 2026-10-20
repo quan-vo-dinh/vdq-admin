@@ -1,4 +1,5 @@
 "use client";
+import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { useFinanceLocale } from "./locale";
 import { Suspense, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -82,7 +83,7 @@ export function FinanceShell({ children }: { children: ReactNode }) {
   const [adding, setAdding] = useState(false);
   return (
     <div className="finance-workspace">
-      <h1 className="sr-only">{text("Tài chính cá nhân")}</h1>
+      <div className="pb-4"><PersonalizedIntro /></div>
       <div className="finance-module-header">
         <Suspense fallback={<Skeleton className="h-5 w-56" />}>
           <FinanceBreadcrumb />

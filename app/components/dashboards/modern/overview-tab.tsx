@@ -1,6 +1,6 @@
 'use client'
 import { HeadingText } from "@/app/components/shared/heading-text";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -11,34 +11,13 @@ import {
 } from '@/components/ui/select';
 import { CalendarDays, RefreshCcw, Download, Sun, Moon } from 'lucide-react';
 import { useLanguage } from '@/app/context/language-context';
-import { currentUser } from '@/lib/profile';
+import { usePersonalGreeting } from '@/app/components/shared/personalized-intro';
 
 
 export default function OverviewTab() {
   const { t } = useLanguage();
-  const [greeting, setGreeting] = useState('');
-
-  useEffect(() => {
-    const hour = new Date().getHours();
-
-    if (hour >= 5 && hour < 12) {
-      setGreeting('Good Morning');
-    } else if (hour >= 12 && hour < 17) {
-      setGreeting('Good Afternoon');
-    } else if (hour >= 17 && hour < 21) {
-      setGreeting('Good Evening');
-    } else {
-      setGreeting('Good Night');
-    }
-  }, []);
-
-  const getGreetingIcon = () => {
-    if (greeting === 'Good Morning' || greeting === 'Good Afternoon') {
-      return <Sun size={25} color="orange" />;
-    } else {
-      return <Moon size={25} />;
-    }
-  };
+  const greeting = usePersonalGreeting();
+  const getGreetingIcon = () => greeting.daytime ? <Sun size={25} color="orange" /> : <Moon size={25} />;
 
   const dropdownItems = ['Monthly', 'Yearly'];
   const [selectedYear, setSelectedYear] = useState(dropdownItems[0]);
@@ -48,9 +27,9 @@ export default function OverviewTab() {
       <div className="flex items-center flex-wrap lg:flex-nowrap lg:gap-0 gap-4 justify-between">
         <div className='flex flex-col items-start'>
           <h2 className="text-xl flex item-center gap-2"><HeadingText>
-            {t(greeting)}, {currentUser.nickname} <span className="flex items-center">{getGreetingIcon()}</span>
+            {greeting.title} <span className="flex items-center">{getGreetingIcon()}</span>
           </HeadingText></h2>
-          <p className='text-sm font-normal text-muted-foreground'>{t('Stay informed with today’s analytics')}</p>
+          <p className='text-sm font-normal text-muted-foreground'>{greeting.subtitle}</p>
         </div>
         <div className="flex items-center lg:flex-nowrap flex-wrap gap-2">
           <Button variant="outline" className={"p-2.5 h-auto outline rounded-lg cursor-pointer"}>

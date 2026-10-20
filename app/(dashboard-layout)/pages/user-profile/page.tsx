@@ -1,3 +1,4 @@
+import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import UserProfile from "@/app/components/user-profile";
 import type { Metadata } from "next";
 
@@ -10,6 +11,7 @@ const Notes = () => {
 
   return (
     <>
+        <div className="pb-4"><PersonalizedIntro taglineOnly /></div>
         <UserProfile/>
     </>
   );
