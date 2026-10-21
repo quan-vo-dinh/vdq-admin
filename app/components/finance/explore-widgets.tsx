@@ -303,7 +303,7 @@ export function BudgetRadar() {
         >
           <RadarChart data={rows} outerRadius="62%" accessibilityLayer>
             <PolarGrid stroke="var(--border)" />
-            <PolarAngleAxis dataKey="name" tick={{ fontSize: 11 }} />
+            <PolarAngleAxis dataKey="name" tick={{ fontSize: 14 }} />
             <PolarRadiusAxis domain={[0, max]} tick={false} axisLine={false} />
             <ChartTooltip
               content={

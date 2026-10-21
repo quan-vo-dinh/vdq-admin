@@ -17,7 +17,7 @@ export function Agenda({ day, now }: { day: string; now: number }) {
         const eventDay = event.start.slice(0, 10);
         const ongoing = eventDay < day;
         return <Link key={event.id} href={`/apps/calendar?date=${ongoing ? day : eventDay}`} className="flex items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/50">
-          <div className="flex w-10 shrink-0 flex-col items-center rounded-md bg-muted py-1 font-mono"><span className="text-[10px] text-muted-foreground">{date(`${eventDay}T12:00:00+07:00`, { month: "2-digit" })}</span><span className="text-lg leading-6">{eventDay.slice(8)}</span></div>
+          <div className="flex w-10 shrink-0 flex-col items-center rounded-md bg-muted py-1 font-mono"><span className="text-xs text-muted-foreground">{date(`${eventDay}T12:00:00+07:00`, { month: "2-digit" })}</span><span className="text-lg leading-6">{eventDay.slice(8)}</span></div>
           <div className="min-w-0 flex-1"><p className="line-clamp-2 font-medium">{event.title}</p><p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><Clock3 className="size-3" />{event.allDay ? text("Cả ngày", "All day") : `${event.start.slice(11, 16)} – ${event.end.slice(11, 16)}`}{(ongoing || calendarTimestamp(event.start) <= now) && <span> · {text("Đang diễn ra", "In progress")}</span>}</p>{event.location && <p className="mt-1 truncate text-xs text-muted-foreground">{event.location}</p>}</div><ArrowUpRight className="mt-1 size-3.5 shrink-0 text-muted-foreground" />
         </Link>;
       })}

@@ -90,7 +90,7 @@ export function GitHubAnalytics() {
           className="developer-heatmap"
           blockSize={13}
           blockMargin={4}
-          fontSize={12}
+          fontSize={14}
           weekStart={1}
           showWeekdayLabels={["mon", "wed", "fri"]}
           colorScheme={hydrated && resolvedTheme === "dark" ? "dark" : "light"}

@@ -263,7 +263,7 @@ export function BudgetComparison({
             width={115}
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 10 }}
+            tick={{ fontSize: 14 }}
           />
           <ReferenceLine x={0} stroke="var(--border)" />
           <ChartTooltip

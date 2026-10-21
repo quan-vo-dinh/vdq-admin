@@ -97,7 +97,7 @@ export function HabitCard({
                 key={date}
                 className="flex flex-1 flex-col items-center gap-2"
               >
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   {date.slice(8)}/{date.slice(5, 7)}
                 </span>
                 <span

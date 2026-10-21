@@ -36,9 +36,9 @@ function Intro({ taglineOnly = false, compact = false }: { taglineOnly?: boolean
   const title = entry[language === "vi" ? 0 : 2];
   const description = entry[language === "vi" ? 1 : 3].replaceAll("bin", currentUser.nickname);
   if (!title && !description) return null;
-  return <div className={cn("flex flex-col gap-1", compact && "h-16 min-w-0 flex-1 basis-0 justify-center gap-1")}>
-    {!taglineOnly && title && <h1 className={cn("flex items-center gap-2 text-xl font-semibold", compact && "h-6 shrink-0 leading-6")}><HeadingText>{title.replaceAll("bin", currentUser.nickname)}</HeadingText><PageTitleIcon /></h1>}
-    {description && <p className={cn("text-sm font-normal text-muted-foreground", compact && "line-clamp-2 h-9 w-full max-w-[78ch] shrink-0 leading-[18px] break-words")} title={compact ? description : undefined}>{description}</p>}
+  return <div className={cn("flex flex-col gap-1", compact && "min-h-16 min-w-0 flex-1 basis-0 justify-center gap-1")}>
+    {!taglineOnly && title && <h1 className={cn("flex items-center gap-2 text-xl font-semibold", compact && "min-h-7 shrink-0 leading-7")}><HeadingText>{title.replaceAll("bin", currentUser.nickname)}</HeadingText><PageTitleIcon /></h1>}
+    {description && <p className={cn("text-sm font-normal text-muted-foreground", compact && "line-clamp-2 w-full max-w-[78ch] shrink-0 leading-6 break-words")} title={compact ? description : undefined}>{description}</p>}
   </div>;
 }
 export function PersonalizedIntro({ taglineOnly = false, compact = false }: { taglineOnly?: boolean; compact?: boolean }) {

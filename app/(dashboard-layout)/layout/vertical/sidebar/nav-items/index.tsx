@@ -49,7 +49,7 @@ export default function NavItem({
 
         {/* Pro Badge */}
         {item.isPro && (
-          <Badge className="ms-auto hide-menu text-[10px]! px-1.5 py-0.5 h-auto! bg-primary! text-background! rounded-md">
+          <Badge className="ms-auto hide-menu text-xs! px-1.5 py-0.5 h-auto! bg-primary! text-background! rounded-md">
             Pro
           </Badge>
         )}

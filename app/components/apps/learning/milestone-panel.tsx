@@ -71,7 +71,7 @@ export function MilestonePanel() {
               >
                 <Trophy className="size-4" />
                 <span>{n}</span>
-                <span className="text-[10px]">{t("ngày", "days")}</span>
+                <span className="text-xs">{t("ngày", "days")}</span>
               </div>
             ))}
           </div>

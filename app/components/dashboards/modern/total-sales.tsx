@@ -149,14 +149,14 @@ export default function TotalSales({ chartData, period, onPeriodChange }: {
               axisLine={false}
               tickMargin={10}
               interval={0}
-              tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
+              tick={{ fontSize: 14, fill: "var(--muted-foreground)" }}
               tickFormatter={(v) => (visibleLabels.has(v) ? date(`${v}T12:00:00+07:00`, { day: "2-digit", month: "2-digit" }) : "")}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
               tickMargin={4}
-              tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
+              tick={{ fontSize: 14, fill: "var(--muted-foreground)" }}
               ticks={Array.from({ length: max + 1 }, (_, i) => i)}
               domain={[0, max]}
               allowDecimals={false}
