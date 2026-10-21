@@ -13,14 +13,15 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { FieldGroup } from "@/components/ui/field";
+import { Field, FieldLabel, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { useFinance } from "@/app/context/finance-context";
 import { budgetLimit, type Budget } from "@/lib/finance/model";
 import { BudgetComparison } from "./analysis-charts";
 import { BudgetRadar } from "./explore-widgets";
 import { BudgetPulse } from "./dashboard-widgets";
 import { FinanceBoard } from "./template-layout";
-import { MoneyInput, MonthPicker } from "./shared";
+import { Switch } from "@/components/ui/switch";
+import { MoneyInput, MonthPicker, Choice } from "./shared";
 import { useFinanceLocale } from "./locale";
 import { FinanceHeading } from "./heading";
 
@@ -30,6 +31,8 @@ export function BudgetsPage() {
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<Budget>();
   const [limit, setLimit] = useState(0);
+  const [scope, setScope] = useState("month");
+  const [fixed, setFixed] = useState(false);
   const [view, setView] = useState<"bars" | "radar">("bars");
   return (
     <div className="finance-page finance-budgets">
@@ -52,6 +55,7 @@ export function BudgetsPage() {
             <TabsContent value="bars" keepMounted>
               <BudgetComparison
                 onEdit={(b) => {
+                  setError(""); setScope("month"); setFixed(b.fixed);
                   setEditing(b);
                   setLimit(budgetLimit(b, month));
                 }}
@@ -68,7 +72,7 @@ export function BudgetsPage() {
         <Dialog
           open
           onOpenChange={(open) => {
-            if (!open) setEditing(undefined);
+            if (!open && !busy) setEditing(undefined);
           }}
         >
           <DialogContent size="sm" data-readable-feature data-finance-typography closeLabel={text("Đóng")}>
@@ -79,8 +83,7 @@ export function BudgetsPage() {
                 </FinanceHeading>
               </DialogTitle>
               <DialogDescription>
-                {text("Hạn mức cho tháng")} {month.slice(5)}/{month.slice(0, 4)}
-                .
+                {text("Mặc định áp dụng cho tháng chưa có hạn mức riêng. Điều chỉnh từng tháng không thay đổi tháng khác.")}
               </DialogDescription>
             </DialogHeader>
             <form
@@ -89,9 +92,13 @@ export function BudgetsPage() {
                 e.preventDefault();
                 try {
                   let budgetId = editing.resourceId;
-                  if (!budgetId) {const result = await action('budgets','POST',{id:editing.categoryId,category_id:editing.categoryId,name:editing.name,default_limit:0,fixed:editing.fixed});budgetId=result.id;setEditing({...editing,resourceId:budgetId});}
-                  const row = editing.monthRows?.find(r=>r.month===month+'-01');
-                  await action('budget_months',row?'PATCH':'POST',{id:row?.id??(budgetId!.slice(0,24)+month.replace('-','').padEnd(12,'0')),expectedRevision:row?.revision,budget_id:budgetId,month:month+'-01',limit_amount:limit});
+                  if (scope === "default") {
+                    await action("budgets",budgetId?"PATCH":"POST",{id:budgetId??editing.categoryId,expectedRevision:editing.revision,category_id:editing.categoryId,name:editing.name,default_limit:limit,fixed});
+                  } else {
+                    if (!budgetId) {const result = await action("budgets","POST",{id:editing.categoryId,category_id:editing.categoryId,name:editing.name,default_limit:editing.limit,fixed:editing.fixed});budgetId=result.id;setEditing({...editing,resourceId:budgetId,revision:result.revision});}
+                    const row = editing.monthRows?.find(r=>r.month===month+"-01");
+                    await action("budget_months",row?"PATCH":"POST",{id:row?.id??(budgetId!.slice(0,24)+month.replace("-","").padEnd(12,"0")),expectedRevision:row?.revision,budget_id:budgetId,month:month+"-01",limit_amount:limit});
+                  }
                 } catch(e) {setError(e instanceof Error?e.message:'Không lưu được.');return;}
                 notify("Đã cập nhật hạn mức.");
                 setEditing(undefined);
@@ -99,6 +106,7 @@ export function BudgetsPage() {
             >
               {error && <p role="alert">{error}</p>}
               <FieldGroup>
+                <Choice label={text("Phạm vi hạn mức")} value={scope} onChange={v=>{if(!busy){setScope(v);setLimit(v==="default"?editing.limit:budgetLimit(editing,month));}}} options={[{value:"month",label: `${text("Tháng")} ${month}`},{value:"default",label:text("Mặc định")}]} />
                 <MoneyInput
                   id="budget-limit"
                   label="Hạn mức (VND)"
@@ -106,11 +114,18 @@ export function BudgetsPage() {
                   onChange={setLimit}
                   sliderMax={10_000_000}
                 />
+                {scope === "default" && <Field orientation="horizontal"><Switch id="budget-fixed" checked={fixed} disabled={busy} onCheckedChange={setFixed}/><FieldLabel htmlFor="budget-fixed">{text("Chi phí cố định")}</FieldLabel></Field>}
+                <FieldDescription>{text("Hạn mức mặc định")}: {editing.limit.toLocaleString("vi-VN")} ₫</FieldDescription>
               </FieldGroup>
+              {scope === "month" && editing.monthRows?.some(r=>r.month===month+"-01") && <Button type="button" variant="outline" disabled={busy} onClick={async()=>{
+                const row=editing.monthRows!.find(r=>r.month===month+"-01")!;
+                try {await action("budget_months","DELETE",{id:row.id,expectedRevision:row.revision});notify("Đã dùng lại hạn mức mặc định cho tháng.");setEditing(undefined);} catch(e){setError(e instanceof Error?e.message:"Không lưu được.");}
+              }}>{text("Bỏ hạn mức riêng, dùng mặc định")}</Button>}
               <DialogFooter>
                 <Button
                   type="button"
                   variant="outline"
+                  disabled={busy}
                   onClick={() => setEditing(undefined)}
                 >
                   {text("Hủy")}
