@@ -6,10 +6,13 @@ import { getFetcher } from '@/app/api/global-fetcher';
 import type { FinanceData } from '@/lib/finance/model';
 import type { FinanceMessage } from '@/lib/finance/i18n';
 import { financeNumbers } from '@/lib/finance/wire';
+import { recentMonthRange, type FinancePeriodMode } from '@/lib/finance/period';
 import { todayKey } from '@/lib/learning/model';
 function useFinanceState() {
  const {data,error,mutate}=useSWR<FinanceData,Error>('/api/finance',async url=>financeNumbers(await getFetcher(url)) as FinanceData,{refreshInterval:60000});
  const [month,setMonth]=useState(()=>todayKey().slice(0,7));
+ const [periodMode,setPeriodMode]=useState<FinancePeriodMode>('calendar');
+ const period=periodMode==='recent-month'?recentMonthRange(data?.asOf??todayKey()):month;
  const [notice,notify]=useState<string|FinanceMessage>('');
  const [busy,setBusy]=useState(false);const lock=useRef(false);
  async function action(resource:string,method:string,values:Record<string,unknown>) {
@@ -23,7 +26,7 @@ function useFinanceState() {
   } catch(e) {notify(e instanceof Error?e.message:'Không lưu được.');throw e;}
   finally {lock.current=false;setBusy(false);}
  }
- return {data,error,month,setMonth,notice,notify,busy,action,reload:()=>{void mutate();}};
+ return {data,error,month,setMonth,period,periodMode,setPeriodMode,notice,notify,busy,action,reload:()=>{void mutate();}};
 }
 const FinanceContext=createContext<ReturnType<typeof useFinanceState>|null>(null);
 export function FinanceProvider({children}:{children:ReactNode}) {const state=useFinanceState();return <FinanceContext.Provider value={state}>{children}</FinanceContext.Provider>;}

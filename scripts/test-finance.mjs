@@ -44,6 +44,7 @@ try {
     exportTransactions,
     transactionKey,
   } = require(join(temporary, "finance/csv.js"));
+  const {recentMonthRange, calendarMonthRange, periodDays, inFinancePeriod, periodMonthShares} = require(join(temporary,"finance/period.js"));
   const data = financeDemo();
   const { createFinanceLocale } = require(join(temporary, "finance/i18n.js"));
   const { financeEnglish } = require(join(temporary, "finance/messages.js"));
@@ -240,6 +241,45 @@ try {
     assert.equal(parse("2026-10-14,Expense,100,expense,custom,bank,")[0].error, "");
     assert.equal(parse("2026-10-14,Refund,20,refund,custom,bank,")[0].error, "");
     assert.ok(parse("2026-10-14,A,100,expense,new_code,bank,", {...snapshot,accounts:data.accounts.map(a=>({...a,archivedAt:"2026-10-01"}))})[0].error);
+  });
+  test("recent calendar month includes exact boundaries and clamps leap/year ends", () => {
+    assert.deepEqual(recentMonthRange("2026-10-21"), {from:"2026-09-21",to:"2026-10-21"});
+    assert.deepEqual(recentMonthRange("2026-03-31"), {from:"2026-02-28",to:"2026-03-31"});
+    assert.deepEqual(recentMonthRange("2024-03-31"), {from:"2024-02-29",to:"2024-03-31"});
+    assert.deepEqual(recentMonthRange("2026-01-01"), {from:"2025-12-01",to:"2026-01-01"});
+    const range=recentMonthRange("2026-10-21");
+    assert.equal(periodDays(range).length,31);
+    assert.equal(inFinancePeriod("2026-09-20",range),false);
+    assert.equal(inFinancePeriod("2026-09-21",range),true);
+    assert.equal(inFinancePeriod("2026-10-21",range),true);
+    assert.equal(inFinancePeriod("2026-10-22",range),false);
+    assert.equal(periodDays("2026-10","2026-10-21").length,21);
+    assert.equal(periodDays("9999-12").length,31);
+    assert.deepEqual(calendarMonthRange("0001-02"),{from:"0001-02-01",to:"0001-02-28"});
+  });
+  test("rolling reports count income/refunds and exclude transfers from net totals", () => {
+    const range=recentMonthRange("2026-10-21"), base=data.transactions[0];
+    const rows=[
+      {...base,date:"2026-09-20",amount:999,kind:"expense"},
+      {...base,date:"2026-09-21",amount:100,kind:"expense",category:"food"},
+      {...base,date:"2026-10-01",amount:500,kind:"income"},
+      {...base,date:"2026-10-20",amount:20,kind:"refund",category:"food"},
+      {...base,date:"2026-10-21",amount:1000,kind:"transfer"},
+      {...base,date:"2026-10-22",amount:999,kind:"expense"},
+    ];
+    assert.deepEqual(monthlyTotals(rows,range),{income:500,expenses:80,refunds:20,net:420});
+    assert.equal(categorySpent(rows,"food",range),80);
+    assert.equal(rows.filter(r=>inFinancePeriod(r.date,range)).length,4);
+    assert.deepEqual(monthlyTotals(rows,"2026-09"),{income:0,expenses:1099,refunds:0,net:-1099});
+  });
+  test("rolling budget weights each month's override without mutating defaults", () => {
+    const budget={...data.budgets[0],limit:3100,monthlyLimits:{"2026-09":3000}};
+    const before=JSON.stringify(budget), range=recentMonthRange("2026-10-21");
+    assert.equal(budgetLimit(budget,range),3100); // 10/30 * 3000 + 21/31 * 3100
+    assert.equal(budgetLimit(budget,"2026-09"),3000);
+    assert.equal(budgetLimit(budget,"2026-10"),3100);
+    assert.equal(periodMonthShares({from:"9999-12-01",to:"9999-12-31"}).length,1);
+    assert.equal(JSON.stringify(budget),before);
   });
   test("CSV permits backfilled transactions before the original reporting start", () => {
     const header = csvTemplate.split("\n")[0];

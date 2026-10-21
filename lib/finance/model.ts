@@ -1,3 +1,4 @@
+import { inFinancePeriod, periodMonthShares, type FinancePeriod } from "./period";
 export type TransactionKind = "expense" | "income" | "transfer" | "refund";
 export type Transaction = {
   id: string;
@@ -31,8 +32,10 @@ export type Budget = {
   monthRows?: {id: string; month: string; revision: number}[];
   monthlyLimits?: Record<string, number>;
 };
-export const budgetLimit = (budget: Budget, month: string) =>
-  budget.monthlyLimits?.[month] ?? budget.limit;
+export const budgetLimit = (budget: Budget, period: FinancePeriod): number =>
+  typeof period === "string"
+    ? budget.monthlyLimits?.[period] ?? budget.limit
+    : Math.round(periodMonthShares(period).reduce((total,{month,share}) => total+(budget.monthlyLimits?.[month] ?? budget.limit)*share,0));
 export type Goal = {
   id: string;
   revision?: number;
@@ -81,8 +84,8 @@ export const compactMoney = (value: number) =>
   }).format(value / 1_000_000)} tr`;
 export const sum = <T>(items: T[], get: (item: T) => number) =>
   items.reduce((total, item) => total + get(item), 0);
-export function monthlyTotals(transactions: Transaction[], month: string) {
-  const rows = transactions.filter((t) => t.date.startsWith(month));
+export function monthlyTotals(transactions: Transaction[], period: FinancePeriod) {
+  const rows = transactions.filter((t) => inFinancePeriod(t.date, period));
   const income = sum(
     rows.filter((t) => t.kind === "income"),
     (t) => t.amount,
@@ -119,11 +122,11 @@ export function accountBalance(account: Account, transactions: Transaction[]) {
 export function categorySpent(
   transactions: Transaction[],
   category: string,
-  month: string,
+  period: FinancePeriod,
 ) {
   return sum(
     transactions.filter(
-      (t) => t.category === category && t.date.startsWith(month),
+      (t) => t.category === category && inFinancePeriod(t.date, period),
     ),
     (t) =>
       t.kind === "expense" ? t.amount : t.kind === "refund" ? -t.amount : 0,

@@ -1,5 +1,6 @@
 "use client";
 
+import { periodDays, periodRange } from "@/lib/finance/period";
 import { useState } from "react";
 import {
   Line,
@@ -26,25 +27,18 @@ import { ChartHelp, FinanceChartTooltip, SeriesControl } from "./chart-tools";
 import { useFinanceLocale } from "./locale";
 
 export function IncomeSpendingChart() {
-  const { data: loaded, month } = useFinance();
+  const { data: loaded, period } = useFinance();
   const data = loaded!;
   const { text, money, date, compactMoney, number } = useFinanceLocale();
   const [mode, setMode] = useState("cumulative");
   const [visible, setVisible] = useState(["income", "expenses"]);
-  const days =
-    month === data.asOf.slice(0, 7)
-      ? Number(data.asOf.slice(8))
-      : new Date(
-          Number(month.slice(0, 4)),
-          Number(month.slice(5)),
-          0,
-        ).getDate();
-  const chart = Array.from({ length: days }, (_, i) => {
-    const day = `${month}-${String(i + 1).padStart(2, "0")}`;
+  const range=periodRange(period);
+  const days=periodDays(period,data.asOf);
+  const chart = days.map(day => {
     const daily = data.transactions.filter((t) => t.date === day);
     const stats = monthlyTotals(
       mode === "daily" ? daily : data.transactions.filter((t) => t.date <= day),
-      month,
+      period,
     );
     return {
       date: day,
@@ -66,11 +60,11 @@ export function IncomeSpendingChart() {
   return (
     <Section
       className="finance-income-panel"
-      title="Nhịp thu chi trong tháng"
+      title="Nhịp thu chi trong kỳ"
       icon={ChartLine}
       description={text("Dữ liệu ghi nhận · {0} đến {1}", [
-        date(`${month}-01`),
-        date(`${month}-${days}`),
+        date(range.from),
+        date(days.at(-1) ?? range.to),
       ])}
       action={
         <ChartHelp>
@@ -87,12 +81,12 @@ export function IncomeSpendingChart() {
             className="finance-hero-value"
             data-finance-value
             data-finance-tone={
-              monthlyTotals(data.transactions, month).net < 0
+              monthlyTotals(data.transactions, period).net < 0
                 ? "danger"
                 : "balance"
             }
           >
-            {money(monthlyTotals(data.transactions, month).net)}
+            {money(monthlyTotals(data.transactions, period).net)}
           </p>
         </div>
         <Choice
@@ -119,7 +113,7 @@ export function IncomeSpendingChart() {
           <CartesianGrid vertical={false} strokeDasharray="4 4" />
           <XAxis
             dataKey="date"
-            tickFormatter={(v: string) => v.slice(8)}
+            tickFormatter={(v: string) => typeof period === "string" ? v.slice(8) : `${v.slice(8)}/${v.slice(5,7)}`}
             axisLine={false}
             tickLine={false}
             minTickGap={25}
@@ -206,7 +200,7 @@ export function BudgetComparison({
 }: {
   onEdit: (budget: Budget) => void;
 }) {
-  const { data: loaded, month } = useFinance();
+  const { data: loaded, period } = useFinance();
   const data = loaded!;
   const { text, money, compactMoney } = useFinanceLocale();
   const [selected, setSelected] = useState<string | null>(null);
@@ -214,8 +208,8 @@ export function BudgetComparison({
     .map((b) => ({
       id: b.id,
       name: text(b.name),
-      cap: budgetLimit(b, month),
-      spent: categorySpent(data.transactions, b.id, month),
+      cap: budgetLimit(b, period),
+      spent: categorySpent(data.transactions, b.id, period),
     }))
     .sort((a, b) => b.spent - a.spent);
   const current = rows.find((r) => r.id === selected) ?? rows[0];
@@ -227,7 +221,7 @@ export function BudgetComparison({
     <Section
       title="Hạn mức và thực tế"
       icon={SlidersHorizontal}
-      description="So sánh từng danh mục, nhận diện phần vượt"
+      description={typeof period === "string" ? "So sánh từng danh mục, nhận diện phần vượt" : "Hạn mức được phân bổ theo số ngày của từng tháng trong khoảng đã chọn."}
       action={
         <ChartHelp>
           {text(
@@ -312,7 +306,7 @@ export function BudgetComparison({
               if (b) onEdit(b);
             }}
           >
-            {text("Điều chỉnh hạn mức")}
+            {text(typeof period === "string" ? "Điều chỉnh hạn mức" : "Điều chỉnh theo tháng lịch")}
           </Button>
         </div>
       )}

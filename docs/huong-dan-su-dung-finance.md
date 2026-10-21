@@ -43,3 +43,11 @@ Phạm vi sản phẩm: [bối cảnh cô đọng](personal-finance-context.md).
 - **Danh mục**: xem danh sách, tìm theo tên/mã, lọc đang dùng/đã lưu trữ/tất cả. Có thể sửa tên, lưu trữ và khôi phục. Danh mục tùy tạo chưa dùng được sửa mã/loại hoặc xóa sau xác nhận. Mã/loại danh mục mặc định hoặc đã có giao dịch/ngân sách bị khóa để bảo vệ dữ liệu; dùng lưu trữ thay vì xóa.
 - **Tài khoản & khoản dự kiến**: thêm/sửa, tìm tài khoản và lọc lưu trữ. Tài khoản đã có giao dịch (kể cả tài khoản nhận chuyển khoản) không thể xóa; có thể lưu trữ và khôi phục. Sửa số dư đầu kỳ sẽ thay đổi báo cáo/số dư. Khoản dự kiến có xác nhận trước khi xóa.
 - **Ngân sách → Điều chỉnh hạn mức**: chọn **Mặc định** để chỉnh hạn mức chung và chi phí cố định; chọn tháng để chỉnh riêng tháng đó. **Bỏ hạn mức riêng, dùng mặc định** trả tháng đó về cấu hình chung, không thay đổi giao dịch. Tên ngân sách theo tên danh mục.
+
+## Bộ lọc 1 tháng gần đây
+
+Trên Tổng quan, Giao dịch và Ngân sách, chọn **Loại kỳ báo cáo → 1 tháng gần đây**. Khoảng tính lùi đúng một tháng lịch đến hôm nay theo ngày Finance (Asia/Ho_Chi_Minh), gồm cả ngày bắt đầu và kết thúc: ví dụ 21/09–21/10; ngày 31/03 lùi về 28/02 hoặc 29/02 trong năm nhuận. Khoảng ngày hiển thị ngay bên cạnh bộ chọn.
+
+Lựa chọn dùng chung khi chuyển giữa ba trang; tổng thu/chi, hoàn tiền, biểu đồ, danh sách và CSV xuất cùng theo khoảng này. Số dư tài khoản/mục tiêu vẫn là số hiện tại. **Tháng lịch** giữ cách xem/chọn tháng cũ. Mục tiêu không có bộ lọc lịch sử; Dòng tiền vẫn là dự báo tương lai theo 30/60/90 ngày.
+
+Ngân sách trong khoảng vắt qua hai tháng được phân bổ theo số ngày nằm trong từng tháng, dùng hạn mức riêng của mỗi tháng nếu có và làm tròn VND ở kết quả. **Điều chỉnh theo tháng lịch** chuyển về tháng hiện tại trước khi sửa; không ghi một hạn mức riêng cho khoảng lùi. Không thay đổi ngân sách hay giao dịch khi chỉ đổi bộ lọc.

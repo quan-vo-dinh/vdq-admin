@@ -135,7 +135,7 @@ export function GoalSpotlight() {
 }
 
 export function SpendingExplorer() {
-  const { data: loaded, month } = useFinance();
+  const { data: loaded, period } = useFinance();
   const data = loaded!;
   const { text, money, compactMoney, number } = useFinanceLocale();
   const [selected, setSelected] = useState<string | null>(null);
@@ -145,7 +145,7 @@ export function SpendingExplorer() {
     .map((b, i) => ({
       id: b.id,
       name: text(b.name),
-      net: categorySpent(data.transactions, b.id, month),
+      net: categorySpent(data.transactions, b.id, period),
       fill: palette[i % palette.length],
     }))
     .sort((a, b) => b.net - a.net);
@@ -270,19 +270,19 @@ export function SpendingExplorer() {
 }
 
 export function BudgetRadar() {
-  const { data: loaded, month } = useFinance();
+  const { data: loaded, period } = useFinance();
   const { text, money, number } = useFinanceLocale();
   const rows = loaded!.budgets
-    .filter((b) => budgetLimit(b, month) > 0)
+    .filter((b) => budgetLimit(b, period) > 0)
     .map((b) => ({
       name: text(b.name),
-      cap: budgetLimit(b, month),
-      spent: categorySpent(loaded!.transactions, b.id, month),
+      cap: budgetLimit(b, period),
+      spent: categorySpent(loaded!.transactions, b.id, period),
       limit: 100,
       used: Math.max(
         0,
-        (categorySpent(loaded!.transactions, b.id, month) /
-          budgetLimit(b, month)) *
+        (categorySpent(loaded!.transactions, b.id, period) /
+          budgetLimit(b, period)) *
           100,
       ),
     }));

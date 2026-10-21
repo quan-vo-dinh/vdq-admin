@@ -1,5 +1,12 @@
 // Finance UI copy. Keys stay separate from account/category IDs and user-entered content.
 export const financeEnglish: Record<string, string> = {
+  "Điều chỉnh theo tháng lịch": "Edit calendar-month budget",
+  "Hạn mức được phân bổ theo số ngày của từng tháng trong khoảng đã chọn.": "Budgets are prorated by the number of days in each calendar month within this range.",
+  "Hạn mức trong kỳ": "Budget for this period",
+  "Nhịp thu chi trong kỳ": "Income and spending over the period",
+  "Loại kỳ báo cáo": "Reporting period type",
+  "1 tháng gần đây": "Last month to today",
+  "Tháng lịch": "Calendar month",
   "Quản lý danh mục": "Manage categories",
   "Danh sách danh mục": "Category list",
   "Tìm danh mục": "Search categories",
