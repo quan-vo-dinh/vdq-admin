@@ -21,12 +21,12 @@ import StyleDivider from "@/app/components/shared/StyleDivider";
 
 export function OverviewPage() {
   const { text, money } = useFinanceLocale();
-  const { data: loaded, month } = useFinance();
+  const { data: loaded, period } = useFinance();
   const data = loaded!;
   const totals = overview(data);
   const over = data.budgets.filter(
     (b) =>
-      categorySpent(data.transactions, b.id, month) > budgetLimit(b, month),
+      categorySpent(data.transactions, b.id, period) > budgetLimit(b, period),
   );
   return (
     <div className="finance-page finance-overview">
@@ -37,10 +37,10 @@ export function OverviewPage() {
         {over.length > 0 && (
           <BudgetNotice
             noticeId={JSON.stringify([
-              month,
+              period,
               ...over.map((budget) => [
                 budget.id,
-                categorySpent(data.transactions, budget.id, month) - budgetLimit(budget, month),
+                categorySpent(data.transactions, budget.id, period) - budgetLimit(budget, period),
               ]),
             ])}
             title={text("{0} danh mục cần xem lại", [over.length])}
@@ -50,8 +50,8 @@ export function OverviewPage() {
                   text("{0} vượt {1}", [
                     text(b.name),
                     money(
-                      categorySpent(data.transactions, b.id, month) -
-                        budgetLimit(b, month),
+                      categorySpent(data.transactions, b.id, period) -
+                        budgetLimit(b, period),
                     ),
                   ]),
                 )

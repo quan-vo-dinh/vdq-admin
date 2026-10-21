@@ -418,17 +418,24 @@ export function PlanBadge() {
   );
 }
 export function MonthPicker() {
-  const { text } = useFinanceLocale();
-  const { month, setMonth } = useFinance();
+  const { text, date: formatDate } = useFinanceLocale();
+  const { month, setMonth, period, periodMode, setPeriodMode } = useFinance();
+  const modes=[{value:"calendar",label:text("Tháng lịch")},{value:"recent-month",label:text("1 tháng gần đây")}];
   const shift = (amount: number) => {
     const date = new Date(`${month}-01T12:00:00Z`);
     date.setUTCMonth(date.getUTCMonth() + amount);
     setMonth(date.toISOString().slice(0, 7));
   };
-  return <div role="group" aria-label={text("Kỳ báo cáo")} className="flex min-w-0 items-center gap-2">
-    <Button variant="outline" size="icon" aria-label={text("Kỳ trước")} disabled={month === '0001-01'} onClick={() => shift(-1)}><ChevronLeft /></Button>
-    <Input type="month" aria-label={text("Kỳ báo cáo")} className="w-auto min-w-0" min="0001-01" max="9999-12" value={month}
-      onChange={event => { const value = event.target.value; if (/^[0-9]{4}-(0[1-9]|1[0-2])$/.test(value) && value >= '0001-01') setMonth(value); }} />
-    <Button variant="outline" size="icon" aria-label={text("Kỳ sau")} disabled={month === '9999-12'} onClick={() => shift(1)}><ChevronRight /></Button>
+  return <div role="group" aria-label={text("Kỳ báo cáo")} className="flex min-w-0 flex-wrap items-center gap-2">
+    <Select items={modes} value={periodMode} onValueChange={value=>{if(value==="calendar"||value==="recent-month")setPeriodMode(value);}}>
+      <SelectTrigger aria-label={text("Loại kỳ báo cáo")}><SelectValue /></SelectTrigger>
+      <SelectContent><SelectGroup>{modes.map(mode=><SelectItem key={mode.value} value={mode.value}>{mode.label}</SelectItem>)}</SelectGroup></SelectContent>
+    </Select>
+    {periodMode==="calendar" ? <>
+      <Button variant="outline" size="icon" aria-label={text("Kỳ trước")} disabled={month === '0001-01'} onClick={() => shift(-1)}><ChevronLeft /></Button>
+      <Input type="month" aria-label={text("Kỳ báo cáo")} className="w-auto min-w-0" min="0001-01" max="9999-12" value={month}
+        onChange={event => { const value = event.target.value; if (/^[0-9]{4}-(0[1-9]|1[0-2])$/.test(value) && value >= '0001-01') setMonth(value); }} />
+      <Button variant="outline" size="icon" aria-label={text("Kỳ sau")} disabled={month === '9999-12'} onClick={() => shift(1)}><ChevronRight /></Button>
+    </> : typeof period!=="string" && <span className="text-sm text-muted-foreground" role="status">{formatDate(period.from)} – {formatDate(period.to)}</span>}
   </div>;
 }

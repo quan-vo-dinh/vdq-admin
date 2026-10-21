@@ -106,19 +106,19 @@ export function AccountSummary() {
 }
 
 export function BudgetPulse() {
-  const { data: loaded, month } = useFinance();
+  const { data: loaded, period } = useFinance();
   const data = loaded!;
   const { text, money, number } = useFinanceLocale();
-  const limit = sum(data.budgets, (b) => budgetLimit(b, month));
-  const spent = monthlyTotals(data.transactions, month).expenses;
+  const limit = sum(data.budgets, (b) => budgetLimit(b, period));
+  const spent = monthlyTotals(data.transactions, period).expenses;
   const over = data.budgets.filter(
     (b) =>
-      categorySpent(data.transactions, b.id, month) > budgetLimit(b, month),
+      categorySpent(data.transactions, b.id, period) > budgetLimit(b, period),
   ).length;
   const remaining = limit - spent;
   const fixed = sum(
     data.budgets.filter((b) => b.fixed),
-    (b) => budgetLimit(b, month),
+    (b) => budgetLimit(b, period),
   );
   const withinLimit = Math.max(0, data.budgets.length - over);
   return (
@@ -147,7 +147,7 @@ export function BudgetPulse() {
           </div>
           <div className="finance-budget-pulse-stats">
             <div>
-              <span>{text("Hạn mức tháng")}</span>
+              <span>{text(typeof period === "string" ? "Hạn mức tháng" : "Hạn mức trong kỳ")}</span>
               <strong>{money(limit)}</strong>
             </div>
             <div>

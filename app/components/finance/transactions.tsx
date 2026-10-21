@@ -52,6 +52,7 @@ import {
 import { transactionIcon, transactionTone } from "./appearance";
 import { TransactionEditor } from "./transaction-editor";
 import { ImportDialog } from "./import-dialog";
+import { inFinancePeriod, periodRange } from "@/lib/finance/period";
 import { AccountSummary } from "./dashboard-widgets";
 import {
   Accordion,
@@ -63,7 +64,7 @@ import {
 export function TransactionsPage() {
   const { text, money, date, locale, transactionDescription } =
     useFinanceLocale();
-  const { data: loaded, month, action, notify } = useFinance();
+  const { data: loaded, period, action, notify } = useFinance();
   const data = loaded!;
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState("all");
@@ -73,13 +74,13 @@ export function TransactionsPage() {
   const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState<Transaction>();
   const [importing, setImporting] = useState(false);
-  const stats = monthlyTotals(data.transactions, month);
+  const stats = monthlyTotals(data.transactions, period);
   const accounts = data.accounts;
   const categories = data.categories?.map(c => ({id: c.code, name: c.name})) ?? data.budgets;
   const inScope = data.transactions
     .filter(
       (t) =>
-        t.date.startsWith(month) &&
+        inFinancePeriod(t.date, period) &&
         (account === "all" ||
           t.account === account ||
           t.destination === account) &&
@@ -197,7 +198,7 @@ export function TransactionsPage() {
             disabled={!filtered.length}
             onClick={() =>
               downloadCsv(
-                `giao-dich-${month}.csv`,
+                `giao-dich-${typeof period === "string" ? period : `${period.from}_${period.to}`}.csv`,
                 exportTransactions(filtered),
               )
             }
@@ -237,7 +238,7 @@ export function TransactionsPage() {
           title={text("Sổ giao dịch")}
           icon={ReceiptText}
           description={text(`Kỳ {0} · Dữ liệu có đến ${data.asOf}`, [
-            month.split("-").reverse().join("/"),
+            typeof period === "string" ? period.split("-").reverse().join("/") : `${date(periodRange(period).from)} – ${date(periodRange(period).to)}`,
           ])}
         >
           <div className="flex flex-col gap-4">

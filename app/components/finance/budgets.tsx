@@ -27,7 +27,7 @@ import { FinanceHeading } from "./heading";
 
 export function BudgetsPage() {
   const { text } = useFinanceLocale();
-  const { month, action, busy, notify } = useFinance();
+  const { data, month, setMonth, periodMode, setPeriodMode, action, busy, notify } = useFinance();
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<Budget>();
   const [limit, setLimit] = useState(0);
@@ -55,9 +55,11 @@ export function BudgetsPage() {
             <TabsContent value="bars" keepMounted>
               <BudgetComparison
                 onEdit={(b) => {
+                  const editMonth=periodMode==="recent-month"?data!.asOf.slice(0,7):month;
+                  if(periodMode==="recent-month"){setMonth(editMonth);setPeriodMode("calendar");}
                   setError(""); setScope("month"); setFixed(b.fixed);
                   setEditing(b);
-                  setLimit(budgetLimit(b, month));
+                  setLimit(budgetLimit(b, editMonth));
                 }}
               />
             </TabsContent>
