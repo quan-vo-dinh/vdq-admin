@@ -18,6 +18,18 @@ không tạo owner mới và không lưu mật khẩu cá nhân trong Supabase A
 4. Khởi động lại server sau khi thay env. Chưa đủ cấu hình thì form bị vô hiệu hóa,
    API trả 503; không có tài khoản/mật khẩu mặc định.
 
+## Cấu hình local đã đồng bộ
+
+`.env` và `.env.local` chứa cùng cấu hình ứng dụng local, username, hash và key
+phát hành session của stack local. `.env.development.local` vẫn có ưu tiên cao
+hơn khi chạy dev; giữ URL, publishable key và owner IDs đồng nhất giữa các file.
+Không đồng bộ env cloud/tooling vào các file local này.
+
+Mật khẩu local được sinh ngẫu nhiên và lưu trong `.env.owner-login.local`
+(file được Git bỏ qua, quyền `0600`, Next không tự nạp file này). File chỉ để chủ
+máy lấy thông tin đăng nhập; nên lưu vào password manager rồi xóa file. Runtime
+xác thực bằng hash trong `.env`/`.env.local`, không đọc mật khẩu rõ từ file này.
+
 ## Cơ chế session và dữ liệu
 
 `POST /api/auth/credentials` kiểm tra Origin, giới hạn body 4 KiB, giới hạn lần thử,

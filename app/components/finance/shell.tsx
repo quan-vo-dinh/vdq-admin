@@ -2,20 +2,10 @@
 import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { useFinanceLocale } from "./locale";
 import { Suspense, useEffect, useState, type ReactNode } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFinance } from "@/app/context/finance-context";
 import { ApiError } from "@/app/api/global-fetcher";
@@ -29,36 +19,14 @@ const links = [
   { slug: "/goals", label: "Mục tiêu" },
   { slug: "/cash-flow", label: "Dòng tiền" },
 ];
-function FinanceBreadcrumb() {
+function FinanceDocumentTitle() {
   const { text } = useFinanceLocale();
   const path = usePathname();
   useEffect(() => {
     const current = links.find(({ slug }) => path === `/finance${slug}`);
     document.title = `${text("Tài chính cá nhân")} | ${text(current?.label ?? "Tổng quan")}`;
   }, [path, text]);
-  return (
-    <Breadcrumb aria-label={text("Vị trí hiện tại")}>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/finance" />}>
-            {text("Tài chính cá nhân")}
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>
-            {text(
-              links.find(({ slug }) => path === `/finance${slug}`)?.label ??
-                "Tổng quan",
-            )}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-        <BreadcrumbItem>
-          <Badge variant="outline">VND</Badge>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
+  return null;
 }
 export function FinanceLoading() {
   return (
@@ -79,12 +47,10 @@ export function FinanceShell({ children }: { children: ReactNode }) {
   const [adding, setAdding] = useState(false);
   return (
     <div className="finance-workspace">
-      <div className="pb-4"><PersonalizedIntro /></div>
-      <div className="finance-module-header">
-        <Suspense fallback={<Skeleton className="h-5 w-56" />}>
-          <FinanceBreadcrumb />
-        </Suspense>
-        <div className="flex shrink-0 items-center gap-2">
+      <Suspense fallback={null}><FinanceDocumentTitle /></Suspense>
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0 flex-1 basis-80"><PersonalizedIntro /></div>
+        <div className="flex flex-wrap items-center gap-2">
           <FinanceManage />
           <Button disabled={!data || !data.accounts.some(a=>!a.archivedAt)} size="sm" onClick={() => setAdding(true)}>
             <Plus data-icon="inline-start" />

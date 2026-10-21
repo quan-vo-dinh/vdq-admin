@@ -579,7 +579,6 @@ html.dark {
 
 /* Finance composes the Modern dashboard's shared board, cards and patterned dividers. */
 .finance-workspace { display:flex; flex-direction:column; gap:16px; min-width:0; --finance-inset:20px; }
-.finance-module-header { display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid var(--border); }
 .finance-page { display:flex; flex-direction:column; gap:16px; min-width:0; }
 .finance-page-intro { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding-block:4px; }
 .finance-page-intro > div:first-child > [data-finance-icon] { display:none; }
@@ -692,7 +691,6 @@ html.dark {
 @media (max-width:1023px) {
   .finance-overview-main,.finance-transaction-insights,.finance-budget-main,.finance-forecast-main,.finance-goals-summary { grid-template-columns:minmax(0,1fr); }
   .finance-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .finance-module-header { flex-wrap:wrap; gap:8px; padding-bottom:8px; }
 }
 @media (max-width:639px) {
   .finance-workspace { --finance-inset:16px; }
@@ -710,7 +708,6 @@ html.dark {
 
 /* Each finance task has its own visual rhythm, built from the shared primitives. */
 .finance-workspace { --finance-inset:24px; gap:24px; }
-.finance-module-header { align-items:center; padding-bottom:12px; }
 .finance-page { gap:24px; }
 .finance-page-intro { padding-block:8px; }
 .finance-board [data-finance-surface] { border:0; border-radius:0; overflow:hidden; }
