@@ -7,7 +7,11 @@ node_modules
 .data
 /docs
 /supabase
-/scripts
+/scripts/*
+!/scripts/test-developer-feed.mjs
+!/scripts/backend
+/scripts/backend/*
+!/scripts/backend/auth-policy.test.mjs
 /.agents
 /AGENTS.md
 /CLAUDE.md

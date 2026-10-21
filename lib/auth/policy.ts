@@ -4,6 +4,15 @@ export class AccessError extends Error {
   }
 }
 
+// Only explicitly retained demo reads and the real daily.dev feed are hosted.
+export function checkHostedFeature(pathname: string, method: string) {
+  const path = pathname.replace(/\/$/, '');
+  if (!/^\/api\/(?:blog|developer|ticket|userprofile|today)(?:\/|$)/.test(path)) return;
+  if (['GET', 'HEAD'].includes(method) &&
+      ['/api/blog', '/api/developer', '/api/developer/feed'].includes(path)) return;
+  throw new AccessError(403, 'feature_not_enabled');
+}
+
 export function safeNext(value: string | null | undefined) {
   // Reject encoded path separators/control chars too; no second decode downstream.
   if (!value || !value.startsWith('/') || value.startsWith('//') || /[\\\x00-\x20\x7f]|%/i.test(value)) return '/';

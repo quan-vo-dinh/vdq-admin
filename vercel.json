@@ -1,0 +1,4 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "node --test scripts/backend/auth-policy.test.mjs && node scripts/test-developer-feed.mjs && pnpm build"
+}
