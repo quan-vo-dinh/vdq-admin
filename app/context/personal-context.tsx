@@ -13,12 +13,12 @@ function usePersonalState(){
  const profile=useSWR<Profile>('/api/profile',read,{refreshInterval:60000});
  const prefs=useSWR<Preferences>('/api/preferences',read,{refreshInterval:60000});
  const {language,setLanguage}=useLanguage();const {theme,setTheme}=useTheme();
- const [error,setError]=useState('');const [saving,setSaving]=useState(false);const lock=useRef(false);
+ const [error,setError]=useState('');const [saving,setSaving]=useState(false);const lock=useRef(false);const themeTransition=useRef(false);
  // Server is authoritative. Only explicit UI actions PATCH; hydration/focus never writes.
- useEffect(()=>{if(prefs.data){setLanguage(prefs.data.locale);setTheme(prefs.data.theme);}},[prefs.data,setLanguage,setTheme]);
- async function preferences(values:Partial<Pick<Preferences,'locale'|'theme'>>){
+ useEffect(()=>{if(prefs.data){setLanguage(prefs.data.locale);if(!themeTransition.current)setTheme(prefs.data.theme);}},[prefs.data,setLanguage,setTheme]);
+ async function preferences(values:Partial<Pick<Preferences,'locale'|'theme'>>, applyTheme?: (theme: Preferences['theme']) => Promise<void>){
   if(!prefs.data||lock.current)return;lock.current=true;setSaving(true);setError('');
-  try{const saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:prefs.data.revision});await prefs.mutate(saved,{revalidate:false});}
+  try{const saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:prefs.data.revision});if(values.theme && applyTheme){themeTransition.current=true;try{await applyTheme(saved.theme);await prefs.mutate(saved,{revalidate:false});}finally{themeTransition.current=false;}}else await prefs.mutate(saved,{revalidate:false});}
   catch(e){setError((e as Error).message);await prefs.mutate();}finally{lock.current=false;setSaving(false);}
  }
  return {profile,prefs,language,theme,preferences,error,saving};
