@@ -51,7 +51,7 @@ export function TransactionEditor({
   const [error, setError] = useState("");
   if (!data) return null;
   const categories = financeCategories(data)
-    .filter(c => c.kind === (kind === "income" ? "income" : "expense") && (!c.archived_at || c.code === initial?.category))
+    .filter(c => !c.archived_at || c.code === initial?.category)
     .map(c => ({value: c.code, label: c.name}));
   const selectedCategory = categories.some((c) => c.value === category)
     ? category

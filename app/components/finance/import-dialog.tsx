@@ -150,7 +150,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             `Ngày YYYY-MM-DD không sau ${data!.asOf}; VND nguyên dương, tối đa 1 tỷ. Mã tài khoản: ${data!.accounts.map(a=>a.id).join(', ')}. Danh mục: ${financeCategories(data!).filter(c=>!c.archived_at).map(c=>c.code).join(', ')}.`,
           )}
         </p>
-        <p className="text-sm text-muted-foreground">{text("Mã category chưa tồn tại sẽ được tạo khi xác nhận nhập, tên ban đầu giống mã. income tạo danh mục thu nhập; expense/refund tạo danh mục chi tiêu. Mã cần 1–40 ký tự chữ thường, số, _ hoặc -, bắt đầu bằng chữ; không dùng transfer.")}</p>
+        <p className="text-sm text-muted-foreground">{text("Mã category chưa tồn tại sẽ được tạo khi xác nhận nhập, tên ban đầu giống mã. Một mã dùng được cho cả thu nhập, chi tiêu và hoàn tiền; loại thu/chi được xác định bởi kind của từng giao dịch. Mã cần 1–40 ký tự chữ thường, số, _ hoặc -, bắt đầu bằng chữ; không dùng transfer.")}</p>
         {!!newCategories.length && <Alert><AlertDescription>{text("Danh mục sẽ tạo mới")}: {newCategories.join(", ")}</AlertDescription></Alert>}
         {error && (
           <Alert variant="destructive">

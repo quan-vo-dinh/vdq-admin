@@ -226,7 +226,7 @@ try {
     assert.deepEqual([...new Set(rows.map(r => r.row.category))], ["suc_khoe", "thuong"]);
     assert.equal(JSON.stringify(data), before);
   });
-  test("CSV checks persisted category kind, archival, conflicting new kinds and archived accounts", () => {
+  test("CSV allows shared income/expense categories while checking archival and accounts", () => {
     const snapshot = {...data, categories: [
       {id:"1", code:"custom", name:"Custom", kind:"income", archived_at:null, revision:1},
       {id:"2", code:"old", name:"Old", kind:"expense", archived_at:"2026-10-01", revision:1},
@@ -234,9 +234,11 @@ try {
     const parse = (lines, input = snapshot) => parseFinanceCsv(`${csvTemplate.split("\n")[0]}\n${lines}`, input);
     assert.equal(parse("2026-10-14,Bonus,500,income,custom,bank,")[0].error, "");
     assert.equal(parse("2026-10-14,Bonus,500,income,custom,bank,")[0].newCategory, false);
-    for (const [kind,code] of [["expense","custom"],["refund","old"],["income","transfer"],["income",""],["expense","a".repeat(41)]])
+    for (const [kind,code] of [["refund","old"],["income","transfer"],["income",""],["expense","a".repeat(41)]])
       assert.ok(parse(`2026-10-14,Invalid,100,${kind},${code},bank,`)[0].error);
-    assert.ok(parse("2026-10-14,A,100,income,new_code,bank,\n2026-10-14,B,100,expense,new_code,bank,").every(r => r.error));
+    assert.ok(parse("2026-10-14,A,100,income,new_code,bank,\n2026-10-14,B,100,expense,new_code,bank,\n2026-10-14,C,20,refund,new_code,bank,").every(r => !r.error && r.newCategory));
+    assert.equal(parse("2026-10-14,Expense,100,expense,custom,bank,")[0].error, "");
+    assert.equal(parse("2026-10-14,Refund,20,refund,custom,bank,")[0].error, "");
     assert.ok(parse("2026-10-14,A,100,expense,new_code,bank,", {...snapshot,accounts:data.accounts.map(a=>({...a,archivedAt:"2026-10-01"}))})[0].error);
   });
   test("CSV permits backfilled transactions before the original reporting start", () => {
