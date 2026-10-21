@@ -1,6 +1,6 @@
 'use client';
 import { apiFetch } from "@/lib/api/transport";
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useEffectEvent, useRef, useState, type ReactNode } from 'react';
 import useSWR from 'swr';
 import { useTheme } from 'next-themes';
 import { useLanguage } from './language-context';
@@ -29,8 +29,13 @@ function usePersonalState(){
  const prefs=useSWR<Preferences>('/api/preferences',read,{refreshInterval:60000});
  const {language,setLanguage}=useLanguage();const {theme,setTheme}=useTheme();
  const [error,setError]=useState('');const [saving,setSaving]=useState(false);const lock=useRef(false);const themeTransition=useRef(false);
- // Server is authoritative. Only explicit UI actions PATCH; hydration/focus never writes.
- useEffect(()=>{if(prefs.data){setLanguage(prefs.data.locale);if(!themeTransition.current)setTheme(prefs.data.theme);}},[prefs.data,setLanguage,setTheme]);
+ // Only new server values synchronize preferences. next-themes changes its
+ // setter identity on theme/storage updates; that must not replay stale data.
+ const savedLocale=prefs.data?.locale,savedTheme=prefs.data?.theme;
+ const synchronize=useEffectEvent((locale:Preferences['locale'],mode:Preferences['theme'])=>{
+  setLanguage(locale);if(!themeTransition.current)setTheme(mode);
+ });
+ useEffect(()=>{if(savedLocale&&savedTheme)synchronize(savedLocale,savedTheme);},[savedLocale,savedTheme]);
  async function preferences(values:Partial<Pick<Preferences,'locale'|'theme'>>, applyTheme?: (theme: Preferences['theme']) => Promise<void>){
   if(!prefs.data||lock.current)return;lock.current=true;themeTransition.current=!!values.theme;setSaving(true);setError('');
   try{
