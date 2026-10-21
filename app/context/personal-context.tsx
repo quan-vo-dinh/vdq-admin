@@ -19,7 +19,7 @@ export async function patchPersonal<T>(url:string,body:unknown):Promise<T>{
    conflict:'Dữ liệu đã thay đổi ở tab khác. Bản nháp được giữ; đóng và mở lại để tải phiên bản mới.',
    invalid:'Một trường thông tin không hợp lệ hoặc dài quá 500 ký tự.',
   };
-  throw new Error(messages[result.code] ?? (response.status===401?'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.':'Không lưu được dữ liệu. Vui lòng thử lại.'));
+  throw new Error(messages[result.code] ?? (response.status===401?'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.':'Không lưu được dữ liệu. Vui lòng thử lại.'),{cause:response.status});
  }
  return response.json();
 }
@@ -32,9 +32,21 @@ function usePersonalState(){
  // Server is authoritative. Only explicit UI actions PATCH; hydration/focus never writes.
  useEffect(()=>{if(prefs.data){setLanguage(prefs.data.locale);if(!themeTransition.current)setTheme(prefs.data.theme);}},[prefs.data,setLanguage,setTheme]);
  async function preferences(values:Partial<Pick<Preferences,'locale'|'theme'>>, applyTheme?: (theme: Preferences['theme']) => Promise<void>){
-  if(!prefs.data||lock.current)return;lock.current=true;setSaving(true);setError('');
-  try{const saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:prefs.data.revision});if(values.theme && applyTheme){themeTransition.current=true;try{await applyTheme(saved.theme);await prefs.mutate(saved,{revalidate:false});}finally{themeTransition.current=false;}}else await prefs.mutate(saved,{revalidate:false});}
-  catch(e){setError((e as Error).message);await prefs.mutate();}finally{lock.current=false;setSaving(false);}
+  if(!prefs.data||lock.current)return;lock.current=true;themeTransition.current=!!values.theme;setSaving(true);setError('');
+  try{
+   let saved:Preferences;
+   try{saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:prefs.data.revision});}
+   catch(e){
+    // A second open tab can advance the revision. Retry this explicit preference
+    // once against current data, preserving all fields the user did not change.
+    if(!(e instanceof Error)||e.cause!==409)throw e;
+    const latest=await read<Preferences>('/api/preferences');
+    saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:latest.revision});
+   }
+   await prefs.mutate(saved,{revalidate:false});
+   if(values.theme){if(applyTheme)await applyTheme(saved.theme);else setTheme(saved.theme);}
+  }
+  catch(e){setError((e as Error).message);const latest=await prefs.mutate();if(latest)setTheme(latest.theme);}finally{themeTransition.current=false;lock.current=false;setSaving(false);}
  }
  return {profile,prefs,language,theme,preferences,error,saving};
 }
