@@ -1,7 +1,7 @@
 import 'server-only';
 import { backendEnvironment } from '@/lib/supabase/server';
 import { requireOwner } from './owner';
-import { AccessError, checkOrigin } from './policy';
+import { AccessError, checkOrigin, checkHostedFeature } from './policy';
 
 export function privateResponse(response: Response) {
   response.headers.set('Cache-Control', 'private, no-store');
@@ -18,10 +18,7 @@ export function withOwner<T extends Request>(handler: (request: T) => Response |
       const env = backendEnvironment();
       checkOrigin(request, env.origin);
       await requireOwner();
-      // Legacy demos stay in source; their endpoints are disabled outside local dev.
-      if (env.mode !== 'local' && /^\/api\/(?:blog|developer|ticket|userprofile|today)(?:\/|$)/.test(new URL(request.url).pathname)) {
-        throw new AccessError(403, 'feature_not_enabled');
-      }
+      if (env.mode !== 'local') checkHostedFeature(new URL(request.url).pathname, request.method);
       return privateResponse(await handler(request));
     } catch (error) { return accessFailure(error); }
   };

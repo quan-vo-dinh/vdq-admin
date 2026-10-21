@@ -5,8 +5,7 @@ import { FeedError } from "@/lib/developer/feed/service";
 import type { FeedSource } from "@/lib/developer/feed/model";
 async function handleGET(request: NextRequest) {
   const headers = { "Cache-Control": "private, no-store" };
-  // This workspace has no owner authentication yet. Production requires an explicit
-  // opt-in after the deployment is protected by an authenticated gateway.
+  // Owner authentication is enforced by withOwner; upstream access also requires opt-in.
   if (
     process.env.NODE_ENV === "production" &&
     process.env.DAILY_DEV_FEED_ENABLED !== "true"

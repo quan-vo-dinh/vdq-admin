@@ -26,3 +26,12 @@ test('owner env absent or mismatched fails closed',()=>{
   assert.throws(()=>policy.checkOwnerConfiguration('uuid','123',{APP_OWNER_USER_ID:'other',GITHUB_OWNER_ID:'123'}),{status:403});
   policy.checkOwnerConfiguration('uuid','123',{APP_OWNER_USER_ID:'uuid',GITHUB_OWNER_ID:'123'});
 });
+test('hosted feature policy permits retained demo reads and real feed without opening legacy writes',()=>{
+  for(const path of ['/api/developer','/api/developer/feed','/api/blog','/api/developer/feed/']) {
+    policy.checkHostedFeature(path,'GET');
+    policy.checkHostedFeature(path,'HEAD');
+    for(const method of ['POST','PUT','PATCH','DELETE']) assert.throws(()=>policy.checkHostedFeature(path,method),{status:403,code:'feature_not_enabled'});
+  }
+  for(const path of ['/api/today','/api/ticket','/api/userprofile/get-gallery','/api/developer/unknown','/api/blog/unknown']) assert.throws(()=>policy.checkHostedFeature(path,'GET'),{status:403,code:'feature_not_enabled'});
+  for(const path of ['/api/notes','/api/calendar','/api/profile','/api/preferences','/api/finance']) policy.checkHostedFeature(path,'POST');
+});
