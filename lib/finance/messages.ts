@@ -1,10 +1,9 @@
 // Finance UI copy. Keys stay separate from account/category IDs and user-entered content.
 export const financeEnglish: Record<string, string> = {
-  "Mã category chưa tồn tại sẽ được tạo khi xác nhận nhập, tên ban đầu giống mã. income tạo danh mục thu nhập; expense/refund tạo danh mục chi tiêu. Mã cần 1–40 ký tự chữ thường, số, _ hoặc -, bắt đầu bằng chữ; không dùng transfer.": "Unknown category codes will be created on confirmation, initially using the code as their name. income creates income categories; expense/refund creates expense categories. Codes must be 1–40 lowercase letters, digits, _ or -, starting with a letter. The code transfer is reserved.",
+  "Mã category chưa tồn tại sẽ được tạo khi xác nhận nhập, tên ban đầu giống mã. Một mã dùng được cho cả thu nhập, chi tiêu và hoàn tiền; loại thu/chi được xác định bởi kind của từng giao dịch. Mã cần 1–40 ký tự chữ thường, số, _ hoặc -, bắt đầu bằng chữ; không dùng transfer.": "Unknown category codes will be created on confirmation, initially using the code as their name. One code can be used for income, expenses and refunds; each transaction kind determines its direction. Codes must be 1–40 lowercase letters, digits, _ or -, starting with a letter. The code transfer is reserved.",
   "Danh mục sẽ tạo mới": "Categories to create",
   "Sẵn sàng · tạo danh mục mới": "Ready · create new category",
-  "Một mã danh mục không thể dùng cho cả thu nhập và chi tiêu.": "A category code cannot be used for both income and expenses.",
-  "Danh mục đã lưu trữ hoặc không đúng loại giao dịch.": "Category is archived or does not match the transaction type.",
+  "Danh mục đã lưu trữ.": "Category is archived.",
   "Đã thêm danh mục.": "Category added.",
   "Mã danh mục đã tồn tại, kể cả danh mục đã lưu trữ.": "This code already exists, including archived categories.",
   "Mã danh mục cần 1–40 ký tự: chữ thường, số, _ hoặc -; bắt đầu bằng chữ, không dùng transfer.": "Category codes must be 1–40 lowercase letters, digits, _ or -, starting with a letter. The code transfer is reserved.",

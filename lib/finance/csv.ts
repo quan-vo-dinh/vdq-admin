@@ -69,7 +69,6 @@ export function parseFinanceCsv(text: string, data: FinanceData) {
   if (!records.length || records.length > 1000)
     throw new Error("File cần có từ 1 đến 1.000 giao dịch.");
   const categories = new Map(financeCategories(data).map(c => [c.code, c]));
-  const proposedKinds = new Map<string, string>();
   const parsed = records.map((cells, i) => {
     const [date, description, raw, kind, category, account, destination = ""] =
       cells.map((v) => v.trim());
@@ -114,22 +113,15 @@ export function parseFinanceCsv(text: string, data: FinanceData) {
     )
       error = "Tài khoản nhận không hợp lệ";
     if (!error && kind !== "transfer") {
-      const expectedKind = kind === "income" ? "income" : "expense";
       const existing = categories.get(category);
       if (!categoryCodePattern.test(category) || category === "transfer")
         error = "Mã danh mục cần 1–40 ký tự: chữ thường, số, _ hoặc -; bắt đầu bằng chữ, không dùng transfer.";
-      else if (existing && (existing.archived_at || existing.kind !== expectedKind))
-        error = "Danh mục đã lưu trữ hoặc không đúng loại giao dịch.";
-      else if (!existing) {
-        const previous = proposedKinds.get(category);
-        proposedKinds.set(category, previous && previous !== expectedKind ? "conflict" : expectedKind);
-      }
+      else if (existing?.archived_at)
+        error = "Danh mục đã lưu trữ.";
     }
     return { row, error, line: i + 2, newCategory: !error && kind !== "transfer" && !categories.has(category) };
   });
-  return parsed.map(p => proposedKinds.get(p.row.category) === "conflict" && !p.error && p.row.kind !== "transfer"
-    ? {...p, error: "Một mã danh mục không thể dùng cho cả thu nhập và chi tiêu.", newCategory: false}
-    : p);
+  return parsed;
 }
 export function downloadCsv(filename: string, text: string) {
   downloadTextFile(filename, "\uFEFF" + text, "text/csv;charset=utf-8");
