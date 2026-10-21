@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useSyncExternalStore } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/lib/platform/navigation";
 import { useLanguage } from "@/app/context/language-context";
 import { currentUser } from "@/lib/profile";
 import { PageTitleIcon } from "./page-title-icon";

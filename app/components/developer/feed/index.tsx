@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import Image from "next/image";
+import Image from "@/lib/platform/image";
 import {
   ArrowUp,
   ArrowUpRight,

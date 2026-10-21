@@ -1,7 +1,7 @@
 "use client";
 import { useFinanceLocale } from "./locale";
 import type { ReactNode } from "react";
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import {
   ArrowUpRight,
   FlaskConical,

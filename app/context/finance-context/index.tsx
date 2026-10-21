@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api/transport";
 import { createContext, useContext, useRef, useState, type ReactNode } from 'react';
 import useSWR from 'swr';
 import { getFetcher } from '@/app/api/global-fetcher';
@@ -16,7 +17,7 @@ function useFinanceState() {
   lock.current=true;setBusy(true);
   try {
    const body=Object.fromEntries(Object.entries(values).map(([k,v])=>[k,['opening','amount','default_limit','limit_amount','target','allocated','monthly'].includes(k)?String(v):v]));
-   const r=await fetch(`/api/finance/${resource}`,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+   const r=await apiFetch(`/api/finance/${resource}`,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
    if(!r.ok) {const e=await r.json(); throw new Error(r.status===409?'Dữ liệu đã thay đổi. Giữ bản nháp; tải lại dữ liệu trước khi sửa tiếp.':`Không lưu được (${e.code}).`);}
    const result=await r.json();await mutate();return result;
   } catch(e) {notify(e instanceof Error?e.message:'Không lưu được.');throw e;}

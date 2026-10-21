@@ -1,4 +1,5 @@
 "use client";
+import { downloadTextFile } from "@/lib/platform/files";
 import type { ReactNode } from "react";
 import { useLanguage } from "@/app/context/language-context";
 import {
@@ -136,12 +137,5 @@ export function Status({ status }: { status: Source["status"] }) {
   );
 }
 export function downloadText(content: string, name: string) {
-  const url = URL.createObjectURL(
-    new Blob([content], { type: "text/plain;charset=utf-8" }),
-  );
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = name;
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadTextFile(name, content, "text/plain;charset=utf-8");
 }

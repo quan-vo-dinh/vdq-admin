@@ -1,0 +1,135 @@
+[
+  {
+    "path": "/apps/blog/create",
+    "module": "@/app/(dashboard-layout)/apps/blog/create/page.tsx"
+  },
+  {
+    "path": "/apps/blog/detail/:slug",
+    "module": "@/app/(dashboard-layout)/apps/blog/detail/[slug]/page.tsx"
+  },
+  {
+    "path": "/apps/blog/edit",
+    "module": "@/app/(dashboard-layout)/apps/blog/edit/page.tsx"
+  },
+  {
+    "path": "/apps/blog/manage-blog",
+    "module": "@/app/(dashboard-layout)/apps/blog/manage-blog/page.tsx"
+  },
+  {
+    "path": "/apps/blog/post",
+    "module": "@/app/(dashboard-layout)/apps/blog/post/page.tsx"
+  },
+  {
+    "path": "/apps/calendar",
+    "module": "@/app/(dashboard-layout)/apps/calendar/page.tsx"
+  },
+  {
+    "path": "/apps/notes",
+    "module": "@/app/(dashboard-layout)/apps/notes/page.tsx"
+  },
+  {
+    "path": "/apps/tickets/create",
+    "redirect": "/apps/tickets"
+  },
+  {
+    "path": "/apps/tickets",
+    "module": "@/app/(dashboard-layout)/apps/tickets/page.tsx"
+  },
+  {
+    "path": "/developer/ai",
+    "module": "@/app/(dashboard-layout)/developer/ai/page.tsx"
+  },
+  {
+    "path": "/developer/connections",
+    "module": "@/app/(dashboard-layout)/developer/connections/page.tsx"
+  },
+  {
+    "path": "/developer/feed",
+    "module": "@/app/(dashboard-layout)/developer/feed/page.tsx"
+  },
+  {
+    "path": "/developer/github",
+    "redirect": "/developer"
+  },
+  {
+    "path": "/developer/inbox",
+    "redirect": "/developer?view=inbox"
+  },
+  {
+    "path": "/developer",
+    "module": "@/app/(dashboard-layout)/developer/page.tsx"
+  },
+  {
+    "path": "/developer/reports",
+    "redirect": "/developer?panel=reports"
+  },
+  {
+    "path": "/developer/sources",
+    "redirect": "/developer?panel=sources"
+  },
+  {
+    "path": "/finance/budgets",
+    "module": "@/app/(dashboard-layout)/finance/budgets/page.tsx"
+  },
+  {
+    "path": "/finance/cash-flow",
+    "module": "@/app/(dashboard-layout)/finance/cash-flow/page.tsx"
+  },
+  {
+    "path": "/finance/goals",
+    "module": "@/app/(dashboard-layout)/finance/goals/page.tsx"
+  },
+  {
+    "path": "/finance",
+    "module": "@/app/(dashboard-layout)/finance/page.tsx"
+  },
+  {
+    "path": "/finance/transactions",
+    "module": "@/app/(dashboard-layout)/finance/transactions/page.tsx"
+  },
+  {
+    "path": "/icons/iconify",
+    "module": "@/app/(dashboard-layout)/icons/iconify/page.tsx"
+  },
+  {
+    "path": "/",
+    "redirect": "/developer"
+  },
+  {
+    "path": "/pages/form",
+    "module": "@/app/(dashboard-layout)/pages/form/page.tsx"
+  },
+  {
+    "path": "/pages/tables",
+    "module": "@/app/(dashboard-layout)/pages/tables/page.tsx"
+  },
+  {
+    "path": "/pages/user-profile",
+    "module": "@/app/(dashboard-layout)/pages/user-profile/page.tsx"
+  },
+  {
+    "path": "/auth/auth2/register",
+    "module": "@/app/auth/auth2/register/page.tsx",
+    "template": true
+  },
+  {
+    "path": "/auth/auth2/forgot-password",
+    "module": "@/app/auth/auth2/forgot-password/page.tsx",
+    "template": true
+  },
+  {
+    "path": "/auth/auth2/two-steps",
+    "module": "@/app/auth/auth2/two-steps/page.tsx",
+    "template": true
+  },
+  {
+    "path": "/auth/error",
+    "module": "@/app/auth/error/page.tsx",
+    "template": true
+  },
+  {
+    "path": "/auth/maintenance",
+    "module": "@/app/auth/maintenance/page.tsx",
+    "template": true
+  }
+]

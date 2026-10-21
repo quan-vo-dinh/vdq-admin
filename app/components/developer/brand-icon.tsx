@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "@/lib/platform/image";
 import { cn } from "@/lib/utils";
 import type { Provider } from "@/lib/developer/model";
 type Brand = "claude" | "codex" | "chatgpt" | "github";

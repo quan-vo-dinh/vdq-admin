@@ -4,7 +4,7 @@ import { requireOwner } from '@/lib/auth/owner';
 import { AccessError } from '@/lib/auth/policy';
 import { dbError, input, revision, uuid } from '@/lib/backend/mutations';
 import { todayKey } from '@/lib/learning/model';
-import { parseFinanceCsv } from './csv';
+import { categoryCodePattern, parseFinanceCsv } from './csv';
 import { financeWire } from './wire';
 import type { FinanceData } from './model';
 import type { Database } from '@/types/database';
@@ -72,7 +72,7 @@ export async function financeRequest(request:Request,resource?:string) {
   const id=uuid(body.id); if(typeof body.csv!=='string'||Buffer.byteLength(body.csv)>1_000_000) throw new AccessError(400,'invalid');
   let parsed; const data=await financeOverview(); try{parsed=parseFinanceCsv(body.csv,data);}catch{throw new AccessError(400,'invalid_csv');}
   if(parsed.some(r=>r.error)) throw new AccessError(400,'invalid_csv');
-  const rows=parsed.map(({row},i)=>({id:stableRowId(id,i),date:row.date,description:row.description,amount:String(row.amount),kind:row.kind,account_id:row.account,destination_account_id:row.destination??null,category_id:row.kind==='transfer'?null:data.categories!.find(c=>c.code===row.category)?.id??null}));
+  const rows=parsed.map(({row},i)=>({id:stableRowId(id,i),date:row.date,description:row.description,amount:String(row.amount),kind:row.kind,account_id:row.account,destination_account_id:row.destination??null,category_code:row.kind==='transfer'?null:row.category}));
   const r=await db.rpc('finance_import',{p_id:id,p_rows:rows}); dbError(r.error); return Response.json({count:r.data});
  }
  if(!resources.includes(resource as Resource)) throw new AccessError(404,'missing');
@@ -131,6 +131,11 @@ export async function financeRequest(request:Request,resource?:string) {
    }
   }
  };
+ if(key==='categories') {
+  if(values.code!==undefined && (typeof values.code!=='string'||!categoryCodePattern.test(values.code)||values.code==='transfer')) throw new AccessError(400,'invalid_category_code');
+  if(values.name!==undefined && (typeof values.name!=='string'||!values.name.trim()||values.name.trim().length>80)) throw new AccessError(400,'invalid_category_name');
+  if(values.kind!==undefined && !['income','expense'].includes(String(values.kind))) throw new AccessError(400,'invalid_category_kind');
+ }
  const result=await perform();
  if(request.method==='POST'&&result.error?.code==='23505') {
   const r=await db.from(table).select('id,revision').eq('id',id).eq('owner_id',user.id).maybeSingle();dbError(r.error);if(!r.data) throw new AccessError(409,'conflict');return Response.json(r.data);

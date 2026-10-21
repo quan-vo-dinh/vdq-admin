@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import Image from '@/lib/platform/image'
 import CardBox from '@/app/components/shared/CardBox'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import {

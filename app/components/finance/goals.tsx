@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api/transport";
 
 import { FinancePageHeader } from "./page-header";
 import { DashboardCard } from "@/app/components/shared/dashboard-card";
@@ -146,7 +147,7 @@ function GoalEditor({
               const saved=await action('goals',initial||savedRevision?'PATCH':'POST',{...goal, expectedRevision:savedRevision??initial?.revision});
               setSavedRevision(saved.revision);
               if(file||removeImage){
-                const r=await fetch(`/api/finance/goals/image?id=${goal.id}&revision=${saved.revision}`,{method:file?'POST':'DELETE',headers:file?{'Content-Type':file.type}:undefined,body:file});
+                const r=await apiFetch(`/api/finance/goals/image?id=${goal.id}&revision=${saved.revision}`,{method:file?'POST':'DELETE',headers:file?{'Content-Type':file.type}:undefined,body:file});
                 if(!r.ok)throw new Error(r.status===409?'Mục tiêu đã thay đổi. Ảnh cũ được giữ; tải lại trước khi lưu.':'Đã lưu thông tin mục tiêu, nhưng chưa lưu ảnh. Giữ bản nháp để thử lại.');
                 const attached=await r.json();setSavedRevision(attached.revision);
                 if(attached.cleanupPending)notify('Đã lưu ảnh; ảnh cũ cần dọn qua media cleanup.');

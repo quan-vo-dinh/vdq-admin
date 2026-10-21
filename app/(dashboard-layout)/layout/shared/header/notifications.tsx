@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import * as NotificationData from "./data";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";

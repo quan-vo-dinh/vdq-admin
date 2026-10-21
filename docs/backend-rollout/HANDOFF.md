@@ -1,5 +1,13 @@
 # Bàn giao mới nhất P10/P11 — 2026-10-20
 
+## Chỉ dẫn tiếp theo cập nhật 21/10/2026
+
+User yêu cầu cập nhật kế hoạch theo **Capacitor cho toàn bộ dashboard Web + APK Android**. Đọc [P12 mới](phase-12-mobile-future.md), [README](README.md) và [U12](USER_SETUP.md#u12--web--android-capacitor). Đã cập nhật tài liệu; chưa cài Capacitor/SDK, chưa tạo Android project/signing key/APK và chưa chạy mobile acceptance. Không coi việc user giao viết plan là yêu cầu triển khai/deploy ngay.
+
+Hướng đã chốt: giữ web/API Next.js + Supabase, shared feature UI/logic và mobile React static entry riêng; platform adapters, mobile owner session/secure storage, full route matrix, thiết bị thật và release/rollback. Không làm lại quyết định thành PWA/TWA hoặc kết thúc bằng một flow Finance.
+
+Production đã deploy; auth credentials từ env đã chạy cùng GitHub, Profile save/Finance backfill đã có evidence bổ sung. Xem [owner login](evidence/OWNER-ENV-LOGIN.md), [Profile/Finance](evidence/PROFILE-FINANCE-BACKFILL.md) và evidence P11. Các trạng thái “chưa deploy”, “P10–P12 chưa triển khai” phía dưới là lịch sử; P12 hiện **planned**, P11 không tự chuyển PASS.
+
 **P10 PASS local. P11 PARTIAL, đã có cloud migrations; chưa deploy.** Phần P08/P09 và trạng thái PARTIAL cũ bên dưới là lịch sử.
 
 1. Không tạo lại Vercel hoặc bật lại quyền Chrome: project https://vercel.com/bins-projects-c818da1e/vdq-admin, ID prj_42afjCgU71NWGZY0NIISVDKSNcwR; domain vdq-admin.vercel.app (No Deployment), Next.js/Node22/bom1. Sáu env Production đã lưu; còn APP_OWNER_USER_ID cloud. Preview/Development không có app DB env.
@@ -115,3 +123,7 @@ User yêu cầu **bỏ qua import iCloud Keychain**. Đã hủy nhánh lưu key 
 User đã yêu cầu đồng bộ bản sửa lên GitHub và thiết lập luồng Git/Preview/Production. Vercel project vdq-admin đã kết nối repository quan-vo-dinh/vdq-admin bằng `vercel git connect`; không tạo project/domain mới. `vercel.json` chạy auth-policy tests → daily.dev service tests → Next build; một bước thất bại sẽ ngăn deployment mới. `.vercelignore` chỉ mở lại hai test scripts cần cho build, giữ tooling còn lại bị loại khỏi upload CLI.
 
 Luồng: nhánh codex/* → push/PR → Preview build → kiểm tra → merge main → Vercel tự production deployment. Không deploy working tree bằng CLI trong luồng thường lệ. Preview không được copy env/credentials production; backend phải fail closed khi chưa có môi trường test riêng. Full lint hiện baseline17errors/45warnings, không đưa full lint đang đỏ thành gate giả định PASS. Không chạy migrations/seed/bootstrap từ build hoặc Git push.
+
+## P12 thực thi — 21/10/2026 (ưu tiên hơn trạng thái planned ở trên)
+
+Đã có mobile React/Vite entry dùng chung views/adapters, Capacitor8 Android project, owner bearer xuyên repository/RLS, secure vault native, credentials/PKCE flow và scripts/build. Web/mobile typecheck/build và Android debug/unsigned release PASS local. **P12 IN PROGRESS, chưa PASS**: browser hiện bị host disable; CSV/full module UI, thiết bị thật, OAuth native, performance, signed release/cloud rollout chưa nghiệm thu. Không deploy/commit/push/cloud migrate. Xem [P12 evidence](evidence/P12.md) và [mobile runbook](../../mobile/README.md). User đã tự login preview localhost5173 và sẽ kết nối Android. Không import cookie/JWT tự ký để vượt gate.

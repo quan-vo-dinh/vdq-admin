@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import { Circle, Eye, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { BlogPostType } from "../../../(dashboard-layout)/types/apps/blog";
@@ -11,7 +11,7 @@ import {
   BlogContextProps,
 } from "@/app/context/blog-context/index";
 import { useEffect, useContext } from "react";
-import Image from "next/image";
+import Image from "@/lib/platform/image";
 
 interface Btype {
   post: BlogPostType;

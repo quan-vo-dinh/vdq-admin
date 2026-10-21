@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/lib/platform/navigation";
 import { BookOpen, CalendarDays, ChartNoAxesCombined, Code2, FilePenLine, LayoutDashboard, ListTodo, NotebookPen, Plug, ReceiptText, Rss, ScanFace, ShieldCheck, Sparkles, Target, TrendingUp, Wallet, type LucideIcon } from "lucide-react";
 
 // Specific routes precede section fallbacks. Icons decorate the visible title.

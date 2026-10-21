@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api/transport";
 import {createContext,useContext,useEffect,useRef,useState,useSyncExternalStore,type ReactNode} from 'react';
 import useSWR from 'swr';
 import {getFetcher} from '@/app/api/global-fetcher';
@@ -13,7 +14,7 @@ function useLearningState(){
  const data=loaded??{version:1 as const,today,habits:[]};
  async function action(resource:string,method:string,body:Record<string,unknown>){
   if(lock.current)throw new Error('Đang lưu.');lock.current=true;setBusy(true);setFailure('');
-  try{const r=await fetch('/api/learning/'+resource,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status===409?'Dữ liệu/ngày đã thay đổi. Bản nháp được giữ; tải lại rồi mở lại để cập nhật.':'Không lưu được buổi học.');const next=await r.json();await mutate(next,false);return next as typeof data;}
+  try{const r=await apiFetch('/api/learning/'+resource,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status===409?'Dữ liệu/ngày đã thay đổi. Bản nháp được giữ; tải lại rồi mở lại để cập nhật.':'Không lưu được buổi học.');const next=await r.json();await mutate(next,false);return next as typeof data;}
   catch(e){setFailure(e instanceof Error?e.message:'Không lưu được.');throw e;}finally{lock.current=false;setBusy(false);}
  }
  async function createHabit(values:HabitValues,id:string){await action('habits','POST',{...values,id});}

@@ -7,7 +7,7 @@ import { completeOwnerSession } from './owner-session-flow';
 
 // Only called AFTER checking the env password. Admin credentials issue a session;
 // all application data still uses the normal user session and existing RLS.
-export async function issueOwnerSession() {
+export async function issueOwnerSession(target?: Awaited<ReturnType<typeof serverSupabase>>) {
   const env = backendEnvironment();
   const key = process.env.OWNER_SESSION_SECRET_KEY;
   const ownerId = process.env.APP_OWNER_USER_ID;
@@ -17,7 +17,8 @@ export async function issueOwnerSession() {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
     global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
   });
-  const client = await serverSupabase();
+  const client = target ?? await serverSupabase();
+  let session: import("@supabase/supabase-js").Session | null = null;
   await completeOwnerSession(ownerId, githubId, {
     async owner() {
       const { data, error } = await admin.auth.admin.getUserById(ownerId);
@@ -38,9 +39,11 @@ export async function issueOwnerSession() {
     },
     async verify(hash) {
       const { data, error } = await client.auth.verifyOtp({ type: 'email', token_hash: hash });
+      session = data.session;
       return { userId: error ? undefined : data.user?.id, issued: Boolean(data.session) };
     },
     authorize: () => requireOwner(client),
     revoke: () => client.auth.signOut({ scope: 'local' }),
   });
+  return session as import("@supabase/supabase-js").Session | null;
 }

@@ -1,7 +1,7 @@
 'use client'
 import { HeadingText } from "@/app/components/shared/heading-text";
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from '@/lib/platform/image'
+import Link from '@/lib/platform/link'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import {
   Dialog,

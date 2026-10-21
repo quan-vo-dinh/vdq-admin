@@ -1,5 +1,6 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { saveTextFile } from "@/lib/platform/files";
+import { useSearchParams } from "@/lib/platform/navigation";
 import { validDay } from "@/lib/today/model";
 import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { HeadingText } from "@/app/components/shared/heading-text";
@@ -260,20 +261,14 @@ function CalendarWorkspace({ initialDate }: { initialDate?: string }) {
     }
   }
   function exportCalendar() {
-    const url = URL.createObjectURL(
-      new Blob([calendarICS(visible)], { type: "text/calendar;charset=utf-8" }),
-    );
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `calendar-${dateKey(rangeStart)}.ics`;
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    void saveTextFile(`calendar-${dateKey(rangeStart)}.ics`, calendarICS(visible), 'text/calendar;charset=utf-8').then(() => {
     setNotice(
       text(
         `Đã xuất ${visible.length} kế hoạch trong phạm vi đang xem.`,
         `Exported ${visible.length} plans in the current view.`,
       ),
     );
+    }).catch(() => setActionError('Không xuất được file. Vui lòng thử lại.'));
   }
   const sidebarProps = {
     date,

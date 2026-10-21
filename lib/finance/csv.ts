@@ -1,3 +1,4 @@
+import { downloadTextFile } from "../platform/files";
 import type { FinanceData, Transaction, TransactionKind } from "./model";
 const header = [
   "date",
@@ -19,6 +20,17 @@ export const transactionKey = (t: Transaction) =>
     t.account,
     t.destination ?? "",
   ].join("|");
+export const categoryCodePattern = /^[a-z][a-z0-9_-]{0,39}$/;
+
+// Demo snapshots predate persisted categories; production always provides them.
+export function financeCategories(data: FinanceData) {
+  return data.categories ?? [
+    ...data.budgets.map(b => ({code: b.id, name: b.name, kind: "expense", archived_at: b.archivedAt})),
+    {code: "salary", name: "Lương thực nhận", kind: "income", archived_at: null},
+    {code: "freelance", name: "Thu nhập khác", kind: "income", archived_at: null},
+  ];
+}
+
 export function parseFinanceCsv(text: string, data: FinanceData) {
   // RFC4180-style quoted fields, escaped quotes, CRLF and embedded newlines.
   const rows: string[][] = [];
@@ -56,7 +68,9 @@ export function parseFinanceCsv(text: string, data: FinanceData) {
   const records = rows.filter((r) => r.some((v) => v.trim()));
   if (!records.length || records.length > 1000)
     throw new Error("File cần có từ 1 đến 1.000 giao dịch.");
-  return records.map((cells, i) => {
+  const categories = new Map(financeCategories(data).map(c => [c.code, c]));
+  const proposedKinds = new Map<string, string>();
+  const parsed = records.map((cells, i) => {
     const [date, description, raw, kind, category, account, destination = ""] =
       cells.map((v) => v.trim());
     const amount = Number(raw);
@@ -90,32 +104,35 @@ export function parseFinanceCsv(text: string, data: FinanceData) {
       error = "Kiểm tra nội dung / số tiền VND";
     else if (
       !["income", "expense", "transfer", "refund"].includes(kind) ||
-      !data.accounts.some((a) => a.id === account)
+      !data.accounts.some((a) => a.id === account && !a.archivedAt)
     )
       error = "Loại hoặc tài khoản không hợp lệ";
     else if (
       kind === "transfer" &&
       (account === destination ||
-        !data.accounts.some((a) => a.id === destination))
+        !data.accounts.some((a) => a.id === destination && !a.archivedAt))
     )
       error = "Tài khoản nhận không hợp lệ";
-    else if (
-      (kind === "expense" || kind === "refund") &&
-      !data.budgets.some((b) => b.id === category)
-    )
-      error = "Danh mục không hợp lệ";
-    return { row, error, line: i + 2 };
+    if (!error && kind !== "transfer") {
+      const expectedKind = kind === "income" ? "income" : "expense";
+      const existing = categories.get(category);
+      if (!categoryCodePattern.test(category) || category === "transfer")
+        error = "Mã danh mục cần 1–40 ký tự: chữ thường, số, _ hoặc -; bắt đầu bằng chữ, không dùng transfer.";
+      else if (existing && (existing.archived_at || existing.kind !== expectedKind))
+        error = "Danh mục đã lưu trữ hoặc không đúng loại giao dịch.";
+      else if (!existing) {
+        const previous = proposedKinds.get(category);
+        proposedKinds.set(category, previous && previous !== expectedKind ? "conflict" : expectedKind);
+      }
+    }
+    return { row, error, line: i + 2, newCategory: !error && kind !== "transfer" && !categories.has(category) };
   });
+  return parsed.map(p => proposedKinds.get(p.row.category) === "conflict" && !p.error && p.row.kind !== "transfer"
+    ? {...p, error: "Một mã danh mục không thể dùng cho cả thu nhập và chi tiêu.", newCategory: false}
+    : p);
 }
 export function downloadCsv(filename: string, text: string) {
-  const url = URL.createObjectURL(
-    new Blob(["\uFEFF", text], { type: "text/csv;charset=utf-8" }),
-  );
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadTextFile(filename, "\uFEFF" + text, "text/csv;charset=utf-8");
 }
 export function exportTransactions(rows: Transaction[]) {
   const escape = (value: string | number) => {

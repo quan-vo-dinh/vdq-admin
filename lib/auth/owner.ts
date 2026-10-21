@@ -1,11 +1,12 @@
 import 'server-only';
+import { requestAuth } from './request-context';
 import { serverSupabase } from '@/lib/supabase/server';
 import { AccessError, checkOwnerConfiguration } from './policy';
 
 export async function requireOwner(client?: Awaited<ReturnType<typeof serverSupabase>>) {
   const supabase = client ?? await serverSupabase();
   // getUser verifies with Auth. Never authorize using getSession/cookie/user_metadata.
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser(requestAuth.getStore()?.token);
   if (error || !user) throw new AccessError(401, 'unauthenticated');
   const { data, error: registryError } = await supabase.rpc('assert_owner');
   if (registryError) {

@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import NavItem from "../nav-items/index";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/lib/platform/navigation";
 import { useSidebar } from "@/components/ui/sidebar";
 import { MenuItem, ChildItem } from "../sidebaritems";
 import { useLanguage } from "@/app/context/language-context";

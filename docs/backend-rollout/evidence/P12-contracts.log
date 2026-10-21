@@ -1,0 +1,71 @@
+$ node --test scripts/mobile/*.test.mjs
+TAP version 13
+# Subtest: mobile origin/preflight is exact and does not enable cookie credentials
+ok 1 - mobile origin/preflight is exact and does not enable cookie credentials
+  ---
+  duration_ms: 12.651833
+  type: 'test'
+  ...
+# Subtest: invalid Authorization is never interpreted as absent/cookie fallback
+ok 2 - invalid Authorization is never interpreted as absent/cookie fallback
+  ---
+  duration_ms: 1.006042
+  type: 'test'
+  ...
+# Subtest: credentials stream is bounded without Content-Length and malformed input rejected
+ok 3 - credentials stream is bounded without Content-Length and malformed input rejected
+  ---
+  duration_ms: 3.266334
+  type: 'test'
+  ...
+# Subtest: every user dashboard route is mapped without reviving Today or internal layout pages
+ok 4 - every user dashboard route is mapped without reviving Today or internal layout pages
+  ---
+  duration_ms: 3.796625
+  type: 'test'
+  ...
+# Subtest: slow credential stream is cancelled at the deadline
+ok 5 - slow credential stream is cancelled at the deadline
+  ---
+  duration_ms: 21.727875
+  type: 'test'
+  ...
+# Subtest: cold restore is single-flight; only refresh/PKCE reach persistent storage
+ok 6 - cold restore is single-flight; only refresh/PKCE reach persistent storage
+  ---
+  duration_ms: 4.478
+  type: 'test'
+  ...
+# Subtest: offline refresh retains secure token and never invents a saved session
+ok 7 - offline refresh retains secure token and never invents a saved session
+  ---
+  duration_ms: 1.573959
+  type: 'test'
+  ...
+# Subtest: invalid rotated refresh clears private tokens and expires UI
+ok 8 - invalid rotated refresh clears private tokens and expires UI
+  ---
+  duration_ms: 1.381125
+  type: 'test'
+  ...
+# Subtest: logout waits for refresh then revokes rotated session and clears vault
+ok 9 - logout waits for refresh then revokes rotated session and clears vault
+  ---
+  duration_ms: 1.670417
+  type: 'test'
+  ...
+# Subtest: OAuth callback binds host/path/state, expires, and cannot replay
+ok 10 - OAuth callback binds host/path/state, expires, and cannot replay
+  ---
+  duration_ms: 2.159375
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 563.271792

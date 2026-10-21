@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-21T09:48:53.819Z",
+  "result": "PASS",
+  "envSecretValuesChecked": 7,
+  "staticFiles": 345,
+  "totalJsBytes": 3682142,
+  "totalJsGzipBytes": 1191722,
+  "initialJsBytes": 834286,
+  "lazyEntries": 34,
+  "artifacts": [
+    {
+      "path": "mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+      "bytes": 47639833,
+      "sha256": "846af19cba2723fa275c3b1d4cc1327945c0b5c218208ab9f58456ed3cfe3abe"
+    },
+    {
+      "path": "mobile/android/app/build/outputs/apk/release/app-release-unsigned.apk",
+      "bytes": 45612652,
+      "sha256": "73fe6450d25f31d9a4b971f65b301b0aa32f6fc2fbdac68fd16b5c87f3c9ae31"
+    }
+  ],
+  "nativeAcceptance": "PENDING real device and user signing key"
+}

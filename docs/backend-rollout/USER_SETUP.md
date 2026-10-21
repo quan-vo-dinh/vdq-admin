@@ -160,10 +160,20 @@ không có email/password fallback trong UI hoặc runtime app.
 - [ ] Cho phép migration/import/deploy bản đã đạt QA khi bắt đầu phase thực thi này; lúc đó xử lý tài khoản/consent còn thiếu. Lượt viết tài liệu hiện tại chưa publish.
 - [ ] Đăng nhập owner và thử lưu dữ liệu trên domain production, reload/thiết bị khác; xác nhận backup đầu tiên và workflow manual/tự động đã chọn trước dùng dữ liệu thật hằng ngày; không bắt buộc dựng job mới.
 
-## U12 — tương lai Android
+## U12 — Web + Android Capacitor
 
-- [ ] Chỉ setup nhánh đang làm: PWA cần tên/icon; APK sau mới cần app ID/signing keystore và backup khóa. Native/bearer/deep-link adapter riêng chỉ khi chọn làm native.
-- [ ] Phân biệt tự cài APK với phát hành store; không mặc định đăng ký hay trả phí Google Play.
+Đã chốt **Capacitor, toàn bộ dashboard**, không hỏi lại PWA/TWA hay chỉ làm một module. [P12](phase-12-mobile-future.md) là kế hoạch hiện hành; chưa có APK.
+
+- [ ] Chốt tên hiển thị/icon/splash dựa trên nhận diện dashboard hiện tại và Android applicationId ổn định. Có thể chuẩn bị asset từ nguồn hiện có; không tự công bố ID/signature cuối.
+- [ ] Chọn thiết bị Android thật để kiểm tra (model/RAM/Android/WebView), kết nối cài APK; ghi baseline và performance budgets. Không có thiết bị thì phần nghiệm thu đó vẫn pending.
+- [ ] Xác nhận Android Studio/SDK/JDK/licenses và dung lượng công cụ khi bắt đầu thực thi; pin version theo Capacitor đã chọn, không đổi toolchain web tùy tiện.
+- [ ] User giữ release signing keystore/password và backup ngoài Git; agent chỉ cần quyền dùng để build, không in key/password vào log/chat. Debug key không phải release key cuối.
+- [ ] Chốt chính xác GitHub mobile redirect/App Links sau khi có applicationId và certificate; giữ callback web hiện tại. Không mở signup/manual linking.
+- [ ] Cấp cấu hình public API base cho APK; credentials/hash/privileged keys vẫn ở backend. Mobile secure-storage adapter và bearer auth thuộc P12, không phải mục tự hoãn.
+- [ ] Phân phối APK nội bộ trước; Google Play/AAB, iOS, OTA hoặc paid build không mặc định trong scope.
+- [ ] Nghiệm thu đủ module/flow trong ma trận P12 trên web và Android, gồm file chooser/CSV/goal image, app resume, đăng nhập hai cách và dữ liệu cùng backend. Không dùng quyền/cookie ngoài phiên để vượt gate bị chặn.
+
+Chưa cần cung cấp các giá trị trên trong lượt viết plan. Khi thực thi, chuẩn bị phần kỹ thuật độc lập trước và chỉ hỏi thông tin/consent thật sự còn thiếu; không tự tạo release key hoặc đổi production env trong lượt tài liệu này.
 
 ## Env inventory dự kiến
 
@@ -210,3 +220,12 @@ User yêu cầu **bỏ qua import iCloud Keychain**. Đã hủy nhánh lưu key 
 - **Blocker hiện tại: host trả Local browser use is disabled in Work settings.** User yêu cầu agent bật lại; app com.openai.codex bị Computer Use từ chối vì safety, không có tool cập nhật setting. Cần user tự bật Local browser use. Không dùng browser/runtime/cookie khác để bypass. Chưa verify owner relogin sau signup closure hoặc CRUD UI production/ảnh/redeploy persistence. **P11 PARTIAL, không PASS.**
 - Recovery iCloud user bỏ qua, CSV đã xóa; key gốc ngoài Git giữ. Không hỏi lại import.
 - Tiếp: bật browser → owner relogin → record smoke Notes/Calendar/Finance/check-in/Profile/preferences/goal image → backup ảnh/decrypt → redeploy persistence → cleanup exact smoke UUIDs → final backup và gate. Không chạy bootstrap/reset/reopen signup lại.
+
+## U12 — cập nhật thực thi 21/10/2026
+
+- User đã cho phép cài JDK/Android SDK và chấp nhận licenses; đã cài và build APK local thành công.
+- User đã login stable mobile preview localhost5173; sau đó host báo local browser use disabled. Cần bật lại capability để tiếp tục UI QA, không nhập lại credentials qua file/cookie ngoài browser.
+- User có Android và sẽ kết nối/cung cấp model/RAM/Android. ADB hiện chưa có thiết bị; chưa cài APK.
+- Tên/appId development tạm dùng bin Dashboard / dev.vodinhquan.dashboard, logo hiện có; cần chốt trước bản ký phân phối.
+- Chưa có quyền deploy/backend/cloud migration/OAuth redirect/signature config; chưa dùng release signing key. Chuẩn bị cụ thể trong [mobile runbook](../../mobile/README.md); không gửi key/password vào chat.
+- [P12 evidence](evidence/P12.md): debug và unsigned release không thay thế nghiệm thu release trên máy thật.

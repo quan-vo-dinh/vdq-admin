@@ -6,7 +6,7 @@ import { Component, Search as SearchIcon } from 'lucide-react';
 import SimpleBar from "simplebar-react";
 import SidebarContent from "../../vertical/sidebar/sidebaritems";
 
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/app/context/language-context";
 

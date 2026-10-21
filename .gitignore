@@ -54,3 +54,17 @@ next-env.d.ts
 *.enc.json
 /test-results/
 /playwright-report/
+
+# P12 Android outputs and user-owned signing
+/mobile/dist/
+/mobile/android/.gradle/
+/mobile/android/**/build/
+/mobile/android/local.properties
+/mobile/android/app/src/main/assets/public/
+/mobile/android/app/src/main/assets/capacitor*.json
+*.jks
+*.keystore
+*.apk
+*.aab
+
+/mobile/preview/

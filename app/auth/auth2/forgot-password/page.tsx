@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 import FullLogo from "@/app/(dashboard-layout)/layout/shared/logo/full-logo";

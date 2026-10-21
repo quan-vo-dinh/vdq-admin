@@ -1,6 +1,6 @@
 # P11 — Deploy production rỗng và bàn giao
 
-Bản tinh gọn v2, 2026-10-20. Đã thực thi một phần; gate chưa PASS. Xem evidence/P10.md và evidence/P11.md. Phụ thuộc P10. Web/backend trong scope hoàn thành khi phase này đạt. [P12](phase-12-mobile-future.md) là tương lai.
+Bản tinh gọn v2, 2026-10-20. Đã thực thi một phần; gate chưa PASS. Xem evidence/P10.md và evidence/P11.md. Phụ thuộc P10. Web/backend trong scope hoàn thành khi phase này đạt. [P12](phase-12-mobile-future.md) đã được chốt lại ngày 21/10/2026 thành chuyển toàn bộ Web + Android bằng Capacitor; mới có plan, chưa triển khai mobile.
 
 ## Đầu ra cần đạt
 

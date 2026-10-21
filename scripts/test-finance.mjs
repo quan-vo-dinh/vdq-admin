@@ -35,18 +35,18 @@ try {
     categorySpent,
     forecast,
     budgetLimit,
-  } = require(join(temporary, "model.js"));
-  const {financeWire,financeNumbers}=require(join(temporary,"wire.js"));
-  const { financeDemo } = require(join(temporary, "demo.js"));
+  } = require(join(temporary, "finance/model.js"));
+  const {financeWire,financeNumbers}=require(join(temporary,"finance/wire.js"));
+  const { financeDemo } = require(join(temporary, "finance/demo.js"));
   const {
     csvTemplate,
     parseFinanceCsv,
     exportTransactions,
     transactionKey,
-  } = require(join(temporary, "csv.js"));
+  } = require(join(temporary, "finance/csv.js"));
   const data = financeDemo();
-  const { createFinanceLocale } = require(join(temporary, "i18n.js"));
-  const { financeEnglish } = require(join(temporary, "messages.js"));
+  const { createFinanceLocale } = require(join(temporary, "finance/i18n.js"));
+  const { financeEnglish } = require(join(temporary, "finance/messages.js"));
   test("VI/EN formatting keeps VND values and interpolated notices consistent", () => {
     const vi = createFinanceLocale("vi"),
       en = createFinanceLocale("en");
@@ -205,7 +205,7 @@ try {
     assert.equal(parsed[0].row.description, original.description);
     assert.equal(transactionKey(parsed[0].row), transactionKey(original));
   });
-  test("CSV rejects impossible dates, invalid transfers, fractional or excessive VND and unknown categories", () => {
+  test("CSV rejects impossible dates, invalid transfers, fractional or excessive VND and invalid category codes", () => {
     const header = csvTemplate.split("\n")[0];
     for (const line of [
       "2026-09-31,bad,100,expense,food,bank,",
@@ -213,11 +213,31 @@ try {
       "2026-10-14,same account,100,transfer,transfer,bank,bank",
       "2026-10-14,fraction,100.5,expense,food,bank,",
       "2026-10-14,too large,1000000001,expense,food,bank,",
-      "2026-10-14,category,100,expense,unknown,bank,",
+      "2026-10-14,category,100,expense,Invalid Code,bank,",
     ])
       assert.ok(parseFinanceCsv(`${header}\n${line}`, data)[0].error, line);
     assert.throws(() => parseFinanceCsv("bad,header\n1,2", data));
     assert.throws(() => parseFinanceCsv(`${header}\n\"unclosed`, data));
+  });
+  test("CSV discovers new expense/refund and income categories without mutating data", () => {
+    const before = JSON.stringify(data);
+    const rows = parseFinanceCsv(`${csvTemplate.split("\n")[0]}\n2026-10-14,Doctor,100,expense,suc_khoe,bank,\n2026-10-14,Refund,50,refund,suc_khoe,bank,\n2026-10-14,Bonus,500,income,thuong,bank,`, data);
+    assert.ok(rows.every(r => !r.error && r.newCategory));
+    assert.deepEqual([...new Set(rows.map(r => r.row.category))], ["suc_khoe", "thuong"]);
+    assert.equal(JSON.stringify(data), before);
+  });
+  test("CSV checks persisted category kind, archival, conflicting new kinds and archived accounts", () => {
+    const snapshot = {...data, categories: [
+      {id:"1", code:"custom", name:"Custom", kind:"income", archived_at:null, revision:1},
+      {id:"2", code:"old", name:"Old", kind:"expense", archived_at:"2026-10-01", revision:1},
+    ]};
+    const parse = (lines, input = snapshot) => parseFinanceCsv(`${csvTemplate.split("\n")[0]}\n${lines}`, input);
+    assert.equal(parse("2026-10-14,Bonus,500,income,custom,bank,")[0].error, "");
+    assert.equal(parse("2026-10-14,Bonus,500,income,custom,bank,")[0].newCategory, false);
+    for (const [kind,code] of [["expense","custom"],["refund","old"],["income","transfer"],["income",""],["expense","a".repeat(41)]])
+      assert.ok(parse(`2026-10-14,Invalid,100,${kind},${code},bank,`)[0].error);
+    assert.ok(parse("2026-10-14,A,100,income,new_code,bank,\n2026-10-14,B,100,expense,new_code,bank,").every(r => r.error));
+    assert.ok(parse("2026-10-14,A,100,expense,new_code,bank,", {...snapshot,accounts:data.accounts.map(a=>({...a,archivedAt:"2026-10-01"}))})[0].error);
   });
   test("CSV permits backfilled transactions before the original reporting start", () => {
     const header = csvTemplate.split("\n")[0];

@@ -19,7 +19,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import Image from 'next/image';
+import Image from '@/lib/platform/image';
 import {
 
   SearchIcon,

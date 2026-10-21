@@ -2,7 +2,7 @@
 
 import { LifeBuoy, BookOpen } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroupContent, SidebarGroup } from "@/components/ui/sidebar"
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 
 export function NavUser() {
     const navItems = [

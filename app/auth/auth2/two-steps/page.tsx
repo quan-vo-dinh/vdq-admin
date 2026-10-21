@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";

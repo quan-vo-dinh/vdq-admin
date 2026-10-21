@@ -26,6 +26,7 @@ import {
   type Transaction,
   type TransactionKind,
 } from "@/lib/finance/model";
+import { financeCategories } from "@/lib/finance/csv";
 import { MoneyInput, SelectField, Choice } from "./shared";
 
 export function TransactionEditor({
@@ -49,13 +50,9 @@ export function TransactionEditor({
   const [category, setCategory] = useState(initial?.category ?? "food");
   const [error, setError] = useState("");
   if (!data) return null;
-  const categories =
-    kind === "income"
-      ? [
-          { value: "salary", label: text("Lương thực nhận") },
-          { value: "freelance", label: text("Thu nhập khác") },
-        ]
-      : data.budgets.filter(b=>!b.archivedAt || b.id===initial?.category).map((b) => ({ value: b.id, label: b.name }));
+  const categories = financeCategories(data)
+    .filter(c => c.kind === (kind === "income" ? "income" : "expense") && (!c.archived_at || c.code === initial?.category))
+    .map(c => ({value: c.code, label: c.name}));
   const selectedCategory = categories.some((c) => c.value === category)
     ? category
     : categories[0]?.value ?? "";

@@ -1,7 +1,7 @@
 "use client"
 import { Rocket } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import Link from 'next/link';
+import Link from '@/lib/platform/link';
 
 export function NavSecondary() {
     return (

@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useFinance } from "@/app/context/finance-context";
 import {
-
+  financeCategories,
   downloadCsv,
   parseFinanceCsv,
   transactionKey,
@@ -49,6 +49,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
     });
   }, [parsed, data]);
   const valid = rows.filter((r) => !r.error);
+  const newCategories = [...new Set(valid.filter(r => r.newCategory).map(r => r.row.category))];
   const columns: ColumnDef<Parsed>[] = [
     { accessorKey: "line", header: text("Dòng") },
     { id: "date", header: text("Ngày"), accessorFn: (r) => r.row.date },
@@ -62,13 +63,14 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
       header: text("Số tiền"),
       cell: ({ row }) => money(row.original.row.amount || 0),
     },
+    { id: "category", header: text("Danh mục"), accessorFn: r => r.row.category },
     {
       id: "status",
       header: text("Kiểm tra"),
       cell: ({ row: { original: r } }) => (
         <Badge variant={r.error ? "destructive" : "outline"}>
           {text(r.error) ||
-            (r.duplicate ? text("Cảnh báo · giống giao dịch khác") : text("Sẵn sàng"))}
+            (r.duplicate ? text("Cảnh báo · giống giao dịch khác") : r.newCategory ? text("Sẵn sàng · tạo danh mục mới") : text("Sẵn sàng"))}
         </Badge>
       ),
     },
@@ -117,7 +119,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
               id="finance-csv"
               type="file"
               accept=".csv,text/csv"
-              disabled={reading}
+              disabled={reading || busy}
               onChange={async (e) => {
                 const file = e.target.files?.[0];
                 setParsed([]);
@@ -145,9 +147,11 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
         </FieldGroup>
         <p className="text-sm text-muted-foreground">
           {text(
-            `Ngày YYYY-MM-DD từ ${data!.startsOn} đến ${data!.asOf}; VND nguyên dương, tối đa 1 tỷ. Mã tài khoản: ${data!.accounts.map(a=>a.id).join(', ')}. Danh mục: ${data!.budgets.map(b=>b.id).join(', ')}, salary, freelance.`,
+            `Ngày YYYY-MM-DD không sau ${data!.asOf}; VND nguyên dương, tối đa 1 tỷ. Mã tài khoản: ${data!.accounts.map(a=>a.id).join(', ')}. Danh mục: ${financeCategories(data!).filter(c=>!c.archived_at).map(c=>c.code).join(', ')}.`,
           )}
         </p>
+        <p className="text-sm text-muted-foreground">{text("Mã category chưa tồn tại sẽ được tạo khi xác nhận nhập, tên ban đầu giống mã. income tạo danh mục thu nhập; expense/refund tạo danh mục chi tiêu. Mã cần 1–40 ký tự chữ thường, số, _ hoặc -, bắt đầu bằng chữ; không dùng transfer.")}</p>
+        {!!newCategories.length && <Alert><AlertDescription>{text("Danh mục sẽ tạo mới")}: {newCategories.join(", ")}</AlertDescription></Alert>}
         {error && (
           <Alert variant="destructive">
             <AlertDescription>{text(error)}</AlertDescription>

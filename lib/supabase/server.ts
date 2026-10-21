@@ -1,4 +1,5 @@
 import 'server-only';
+import { requestAuth } from '@/lib/auth/request-context';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { readBackendEnvironment } from './env';
@@ -14,6 +15,8 @@ export function backendEnvironment() {
 }
 
 export async function serverSupabase() {
+  const current = requestAuth.getStore();
+  if (current) return current.client;
   const env = backendEnvironment();
   const store = await cookies();
   return createServerClient<Database>(env.url, env.publishableKey, {

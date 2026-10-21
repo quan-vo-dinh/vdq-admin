@@ -1,4 +1,4 @@
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/platform/navigation";
 import { useContext, useState } from "react";
 import { CircleAlert, Trash } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";

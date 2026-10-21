@@ -75,7 +75,7 @@ export function TransactionsPage() {
   const [importing, setImporting] = useState(false);
   const stats = monthlyTotals(data.transactions, month);
   const accounts = data.accounts;
-  const categories = data.budgets;
+  const categories = data.categories?.map(c => ({id: c.code, name: c.name})) ?? data.budgets;
   const inScope = data.transactions
     .filter(
       (t) =>

@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import React from "react";
 import SocialButtons from "../../authforms/social-buttons";
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import type { Metadata } from "next";
 import FullLogo from "@/app/(dashboard-layout)/layout/shared/logo/full-logo";
 import { Button } from "@/components/ui/button";

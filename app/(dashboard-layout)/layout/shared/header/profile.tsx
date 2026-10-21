@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import { profileDD } from "@/app/(dashboard-layout)/layout/shared/header/data";
 import { cn } from "@/lib/utils";
 import { X } from 'lucide-react';

@@ -1,7 +1,7 @@
 "use client";
 import { Suspense, useState, type ReactNode } from "react";
-import Link from "next/link";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import Link from "@/lib/platform/link";
+import { usePathname, useSearchParams, useRouter } from "@/lib/platform/navigation";
 import { RefreshCw, Download, Database, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";

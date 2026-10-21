@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">bin Dashboard</string>
+    <string name="title_activity_main">bin Dashboard</string>
+    <string name="package_name">dev.vodinhquan.dashboard</string>
+    <string name="custom_url_scheme">dev.vodinhquan.dashboard</string>
+</resources>

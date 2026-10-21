@@ -1,4 +1,5 @@
 'use client';
+import { apiFetch } from "@/lib/api/transport";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import useSWR from 'swr';
 import { useTheme } from 'next-themes';
@@ -7,9 +8,9 @@ export type Personal={firstName:string;lastName:string;email:string;phone:string
 export type Address={location:string;state:string;pin:string;zip:string;taxNo:string};
 type Profile={personal:Personal;address:Address;revision:number};
 type Preferences={locale:'vi'|'en';theme:'light'|'dark';revision:number};
-async function read<T>(url:string):Promise<T>{const r=await fetch(url);if(!r.ok)throw new Error('Không tải được dữ liệu cá nhân.');return r.json();}
+async function read<T>(url:string):Promise<T>{const r=await apiFetch(url);if(!r.ok)throw new Error('Không tải được dữ liệu cá nhân.');return r.json();}
 export async function patchPersonal<T>(url:string,body:unknown):Promise<T>{
- const response=await fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ const response=await apiFetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  if(!response.ok){
   const result=await response.json().catch(()=>({}));
   const messages:Record<string,string>={

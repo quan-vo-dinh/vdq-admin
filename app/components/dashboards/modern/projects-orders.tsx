@@ -4,7 +4,7 @@ import { BriefcaseBusiness, ArrowDownUp, Ellipsis } from "lucide-react";
 import { CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { DashboardCard } from "../../shared/dashboard-card";
 import { Table,TableBody,TableCell,TableHead,TableHeader,TableRow } from "@/components/ui/table";
-import Image from "next/image";
+import Image from "@/lib/platform/image";
 import SimpleBar from "simplebar-react";
 import { Button } from "@/components/ui/button";
 

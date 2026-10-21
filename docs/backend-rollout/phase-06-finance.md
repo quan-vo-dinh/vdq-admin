@@ -42,3 +42,11 @@ Không setup cloud mới. User sẽ nhập số dư thật/ngày đầu kỳ sau
 ## Hoãn / rollback
 
 Không importer mock, ngân hàng sync, analytics service, audit ledger hoặc pagination engine chung. Khóa mutation/rollback app tương thích khi lỗi, không thay DB bằng financeDemo; import repair theo batch thay vì truncate bảng.
+
+## Bổ sung danh mục thủ công và từ CSV — 21/10/2026
+
+- Nút **Thêm danh mục** trên header Finance tạo danh mục thu nhập/chi tiêu qua API hiện có. Form giao dịch và bộ lọc đọc danh mục từ backend, bao gồm danh mục thu nhập tự tạo.
+- CSV giữ bảy cột hiện tại. Mã mới trong `category` được hiển thị khi xem trước; `income` tạo danh mục thu nhập, `expense/refund` tạo danh mục chi tiêu, tên ban đầu bằng mã. Không tự tạo tài khoản. Danh mục sai loại/lưu trữ hoặc mã dùng cho cả thu lẫn chi chặn cả batch.
+- Áp dụng `supabase/migrations/20261021000300_finance_import_categories.sql` **trước khi triển khai app mới**. RPC giữ nguyên chữ ký và hỗ trợ payload `category_id` cũ; payload app mới gửi `category_code`. Database tạo danh mục và giao dịch trong cùng transaction, giữ owner guard, retry/hash conflict và rollback nguyên batch. Migration đã chạy cục bộ; chưa áp dụng cloud hoặc deploy app.
+- Kiểm tra: `pnpm test:finance` (16), `pnpm exec supabase test db supabase/tests/finance_import_categories.test.sql` (20), regression `finance_learning.test.sql` (31), `node scripts/backend/test-finance-categories-local.mjs`, scoped ESLint và `pnpm build` PASS. Full lint hiện có 17 errors/43 warnings ngoài các file sửa của tính năng này.
+- Browser local: thêm danh mục thu nhập → reload → chọn trong editor PASS; chọn file CSV hai mã mới → xem trước → nhập → reload thấy đủ hai giao dịch và nhãn danh mục PASS. Dữ liệu tổng hợp phục vụ kiểm thử được dọn riêng theo owner/code/batch; không chỉnh dữ liệu người dùng khác.

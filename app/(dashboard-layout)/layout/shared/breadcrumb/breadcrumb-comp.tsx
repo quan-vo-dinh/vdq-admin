@@ -3,7 +3,7 @@ import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { PageTitleIcon } from "@/app/components/shared/page-title-icon";
 import { HeadingText } from "@/app/components/shared/heading-text";
 import { Card } from "@/components/ui/card";
-import Link from "next/link";
+import Link from "@/lib/platform/link";
 import { useLanguage } from "@/app/context/language-context";
 
 interface BreadcrumbItem {

@@ -1,0 +1,9 @@
+import { useState, type FormEvent } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { authConfig, loginCredentials, loginGithub } from './session';
+export function Login({ onSuccess, initialError }: { onSuccess: () => void; initialError?: string }) {
+ const [username, setUsername] = useState(''), [password, setPassword] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState(initialError ?? '');
+ async function submit(event: FormEvent) { event.preventDefault(); setBusy(true); setError(''); try { await loginCredentials(username, password); setPassword(''); onSuccess(); } catch (e) { setError((e as Error).message); } finally { setBusy(false); } }
+ return <main className="flex min-h-dvh items-center justify-center p-6"><div className="w-full max-w-sm space-y-6"><h1 className="text-2xl font-semibold">bin Dashboard</h1><p>Đăng nhập tài khoản cá nhân của owner.</p><form onSubmit={submit} className="space-y-4"><label className="block">Tài khoản<Input autoComplete="username" value={username} onChange={e => setUsername(e.target.value)} maxLength={128} required /></label><label className="block">Mật khẩu<Input type="password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} maxLength={1024} required /></label><Button type="submit" className="w-full" disabled={busy || !authConfig.credentialsEnabled}>{busy ? 'Đang đăng nhập…' : 'Đăng nhập'}</Button></form><Button className="w-full" variant="outline" disabled={busy} onClick={async () => { setError(''); try { await loginGithub(); } catch (e) { setError((e as Error).message); } }}>Đăng nhập GitHub</Button>{error && <p role="alert" className="text-destructive">{error}</p>}<p className="text-sm text-muted-foreground">Mất mạng: thay đổi chưa gửi sẽ chưa được lưu. Bản nháp chỉ giữ trong phiên đang mở.</p></div></main>;
+}

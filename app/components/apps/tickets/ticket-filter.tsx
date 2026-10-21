@@ -1,9 +1,10 @@
+import { apiFetch } from "@/lib/api/transport";
 import { HeadingText } from "@/app/components/shared/heading-text";
 import React, { useContext, useEffect } from "react";
 import { TicketContext } from "@/app/context/ticket-context/index";
 import { mutate } from "swr";
 import { Chance } from "chance";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/lib/platform/navigation";
 
 const chance = new Chance();
 
@@ -23,7 +24,7 @@ const TicketFilter = () => {
   // Reset Tickets on browser refresh
 
   const handleResetTickets = async () => {
-    const response = await fetch("/api/ticket", {
+    const response = await apiFetch("/api/ticket", {
       method: "GET",
       headers: {
         broserRefreshed: "true",

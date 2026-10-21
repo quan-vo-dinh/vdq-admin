@@ -4,8 +4,8 @@ import { format } from "date-fns";
 import { Circle, Eye, MessageSquare } from "lucide-react";
 import { BlogPostType } from "@/app/(dashboard-layout)/types/apps/blog";
 import { Card } from "@/components/ui/card";
-import Link from "next/link";
-import Image from "next/image";
+import Link from "@/lib/platform/link";
+import Image from "@/lib/platform/image";
 import {
   Tooltip,
   TooltipContent,

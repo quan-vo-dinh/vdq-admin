@@ -2,13 +2,21 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@import "./css/styles/style-lyra.css";
+@import "./css/pages/app.css";
+
+/* Do not scan generated native/web assets back into Tailwind builds. */
+@source not "../mobile/android";
+@source not "../mobile/dist";
+@source not "../mobile/preview";
+@source not "../.next";
+@source not "../test-results";
+
 @custom-variant dark (&:is(.dark *));
 
 @custom-variant style-lyra (&:where(.style-lyra *));
 
-@import "./css/styles/style-lyra.css";
 
-@import "./css/pages/app.css";
 
 /* App type scale: metadata >=14px; controls 15px; body 16px.
    Keep the root size unchanged so rem spacing, dialogs and user zoom stay intact. */

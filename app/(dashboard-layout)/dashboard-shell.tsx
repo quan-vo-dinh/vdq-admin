@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/lib/platform/navigation";
 import { PersonalProvider } from "@/app/context/personal-context";
 import Header from "./layout/vertical/header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";

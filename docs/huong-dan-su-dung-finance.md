@@ -2,7 +2,7 @@
 
 Mở [/finance](http://localhost:3000/finance), chuyển trang bằng sidebar. Trên điện thoại, mở menu ở góc trên. Nút **Ghi giao dịch** luôn có sẵn trong Finance.
 
-**Đây là bản trải nghiệm:** dữ liệu minh họa đến 15/10/2026; thay đổi giữ khi chuyển trang trong Finance nhưng mất khi tải lại toàn bộ trang. Có thể đổi ngôn ngữ VI/EN và giao diện sáng/tối.
+Dữ liệu được lưu qua API vào Supabase theo tài khoản chủ sở hữu và được tải lại khi mở trang. Có thể đổi ngôn ngữ VI/EN và giao diện sáng/tối.
 
 ## 1. Tổng quan
 
@@ -12,7 +12,11 @@ Xem số dư, tiền đã dành, khoản sắp đến và tiền chưa phân b�
 
 Ghi khoản thu, chi, hoàn tiền hoặc chuyển khoản. Tìm theo nội dung, lọc theo tài khoản, danh mục hay loại; sửa/xóa ngay trong bảng. Mở **Số dư tài khoản** khi cần xem từng nơi giữ tiền.
 
-**Nhập CSV:** tải mẫu, điền đúng bảy cột, xem trước rồi xác nhận. Hệ thống bỏ dòng lỗi và dòng trùng đã nhận diện; tối đa 1 MB / 1.000 dòng. **Xuất** tải các giao dịch theo bộ lọc hiện tại. Chưa hỗ trợ mọi định dạng sao kê ngân hàng.
+**Nhập CSV:** tải mẫu, điền đúng bảy cột, xem trước rồi xác nhận. Một dòng lỗi chặn toàn bộ lượt nhập; dòng trùng chỉ cảnh báo và vẫn được nhập; tối đa 1 MB / 1.000 dòng. **Xuất** tải các giao dịch theo bộ lọc hiện tại. Chưa hỗ trợ mọi định dạng sao kê ngân hàng.
+
+**Thêm danh mục thủ công:** bấm **Thêm danh mục** trên đầu trang Finance; nhập tên, mã và chọn Thu nhập/Chi tiêu. Mã dài 1–40 ký tự (`a-z`, `0-9`, `_`, `-`), bắt đầu bằng chữ; không dùng `transfer`. Mã không được trùng, kể cả danh mục đã lưu trữ.
+
+**Tự tạo danh mục từ CSV:** giữ nguyên bảy cột `date,description,amount,kind,category,account,destination`. Trong `category`, điền mã mới như `suc_khoe` hoặc `thuong`. Xem trước hiển thị danh sách sẽ tạo; xác nhận nhập mới lưu danh mục và giao dịch cùng một lần. `income` tạo danh mục thu nhập; `expense`/`refund` tạo danh mục chi tiêu. Tên ban đầu bằng mã. Cùng một mã không được dùng cho cả thu nhập và chi tiêu; danh mục đã lưu trữ hoặc sai loại sẽ báo lỗi. `transfer` không tạo danh mục. Danh mục chi tiêu mới xuất hiện trong ngân sách với hạn mức 0 để bạn tự điều chỉnh. Cột `account` và `destination` vẫn phải là mã tài khoản đang hoạt động có sẵn; không tự tạo tài khoản từ CSV.
 
 ## 3. Ngân sách
 

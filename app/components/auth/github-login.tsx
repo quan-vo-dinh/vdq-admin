@@ -1,6 +1,6 @@
 'use client';
 import { useState, type FormEvent } from 'react';
-import Image from 'next/image';
+import Image from '@/lib/platform/image';
 import { Input } from '@/components/ui/input';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Button } from '@/components/ui/button';

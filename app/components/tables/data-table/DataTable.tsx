@@ -1,4 +1,5 @@
 'use client'
+import { downloadTextFile } from "@/lib/platform/files";
 
 import React, { useMemo, useState } from 'react'
 import {
@@ -389,14 +390,7 @@ const DataTable = <T extends Record<string, unknown>>({
       headers.join(','),
       ...rows.map((row) => row.join(',')),
     ].join('\n')
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'table-data.csv')
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    downloadTextFile('table-data.csv', csvContent, 'text/csv;charset=utf-8');
   }
 
   return (

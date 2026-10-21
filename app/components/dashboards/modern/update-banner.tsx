@@ -2,7 +2,7 @@
 import { CardContent } from '@/components/ui/card';
 import { DashboardCard } from "../../shared/dashboard-card";
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import Link from '@/lib/platform/link';
 import { ArrowRight } from 'lucide-react';
 
 export default function UpdateBanner() {

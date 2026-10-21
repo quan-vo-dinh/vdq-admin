@@ -1,14 +1,14 @@
 "use client";
 import { HeadingText } from "@/app/components/shared/heading-text";
 import React, { useEffect, useContext } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/lib/platform/navigation";
 
 import { Circle, Eye, MessageSquare, Quote } from "lucide-react";
 import { format } from "date-fns";
 import { uniqueId } from "lodash";
 import type { BlogType } from "../../../../(dashboard-layout)/types/apps/blog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
+import Image from "@/lib/platform/image";
 
 import {
   BlogContext,

@@ -1,0 +1,38 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "plugins": [],
+    "incremental": false,
+    "types": [
+      "vite/client"
+    ],
+    "paths": {
+      "@/lib/platform/navigation": [
+        "./src/platform/navigation.tsx"
+      ],
+      "@/lib/platform/link": [
+        "./src/platform/link.tsx"
+      ],
+      "@/lib/platform/image": [
+        "./src/platform/image.tsx"
+      ],
+      "@/lib/platform/error-boundary": [
+        "./src/platform/error-boundary.tsx"
+      ],
+      "@/*": [
+        "../*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "../capacitor.config.ts"
+  ],
+  "exclude": [
+    "../node_modules",
+    "android",
+    "dist"
+  ]
+}

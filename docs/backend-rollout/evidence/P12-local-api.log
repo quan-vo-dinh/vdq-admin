@@ -1,0 +1,11 @@
+PASS mobile grant is Origin bound and body bounded
+PASS real env credentials issue user session without cookies
+PASS web credentials still issue cookie session; same owner as bearer
+PASS bearer reaches every repository; all private reads use real RLS client
+PASS forged bearer cannot fall back to valid web cookie; web CSRF remains enforced
+PASS preflight, including error responses, uses exact origin and headers
+PASS real non-owner Auth user denied by API owner gate and direct RLS
+PASS owner writes and revision conflicts share cookie/bearer contract
+PASS Supabase rotates refresh; refreshed user retains owner access
+PASS logout revokes refresh (access JWT may remain valid until expiry)
+9 local API groups passed; exact smoke record removed; sessions signed out.

@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api/transport";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import useSWRInfinite from "swr/infinite";
 import {
@@ -14,7 +15,7 @@ class FeedRequestError extends Error {
 }
 async function fetchPage(url: string): Promise<FeedPage> {
   try {
-    const response = await fetch(url);
+    const response = await apiFetch(url);
     const data = await response.json();
     if (!response.ok)
       throw new FeedRequestError(

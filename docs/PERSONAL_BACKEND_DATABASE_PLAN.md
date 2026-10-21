@@ -1,5 +1,11 @@
 # Thiết kế backend/database cá nhân — v2
 
+## Quyết định mới nhất — 21/10/2026
+
+User đã chọn **Capacitor cho toàn bộ dashboard Web + APK Android**, dùng chung frontend và backend hiện có. [P12 chi tiết](backend-rollout/phase-12-mobile-future.md) thay thế hướng PWA/TWA cũ; hiện chỉ cập nhật plan, chưa triển khai Android. Web tiếp tục Next.js; mobile đóng gói frontend static riêng, không đổi root Next sang static export. Mobile bearer/secure storage được đưa vào phạm vi P12; offline-first vẫn hoãn.
+
+Đăng nhập hiện đã có credentials từ env server bên cạnh GitHub; xem [ENV_OWNER_LOGIN](ENV_OWNER_LOGIN.md). Một owner không đồng nghĩa chỉ một phương thức đăng nhập. Các mô tả GitHub-only và “chưa deploy” trong bản kế hoạch gốc bên dưới là lịch sử, không ghi đè evidence triển khai mới nhất.
+
 Cập nhật 2026-10-20 theo yêu cầu giảm thời gian và tránh làm quá mức. [Bộ phase](backend-rollout/README.md) là kế hoạch thực thi; [HANDOFF](backend-rollout/HANDOFF.md) ghi kết quả P00/P01 đã hoàn thành. P02/P03 đã PASS local, gồm OAuth GitHub cá nhân thật, registry bootstrap và đóng signup. P04 Notes và P05 Calendar đã triển khai local; xem evidence/bàn giao hiện tại.
 
 ## Quyết định đã chốt
@@ -58,10 +64,14 @@ Tiền VND nguyên numeric(18,0), SQL read text trước JSON, Number adapter ki
 - P09: backup một lệnh, encrypted data+file objects và owner recovery, thử restore một lần. Manual workflow được chấp nhận nếu user biết phải chạy; không hứa RPO khi chưa có runner.
 - P10: regression/release build tổng hợp, tham chiếu kết quả còn áp dụng.
 - P11: migration production + owner bootstrap + smoke/redeploy + backup đầu tiên. Không importer mock/freeze pipeline khi production vẫn rỗng.
-- P12 tương lai chỉ chọn PWA rồi APK nếu cần; native/offline-first là công việc riêng.
+- P12: chuyển toàn bộ dashboard sang Web + Android Capacitor, shared frontend/platform adapters, owner mobile session, native file/lifecycle và full feature/performance acceptance. Offline-first, iOS, Google Play và app native viết lại là phạm vi khác.
 
 ## Những yêu cầu cũ đã bỏ khỏi đường triển khai bắt buộc
 
 Không private.mutation_requests, SQL Tiptap parity validator, custom RPC cho mọi CRUD, media_assets FSM, importer dữ liệu demo, full CI/CD trước release, hosted backup scheduler hoặc nhiều receipt mỗi bước. Không bỏ quyền truy cập, tính đúng dữ liệu, backup/restore cần thiết hay tính năng UI đã cam kết.
 
 [Checklist user setup](backend-rollout/USER_SETUP.md) giữ những việc thực sự cần tài khoản/secret/consent, chia đúng phase. Tài liệu AUTH_OWNER_DATABASE_BACKEND_PLAN.md cũ chỉ là lịch sử, không triển khai Credentials/Blog từ đó.
+
+## P12 — trạng thái thực thi 21/10/2026
+
+Đã có Capacitor Android project, React/Vite mobile entry dùng chung feature views và adapters, bearer/secure session code, APK debug/unsigned release build local. P12 vẫn IN PROGRESS, không PASS; cloud deployment/migration, native OAuth, full parity/thiết bị/performance/signing còn gate. [Evidence P12](backend-rollout/evidence/P12.md) và [runbook](../mobile/README.md) ghi trạng thái mới nhất, ưu tiên hơn các ghi chú planned ở trên.

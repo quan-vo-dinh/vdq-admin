@@ -1,3 +1,4 @@
+import { apiFetch } from "@/lib/api/transport";
 export class ApiError extends Error {
   constructor(public status: number, public code: string, message: string) { super(message); }
 }
@@ -12,34 +13,34 @@ async function readResponse(res: Response) {
 // SWR fetcher function
 
 const getFetcher = (url: string) =>
-  fetch(url, {
+  apiFetch(url, {
     method: 'GET',
     headers: { browserrefreshed: 'false' },
   }).then(readResponse)
 
 const postFetcher = (url: string, arg: unknown) =>
-  fetch(url, {
+  apiFetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(arg),
   }).then(readResponse)
 
 const putFetcher = (url: string, arg: unknown) =>
-  fetch(url, {
+  apiFetch(url, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(arg),
   }).then(readResponse)
 
 const patchFetcher = (url: string, arg: unknown) =>
-  fetch(url, {
+  apiFetch(url, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(arg),
   }).then(readResponse)
 
 const deleteFetcher = (url: string, arg: unknown) =>
-  fetch(url, {
+  apiFetch(url, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(arg),

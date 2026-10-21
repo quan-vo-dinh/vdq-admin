@@ -10,7 +10,7 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 import { Pen, Trash2, ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/platform/navigation";
 import { BlogContext } from "@/app/context/blog-context";
 import { BlogPostType } from "@/app/(dashboard-layout)/types/apps/blog";
 import PlaceholdersInput from "@/app/components/animated-components/animatedinput-placeholder";
@@ -39,7 +39,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import Image from "next/image";
+import Image from "@/lib/platform/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SearchIcon } from "lucide-react";
 

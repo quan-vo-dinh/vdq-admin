@@ -1,5 +1,11 @@
 # Backend rollout — kế hoạch tinh gọn v2
 
+## Ưu tiên cập nhật 21/10/2026 — P12 đã chọn Capacitor
+
+[P12](phase-12-mobile-future.md) nay là kế hoạch chuyển **toàn bộ dashboard** sang web + APK Android bằng Capacitor, không còn nhánh PWA trước/TWA sau. Dùng chung UI/logic, giữ Next.js backend và Supabase, bổ sung mobile entry/static build, bearer auth, secure storage và adapters. Chưa triển khai mobile; xem 12A–12F và ma trận nghiệm thu trong tài liệu P12.
+
+Web production đã hoạt động và có cả credentials từ env + GitHub. Tham chiếu [env login](../ENV_OWNER_LOGIN.md), [production login evidence](evidence/OWNER-ENV-LOGIN.md), [Profile/Finance backfill](evidence/PROFILE-FINANCE-BACKFILL.md), rồi evidence P11 để biết gate còn lại. Các đoạn “chưa deploy”, GitHub-only và số migration/env cũ bên dưới được giữ làm lịch sử, không dùng làm trạng thái hiện tại. Không tự đánh dấu toàn bộ P11 PASS từ các smoke gần đây.
+
 Cập nhật 2026-10-20: **P00–P10 PASS local** theo evidence từng phase. Phiên tiếp tục đã đóng browser CSV P06 và ảnh private P08; P10 regression, OAuth owner relogin, desktop/mobile, process persistence và secret scan PASS. **P11 đã áp 7 migrations cloud không Today**, anon Data API denied; Vercel Hobby project `vdq-admin`, domain `vdq-admin.vercel.app`, Next.js/Node22/bom1 và sáu env Production đã tạo. **Chưa deploy/P11 chưa PASS**: chờ production GitHub OAuth/owner bootstrap, rồi hosted backup và smoke/redeploy. User yêu cầu bỏ qua lưu key vào iCloud; CSV tạm đã xóa, key gốc ngoài Git giữ nguyên. Xem [P10](evidence/P10.md), [P11](evidence/P11.md), [bàn giao](HANDOFF.md).
 
 ## Phạm vi giữ nguyên
@@ -46,7 +52,7 @@ Evidence P00/P01 là lịch sử, giữ nguyên. Bộ phase v2 là chỉ dẫn t
 | [P09](phase-09-backup-operations.md) | Một workflow backup/restore đã thử | P08 |
 | [P10](phase-10-integration-release-qa.md) | Một vòng QA release | P09 |
 | [P11](phase-11-production-deployment.md) | **Web/backend production dùng được** | P10 |
-| [P12](phase-12-mobile-future.md) | PWA, APK nếu cần — tương lai | P11 |
+| [P12](phase-12-mobile-future.md) | **Toàn bộ Web + APK Android, Capacitor; plan đã cập nhật, chưa triển khai** | Backend P11 hiện có; giữ gate nghiệm thu P11 riêng |
 
 Không gộp mọi phase cho một phiên. P06/P07 đã được triển khai trong phiên user giao cả hai phase. Phiên user giao P08/P09 đã triển khai cả hai, làm các phần P09 độc lập trong khi P08 chờ quyền browser upload. Còn gate browser P06/P08; kế tiếp P10.
 
@@ -96,3 +102,7 @@ Hoãn không có nghĩa bỏ tính năng người dùng đã có: Notes Save, Fi
 ## Cập nhật tiếp tục P10/P11 — ưu tiên trạng thái này
 
 **P06/P08 PASS local: browser CSV và ảnh đã kiểm chứng sau khi bật file URL.** P10 build/scoped lint/API/SQL/process/secret scan PASS; full lint vẫn baseline17/45, vòng browser release đầy đủ và rollback nghiệm thu chưa đóng. P11 migrations đã test trên DB rỗng local không Today; Vercel Hobby project vdq-admin đã tạo (Next.js/Node22), chưa Git/env/domain/deploy/cloud push. Recovery iCloud Passwords đang chờ user import CSV tạm, chưa xác minh cất key. Xem evidence/P10.md, evidence/P11.md cho thứ tự tiếp theo và cleanup. Không yêu cầu bật lại quyền Chrome hoặc tạo lại Vercel project.
+
+## Tiến độ P12 thực thi 21/10/2026
+
+P12 chuyển từ planned sang **IN PROGRESS**: đã triển khai shared adapters/mobile entry/full route map, native project/auth và build APK debug + release chưa ký. [Evidence P12](evidence/P12.md) ghi kết quả local và gate còn thiếu; chưa đạt full parity/native performance/release acceptance, không tự đóng P11. [Lệnh chạy và rollback](../../mobile/README.md).

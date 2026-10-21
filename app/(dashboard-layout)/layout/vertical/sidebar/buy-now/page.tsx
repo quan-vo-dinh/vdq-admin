@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from "@/lib/platform/image";
+import Link from "@/lib/platform/link";
 import { Button } from "@/components/ui/button";
 
 const BuyNowCard = () => {

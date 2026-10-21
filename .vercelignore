@@ -23,3 +23,9 @@ test-results
 
 # Required TypeScript compatibility hook referenced by the lockfile.
 !.pnpmfile.cjs
+
+/mobile
+*.jks
+*.keystore
+*.apk
+*.aab

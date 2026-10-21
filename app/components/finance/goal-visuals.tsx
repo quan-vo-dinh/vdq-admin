@@ -1,8 +1,9 @@
 "use client";
+import { apiFetch } from "@/lib/api/transport";
 
 import useSWR from "swr";
 import type { LucideIcon } from "lucide-react";
-import Image from "next/image";
+import Image from "@/lib/platform/image";
 import {
   Bike,
   GraduationCap,
@@ -70,7 +71,7 @@ export function GoalCover({
   image?: string;
 }) {
   const privateImage=image?.startsWith('/api/finance/goals/image?');
-  const {data,error}=useSWR<{url:string|null}>(privateImage?image:null,async url=>{const r=await fetch(url);if(!r.ok)throw new Error('Không tải được ảnh riêng.');return r.json();},{refreshInterval:90000,dedupingInterval:1000});
+  const {data,error}=useSWR<{url:string|null}>(privateImage?image:null,async url=>{const r=await apiFetch(url);if(!r.ok)throw new Error('Không tải được ảnh riêng.');return r.json();},{refreshInterval:90000,dedupingInterval:1000});
   const source=privateImage?data?.url: image;
   const option = goalVisuals[visual ?? "study"];
   const Icon = option.icon;
