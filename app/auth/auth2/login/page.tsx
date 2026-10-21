@@ -4,9 +4,10 @@ import type { Metadata } from 'next';
 import { Card } from '@/components/ui/card';
 import FullLogo from '@/app/(dashboard-layout)/layout/shared/logo/full-logo';
 import { GithubLogin } from '@/app/components/auth/github-login';
+import { credentialsConfigured } from '@/lib/auth/env-credentials';
 import { backendEnvironment } from '@/lib/supabase/server';
 
-export const metadata: Metadata = { title: 'GitHub Login', description: 'Log in to your personal dashboard.' };
+export const metadata: Metadata = { title: 'Đăng nhập', description: 'Log in to your personal dashboard.' };
 async function Login({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   await connection();
   let config = null;
@@ -15,7 +16,7 @@ async function Login({ searchParams }: { searchParams: Promise<{ error?: string 
     config = { url: env.url, publishableKey: env.publishableKey, origin: env.origin };
   } catch { /* Render a useful configuration error; never fall back to a public dashboard. */ }
   const params = await searchParams;
-  return <GithubLogin config={config} initialError={params.error} />;
+  return <GithubLogin credentialsEnabled={credentialsConfigured(process.env)} config={config} initialError={params.error} />;
 }
 export default function BoxedLogin(props: { searchParams: Promise<{ error?: string }> }) {
   return <div className="min-h-screen flex items-center justify-center bg-accent px-4">

@@ -1,5 +1,5 @@
 export class AccessError extends Error {
-  constructor(public status: 400 | 401 | 403 | 404 | 409 | 413 | 500 | 503, public code: string) {
+  constructor(public status: 400 | 401 | 403 | 404 | 409 | 413 | 429 | 500 | 503, public code: string) {
     super(code);
   }
 }

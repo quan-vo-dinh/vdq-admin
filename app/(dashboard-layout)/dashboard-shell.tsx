@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { usePathname } from "next/navigation";
 import { PersonalProvider } from "@/app/context/personal-context";
 import Header from "./layout/vertical/header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -13,13 +14,15 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const viewportWorkspace = pathname === "/apps/calendar";
   return (
     <PersonalProvider><SidebarProvider
       defaultOpen={true}
       style={{ "--sidebar-width-icon": "52px" } as React.CSSProperties}
     >
       <AppSidebar />
-      <SidebarInset className="dashboard-inset outline outline-border m-2 rounded-none! overflow-hidden">
+      <SidebarInset data-workspace-layout={viewportWorkspace ? "viewport" : "document"} className="dashboard-inset outline outline-border m-2 rounded-none! overflow-hidden">
         <Header />
         <div className="dashboard-content flex min-w-0 flex-1 flex-col gap-4 p-3 sm:p-4">
           <div className={cn("dashboard-container mx-auto min-w-0 w-full", "container")}>

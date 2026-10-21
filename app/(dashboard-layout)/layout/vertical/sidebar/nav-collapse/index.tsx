@@ -16,7 +16,7 @@ interface NavCollapseProps {
 export default function NavCollapse({ menu, className }: NavCollapseProps) {
   const pathname = usePathname();
   const { t } = useLanguage();
-  const { state } = useSidebar();
+  const { state, setOpenMobile } = useSidebar();
   const isCollapse = state === "collapsed";
 
   const isActiveRoute = (item: ChildItem): boolean => {
@@ -58,6 +58,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                 <Link
                   key={index}
                   href={item.url || "#"}
+                  onNavigate={() => setOpenMobile(false)}
                   target={item.external ? "_blank" : undefined}
                   className={cn(
                     "flex items-center gap-3  rounded-md transition-all duration-200 ease-in-out ",
@@ -108,6 +109,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                       <Link
                         key={index}
                         href={sub.url || "#"}
+                        onNavigate={() => setOpenMobile(false)}
                         target={sub.external ? "_blank" : undefined}
                         className={cn(
                           "block rounded-md transition-all duration-200 ease-in-out",

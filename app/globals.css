@@ -447,13 +447,15 @@ html.dark {
 .calendar-theme .calendar-mini { width: 100%; padding: 0; }
 .calendar-theme .calendar-mini [data-day] { width: 100%; height: var(--cell-size); min-width: 0; }
 
-/* Calendar is a viewport workspace; other dashboard routes keep document scrolling. */
-.dashboard-inset:has(.calendar-workspace) { height: calc(100dvh - 1rem); min-height: 0; }
-.dashboard-inset:has(.calendar-workspace) > header { flex-shrink: 0; }
-.dashboard-content:has(.calendar-workspace) { min-height: 0; overflow: hidden; }
-.dashboard-container:has(.calendar-workspace) { display: flex; flex: 1; min-height: 0; }
-.dashboard-page:has(.calendar-workspace) { flex: 1; min-height: 0; min-width: 0; }
-.dashboard-container:has(.calendar-workspace) > .dashboard-footer { display: none; }
+/* Select layout by the active pathname, never by descendant presence.
+   Next Activity retains hidden Calendar DOM after navigation; :has() would keep
+   clipping every later route to the Calendar viewport. */
+.dashboard-inset[data-workspace-layout="viewport"] { height: calc(100dvh - 1rem); min-height: 0; }
+.dashboard-inset[data-workspace-layout="viewport"] > header { flex-shrink: 0; }
+.dashboard-inset[data-workspace-layout="viewport"] .dashboard-content { min-height: 0; overflow: hidden; }
+.dashboard-inset[data-workspace-layout="viewport"] .dashboard-container { display: flex; flex: 1; min-height: 0; }
+.dashboard-inset[data-workspace-layout="viewport"] .dashboard-page { flex: 1; min-height: 0; min-width: 0; }
+.dashboard-inset[data-workspace-layout="viewport"] .dashboard-container > .dashboard-footer { display: none; }
 .calendar-workspace { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 0; min-width: 0; }
 .calendar-workspace-header { flex-shrink: 0; }
 .calendar-stats { order: 3; }
