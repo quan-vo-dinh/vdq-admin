@@ -5,6 +5,7 @@ import { AccessError } from '@/lib/auth/policy';
 import { dbError, input, revision, uuid } from '@/lib/backend/mutations';
 import { todayKey } from '@/lib/learning/model';
 import { categoryCodePattern, parseFinanceCsv } from './csv';
+import { isDefaultCategory } from './master-data';
 import { financeWire } from './wire';
 import type { FinanceData } from './model';
 import type { Database } from '@/types/database';
@@ -58,7 +59,7 @@ export async function financeOverview(): Promise<FinanceData> {
  return {asOf:todayKey(),startsOn:current.data!.starts_on,settings:current.data!,categories,
  accounts:accounts.map(a=>({id:a.id!,name:a.name!,opening:number(a.opening),note:a.note!,revision:a.revision!,archivedAt:a.archived_at})),
  transactions:transactions.map(t=>({id:t.id!,revision:t.revision!,date:t.date!,description:t.description!,amount:number(t.amount),kind:t.kind as 'income'|'expense'|'refund'|'transfer',account:t.account_id!,destination:t.destination_account_id??undefined,category:categoryCode(t.category_id),source:t.source as 'csv'|'manual'})),
- budgets:categories.filter(c=>c.kind==='expense'||budgets.some(b=>b.category_id===c.id)||transactions.some(t=>t.category_id===c.id&&(t.kind==='expense'||t.kind==='refund'))).map(c=> {const b=budgets.find(b=>b.category_id===c.id);return {id:c.code,archivedAt:c.archived_at,name:b?.name??c.name,limit:b?number(b.default_limit):0,fixed:b?.fixed??false,resourceId:b?.id??undefined,revision:b?.revision??undefined,categoryId:c.id,monthlyLimits:Object.fromEntries(months.filter(m=>m.budget_id===b?.id).map(m=>[m.month!.slice(0,7),number(m.limit_amount)])),monthRows:months.filter(m=>m.budget_id===b?.id).map(m=>({id:m.id!,month:m.month!,revision:m.revision!}))};}),
+ budgets:categories.filter(c=>c.kind==='expense'||budgets.some(b=>b.category_id===c.id)||transactions.some(t=>t.category_id===c.id&&(t.kind==='expense'||t.kind==='refund'))).map(c=> {const b=budgets.find(b=>b.category_id===c.id);return {id:c.code,archivedAt:c.archived_at,name:c.name,limit:b?number(b.default_limit):0,fixed:b?.fixed??false,resourceId:b?.id??undefined,revision:b?.revision??undefined,categoryId:c.id,monthlyLimits:Object.fromEntries(months.filter(m=>m.budget_id===b?.id).map(m=>[m.month!.slice(0,7),number(m.limit_amount)])),monthRows:months.filter(m=>m.budget_id===b?.id).map(m=>({id:m.id!,month:m.month!,revision:m.revision!}))};}),
  goals:goals.map(g=>({id:g.id!,revision:g.revision!,name:g.name!,target:number(g.target),allocated:number(g.allocated),monthly:number(g.monthly),deadline:g.deadline!,priority:g.priority as 'high'|'normal',visual:g.visual as 'study',image:g.image_path?`/api/finance/goals/image?id=${g.id}`:undefined})),
  bills:bills.map(b=>({id:b.id!,revision:b.revision!,name:b.name!,date:b.due_on!,amount:number(b.amount)}))};
 }
@@ -132,6 +133,10 @@ export async function financeRequest(request:Request,resource?:string) {
   }
  };
  if(key==='categories') {
+  if(request.method!=='POST') {
+   const current=await db.from('finance_categories').select('code,kind').eq('id',id).eq('owner_id',user.id).maybeSingle();dbError(current.error);
+   if(current.data && isDefaultCategory(current.data.code) && (request.method==='DELETE'||(values.code!==undefined&&values.code!==current.data.code)||(values.kind!==undefined&&values.kind!==current.data.kind))) throw new AccessError(409,'default_category_protected');
+  }
   if(values.code!==undefined && (typeof values.code!=='string'||!categoryCodePattern.test(values.code)||values.code==='transfer')) throw new AccessError(400,'invalid_category_code');
   if(values.name!==undefined && (typeof values.name!=='string'||!values.name.trim()||values.name.trim().length>80)) throw new AccessError(400,'invalid_category_name');
   if(values.kind!==undefined && !['income','expense'].includes(String(values.kind))) throw new AccessError(400,'invalid_category_kind');
@@ -140,6 +145,7 @@ export async function financeRequest(request:Request,resource?:string) {
  if(request.method==='POST'&&result.error?.code==='23505') {
   const r=await db.from(table).select('id,revision').eq('id',id).eq('owner_id',user.id).maybeSingle();dbError(r.error);if(!r.data) throw new AccessError(409,'conflict');return Response.json(r.data);
  }
+ if(result.error?.code==='23514'&&result.error.message.includes('category has history')) throw new AccessError(409,'category_has_history');
  if(result.error?.code==='23502') throw new AccessError(400,'invalid');
  if(result.error?.code==='23503'||result.error?.code==='23505') throw new AccessError(409,'referenced_or_conflict');
  dbError(result.error);
