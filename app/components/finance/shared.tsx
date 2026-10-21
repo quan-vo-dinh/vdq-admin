@@ -7,7 +7,6 @@ import {
   FlaskConical,
   ChevronLeft,
   ChevronRight,
-  CalendarDays,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -36,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Slider } from "@/components/ui/slider";
 import { NumberTicker } from "./number-ticker";
@@ -130,40 +130,6 @@ export function Section({
       </CardHeader>
       <CardContent>{children}</CardContent>
     </DashboardCard>
-  );
-}
-export function PageIntro({
-  eyebrow,
-  title,
-  description,
-  children,
-  icon: Icon,
-  tone = "balance",
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-  children?: ReactNode;
-  icon?: LucideIcon;
-  tone?: FinanceTone;
-}) {
-  const { text } = useFinanceLocale();
-  return (
-    <div className="finance-page-intro">
-      <div className="flex min-w-0 max-w-2xl items-start gap-3">
-        {Icon && <FinanceIcon icon={Icon} tone={tone} />}
-        <div className="flex flex-col gap-1">
-          <p data-finance-value data-finance-tone={tone} className="sr-only">
-            {text(eyebrow)}
-          </p>
-          <FinanceHeading as="h2" variant="page" className="finance-page-title">
-            {text(title)}
-          </FinanceHeading>
-          <p className="text-sm text-muted-foreground">{text(description)}</p>
-        </div>
-      </div>
-      {children}
-    </div>
   );
 }
 export function Metric({
@@ -453,53 +419,17 @@ export function PlanBadge() {
   );
 }
 export function MonthPicker() {
-  const { text, date } = useFinanceLocale();
-  const { month, setMonth, data } = useFinance();
-  const start = (data?.startsOn ?? month).slice(0,7), end = (data?.asOf ?? month).slice(0,7);
-  const months:string[]=[];
-  for(let cursor=start;cursor<=end;){months.push(cursor);const d=new Date(cursor+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+1);cursor=d.toISOString().slice(0,7);}
-  const shift=(amount:number)=>{const d=new Date(month+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+amount);setMonth(d.toISOString().slice(0,7));};
-  return (
-    <ButtonGroup aria-label={text("Kỳ báo cáo")}>
-      <Button
-        variant="outline"
-        size="icon"
-        aria-label={text("Kỳ trước")}
-        disabled={month <= start}
-        onClick={() => shift(-1)}
-      >
-        <ChevronLeft />
-      </Button>
-      <Select
-        items={months.map(m=>({value:m,label:date(m+'-01',{month:'long',year:'numeric'})}))}
-        value={month}
-        onValueChange={(v) => {
-          if (v) setMonth(v);
-        }}
-      >
-        <SelectTrigger aria-label={text("Kỳ báo cáo")}>
-          <CalendarDays />
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent data-finance-typography>
-          <SelectGroup>
-            {months.map((m) => (
-              <SelectItem key={m} value={m}>
-                {date(`${m}-01`, { month: "long", year: "numeric" })}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <Button
-        variant="outline"
-        size="icon"
-        aria-label={text("Kỳ sau")}
-        disabled={month >= end}
-        onClick={() => shift(1)}
-      >
-        <ChevronRight />
-      </Button>
-    </ButtonGroup>
-  );
+  const { text } = useFinanceLocale();
+  const { month, setMonth } = useFinance();
+  const shift = (amount: number) => {
+    const date = new Date(`${month}-01T12:00:00Z`);
+    date.setUTCMonth(date.getUTCMonth() + amount);
+    setMonth(date.toISOString().slice(0, 7));
+  };
+  return <ButtonGroup aria-label={text("Kỳ báo cáo")}>
+    <Button variant="outline" size="icon" aria-label={text("Kỳ trước")} disabled={month === '0001-01'} onClick={() => shift(-1)}><ChevronLeft /></Button>
+    <Input type="month" aria-label={text("Kỳ báo cáo")} className="w-auto min-w-0" min="0001-01" max="9999-12" value={month}
+      onChange={event => { const value = event.target.value; if (/^[0-9]{4}-(0[1-9]|1[0-2])$/.test(value) && value >= '0001-01') setMonth(value); }} />
+    <Button variant="outline" size="icon" aria-label={text("Kỳ sau")} disabled={month === '9999-12'} onClick={() => shift(1)}><ChevronRight /></Button>
+  </ButtonGroup>;
 }

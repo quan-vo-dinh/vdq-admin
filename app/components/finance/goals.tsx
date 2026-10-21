@@ -1,4 +1,6 @@
 "use client";
+
+import { FinancePageHeader } from "./page-header";
 import { DashboardCard } from "@/app/components/shared/dashboard-card";
 import { FinanceBoard } from "./template-layout";
 import StyleDivider from "@/app/components/shared/StyleDivider";
@@ -7,7 +9,6 @@ import { DateField } from "./controls";
 import { useFinanceLocale } from "./locale";
 import { useState, useEffect } from "react";
 import {
-  Target,
   ShieldCheck,
   Plus,
   Pencil,
@@ -44,7 +45,6 @@ import {
 import { useFinance } from "@/app/context/finance-context";
 import { overview, type Goal } from "@/lib/finance/model";
 import {
-  PageIntro,
   Metric,
   MoneyInput,
   FinanceIcon,
@@ -123,11 +123,10 @@ function GoalEditor({
               allocated > target ||
               allocated > max ||
               !deadline ||
-              deadline < data.asOf ||
               ![target, allocated, monthly].every(Number.isSafeInteger)
             ) {
               setError(
-                "Kiểm tra tên, mục tiêu dương, ngày tương lai và số tiền phân bổ không vượt mục tiêu hoặc nguồn còn trống.",
+                "Kiểm tra tên, mục tiêu dương, ngày hợp lệ và số tiền phân bổ không vượt mục tiêu hoặc nguồn còn trống.",
               );
               return;
             }
@@ -237,8 +236,6 @@ function GoalEditor({
               label="Mốc mong muốn"
               value={deadline}
               onChange={setDeadline}
-              min={data.asOf}
-              max="2040-12-31"
             />
             {error && <FieldError>{text(error)}</FieldError>}
           </FieldGroup>
@@ -271,20 +268,12 @@ export function GoalsPage() {
     : 0;
   return (
     <div className="finance-page finance-goals">
-      <PageIntro
-        icon={Target}
-        tone="goal"
-        eyebrow={text("Dành tiền cho điều quan trọng")}
-        title={text("Mục tiêu tiết kiệm")}
-        description={text(
-          "Dành tiền cho điều quan trọng, theo nhịp góp của bạn.",
-        )}
-      >
+      <FinancePageHeader>
         <Button variant="outline" onClick={() => setEditor("new")}>
           <Plus data-icon="inline-start" />
           {text("Tạo mục tiêu")}
         </Button>
-      </PageIntro>
+      </FinancePageHeader>
       <FinanceBoard>
         <div className="finance-metrics finance-metrics-two">
           <Metric

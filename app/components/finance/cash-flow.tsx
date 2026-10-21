@@ -1,5 +1,7 @@
 "use client";
 
+import { FinancePageHeader } from "./page-header";
+
 import { useState } from "react";
 import {
   Area,
@@ -29,7 +31,6 @@ import { FieldGroup } from "@/components/ui/field";
 import { useFinance } from "@/app/context/finance-context";
 import { overview, forecast } from "@/lib/finance/model";
 import {
-  PageIntro,
   Metric,
   Section,
   MoneyInput,
@@ -71,12 +72,7 @@ export function CashFlowPage() {
   ];
   return (
     <div className="finance-page finance-cash-flow">
-      <PageIntro
-        icon={ChartNoAxesCombined}
-        eyebrow="Dòng tiền"
-        title="Dòng tiền sắp tới"
-        description="Ước tính từ thu nhập, chi phí và các khoản sắp đến."
-      >
+      <FinancePageHeader>
         <Choice
           label="Khoảng dự báo"
           value={days}
@@ -87,7 +83,7 @@ export function CashFlowPage() {
             { value: "90", label: "90 ngày" },
           ]}
         />
-      </PageIntro>
+      </FinancePageHeader>
       <FinanceBoard>
         <div className="finance-metrics finance-metrics-three">
           <Metric

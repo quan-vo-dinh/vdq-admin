@@ -11,6 +11,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { useState } from 'react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -204,7 +205,6 @@ const UserProfile = () => {
 
       <Dialog open={openModal} onOpenChange={setOpenModal}>
         <DialogContent size="lg" >
-          {saveError && <p role="alert">{saveError}</p>}
           <DialogHeader>
             <DialogTitle className='mb-4'>
               {modalType === 'personal'
@@ -212,6 +212,7 @@ const UserProfile = () => {
                 : t('Edit Address Details')}
             </DialogTitle>
           </DialogHeader>
+          {saveError && <Alert variant="destructive"><AlertDescription>{saveError}</AlertDescription></Alert>}
 
           {modalType === 'personal' ? (
             <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
@@ -297,7 +298,7 @@ const UserProfile = () => {
                 <Label htmlFor='linkedin'>{t('LinkedIn URL')}</Label>
                 <Input
                   id='linkedin'
-                  placeholder={t('LinkedIn URL')}
+                  placeholder='linkedin.com/in/tai-khoan'
                   value={tempPersonal.linkedin}
                   onChange={(e) =>
                     setTempPersonal({
@@ -311,7 +312,7 @@ const UserProfile = () => {
                 <Label htmlFor='github'>{t('GitHub URL')}</Label>
                 <Input
                   id='github'
-                  placeholder={t('GitHub URL')}
+                  placeholder='github.com/tai-khoan'
                   value={tempPersonal.github}
                   onChange={(e) =>
                     setTempPersonal({ ...tempPersonal, github: e.target.value })

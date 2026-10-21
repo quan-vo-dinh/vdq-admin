@@ -66,12 +66,11 @@ export function TransactionEditor({
       !Number.isSafeInteger(amount) ||
       amount <= 0 ||
       !date ||
-      date < data!.startsOn ||
       date > data!.asOf ||
       (kind === "transfer" && account === destination)
     ) {
       setError(
-        "Nhập nội dung, số tiền dương, ngày trong kỳ báo cáo và hai tài khoản khác nhau khi chuyển tiền.",
+        "Nhập nội dung, số tiền dương, ngày không sau hôm nay và hai tài khoản khác nhau khi chuyển tiền.",
       );
       return;
     }
@@ -172,7 +171,6 @@ export function TransactionEditor({
                 label="Ngày ghi nhận"
                 value={date}
                 onChange={setDate}
-                min={data.startsOn}
                 max={data.asOf}
               />
             </FieldGroup>

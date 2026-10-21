@@ -580,10 +580,6 @@ html.dark {
 /* Finance composes the Modern dashboard's shared board, cards and patterned dividers. */
 .finance-workspace { display:flex; flex-direction:column; gap:16px; min-width:0; --finance-inset:20px; }
 .finance-page { display:flex; flex-direction:column; gap:16px; min-width:0; }
-.finance-page-intro { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding-block:4px; }
-.finance-page-intro > div:first-child > [data-finance-icon] { display:none; }
-.finance-page-title { font-size:var(--text-2xl); line-height:var(--text-2xl--line-height); letter-spacing:-.025em; font-weight:600; }
-.finance-page-intro > div:first-child p:last-child { font-size:var(--text-sm); line-height:1.5; }
 .finance-board { min-width:0; }
 .finance-board-footnote { background:var(--background); padding:16px 20px; }
 .finance-board > * { grid-column:1 / -1; min-width:0; }
@@ -694,7 +690,6 @@ html.dark {
 }
 @media (max-width:639px) {
   .finance-workspace { --finance-inset:16px; }
-  .finance-page-intro { align-items:flex-start; }
   .finance-overview-bottom,.finance-overview-stats,.finance-goal-grid { grid-template-columns:minmax(0,1fr); }
   .finance-summary-cell { padding:20px; gap:16px; }
   .finance-summary-value,.finance-hero-value { font-size:var(--text-xl); }
@@ -709,7 +704,6 @@ html.dark {
 /* Each finance task has its own visual rhythm, built from the shared primitives. */
 .finance-workspace { --finance-inset:24px; gap:24px; }
 .finance-page { gap:24px; }
-.finance-page-intro { padding-block:8px; }
 .finance-board [data-finance-surface] { border:0; border-radius:0; overflow:hidden; }
 .finance-panel-header { border-bottom:0; }
 .finance-board [data-finance-surface] > .finance-panel-header { padding-bottom:8px; }
@@ -757,7 +751,6 @@ html.dark {
 @media (max-width:639px) {
   .finance-workspace { --finance-inset:16px; gap:16px; }
   .finance-page { gap:16px; }
-  .finance-page-title { font-size:var(--text-xl); }
   .finance-metrics [data-finance-value] { font-size:var(--text-xl); }
   .finance-board .finance-metrics [data-slot="card-header"] { padding-inline:12px; }
   .finance-board .finance-metrics [data-slot="card-content"] { padding-inline:12px; }

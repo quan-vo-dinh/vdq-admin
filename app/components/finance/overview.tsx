@@ -1,16 +1,17 @@
 "use client";
 
+import { FinancePageHeader } from "./page-header";
+
 import {
   Wallet,
   PiggyBank,
   Landmark,
-  ChartNoAxesCombined,
   ReceiptText,
 } from "lucide-react";
 import { BudgetNotice } from "./budget-notice";
 import { useFinance } from "@/app/context/finance-context";
 import { overview, categorySpent, budgetLimit } from "@/lib/finance/model";
-import { PageIntro, MonthPicker } from "./shared";
+import { MonthPicker } from "./shared";
 import { SpendingExplorer, GoalSpotlight } from "./explore-widgets";
 import { FinanceNotes } from "./controls";
 import { IncomeSpendingChart } from "./analysis-charts";
@@ -29,14 +30,9 @@ export function OverviewPage() {
   );
   return (
     <div className="finance-page finance-overview">
-      <PageIntro
-        icon={ChartNoAxesCombined}
-        eyebrow="Tổng quan"
-        title="Tổng quan tài chính"
-        description="Tiền hiện có, thu chi và mục tiêu của bạn."
-      >
+      <FinancePageHeader>
         <MonthPicker />
-      </PageIntro>
+      </FinancePageHeader>
       <FinanceBoard>
         {over.length > 0 && (
           <BudgetNotice

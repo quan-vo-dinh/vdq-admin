@@ -1,7 +1,8 @@
 "use client";
 
+import { FinancePageHeader } from "./page-header";
+
 import { useState } from "react";
-import { Wallet } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +20,7 @@ import { BudgetComparison } from "./analysis-charts";
 import { BudgetRadar } from "./explore-widgets";
 import { BudgetPulse } from "./dashboard-widgets";
 import { FinanceBoard } from "./template-layout";
-import { PageIntro, MoneyInput, MonthPicker } from "./shared";
+import { MoneyInput, MonthPicker } from "./shared";
 import { useFinanceLocale } from "./locale";
 import { FinanceHeading } from "./heading";
 
@@ -32,14 +33,9 @@ export function BudgetsPage() {
   const [view, setView] = useState<"bars" | "radar">("bars");
   return (
     <div className="finance-page finance-budgets">
-      <PageIntro
-        icon={Wallet}
-        eyebrow="Ngân sách"
-        title="Ngân sách tháng"
-        description="So mức đã chi với hạn mức của từng danh mục."
-      >
+      <FinancePageHeader>
         <MonthPicker />
-      </PageIntro>
+      </FinancePageHeader>
       <FinanceBoard>
         <div className="finance-budget-main">
           <Tabs

@@ -219,6 +219,12 @@ try {
     assert.throws(() => parseFinanceCsv("bad,header\n1,2", data));
     assert.throws(() => parseFinanceCsv(`${header}\n\"unclosed`, data));
   });
+  test("CSV permits backfilled transactions before the original reporting start", () => {
+    const header = csvTemplate.split("\n")[0];
+    const row = parseFinanceCsv(`${header}\n2025-12-15,Backfilled expense,100,expense,food,bank,`, data)[0];
+    assert.equal(row.error, "");
+    assert.equal(row.row.date, "2025-12-15");
+  });
   test("CSV export defuses spreadsheet formulas", () => {
     const text = exportTransactions([
       { ...data.transactions[0], description: "=1+1" },

@@ -8,7 +8,21 @@ export type Address={location:string;state:string;pin:string;zip:string;taxNo:st
 type Profile={personal:Personal;address:Address;revision:number};
 type Preferences={locale:'vi'|'en';theme:'light'|'dark';revision:number};
 async function read<T>(url:string):Promise<T>{const r=await fetch(url);if(!r.ok)throw new Error('Không tải được dữ liệu cá nhân.');return r.json();}
-export async function patchPersonal<T>(url:string,body:unknown):Promise<T>{const r=await fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status===409?'Dữ liệu đã thay đổi ở tab khác. Bản nháp được giữ; tải lại trước khi lưu.':'Không lưu được dữ liệu.');return r.json();}
+export async function patchPersonal<T>(url:string,body:unknown):Promise<T>{
+ const response=await fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ if(!response.ok){
+  const result=await response.json().catch(()=>({}));
+  const messages:Record<string,string>={
+   invalid_url:'Liên kết mạng xã hội không hợp lệ. Nhập tên miền như github.com/tai-khoan hoặc URL https:// đầy đủ.',
+   invalid_email:'Địa chỉ email không hợp lệ.',
+   conflict:'Dữ liệu đã thay đổi ở tab khác. Bản nháp được giữ; đóng và mở lại để tải phiên bản mới.',
+   invalid:'Một trường thông tin không hợp lệ hoặc dài quá 500 ký tự.',
+  };
+  throw new Error(messages[result.code] ?? (response.status===401?'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.':'Không lưu được dữ liệu. Vui lòng thử lại.'));
+ }
+ return response.json();
+}
+
 function usePersonalState(){
  const profile=useSWR<Profile>('/api/profile',read,{refreshInterval:60000});
  const prefs=useSWR<Preferences>('/api/preferences',read,{refreshInterval:60000});

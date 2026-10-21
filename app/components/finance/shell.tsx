@@ -1,16 +1,14 @@
 "use client";
-import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { useFinanceLocale } from "./locale";
-import { Suspense, useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFinance } from "@/app/context/finance-context";
 import { ApiError } from "@/app/api/global-fetcher";
-import { FinanceManage } from "./manage";
-import { TransactionEditor } from "./transaction-editor";
+import { FinancePageHeader } from "./page-header";
 
 const links = [
   { slug: "", label: "Tổng quan" },
@@ -44,20 +42,10 @@ export function FinanceLoading() {
 export function FinanceShell({ children }: { children: ReactNode }) {
   const { text, formatMessage } = useFinanceLocale();
   const { data, error, reload, notice, notify } = useFinance();
-  const [adding, setAdding] = useState(false);
   return (
     <div className="finance-workspace">
       <Suspense fallback={null}><FinanceDocumentTitle /></Suspense>
-      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0 flex-1 basis-80"><PersonalizedIntro /></div>
-        <div className="flex flex-wrap items-center gap-2">
-          <FinanceManage />
-          <Button disabled={!data || !data.accounts.some(a=>!a.archivedAt)} size="sm" onClick={() => setAdding(true)}>
-            <Plus data-icon="inline-start" />
-            {text("Ghi giao dịch")}
-          </Button>
-        </div>
-      </div>
+      {!data && <FinancePageHeader />}
       {notice && (
         <Alert>
           <AlertDescription className="flex items-center justify-between gap-2">
@@ -88,7 +76,6 @@ export function FinanceShell({ children }: { children: ReactNode }) {
       ) : (
         children
       )}
-      {adding && data && <TransactionEditor onClose={() => setAdding(false)} />}
     </div>
   );
 }

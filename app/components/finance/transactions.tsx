@@ -1,4 +1,6 @@
 "use client";
+
+import { FinancePageHeader } from "./page-header";
 import { FinanceHeading } from "./heading";
 import { FinanceBoard } from "./template-layout";
 import StyleDivider from "@/app/components/shared/StyleDivider";
@@ -13,7 +15,6 @@ import {
   Search,
   Pencil,
   Trash2,
-  ArrowLeftRight,
   Scale,
   CircleDollarSign,
   ReceiptText,
@@ -42,7 +43,6 @@ import {
 } from "@/lib/finance/model";
 import { downloadCsv, exportTransactions } from "@/lib/finance/csv";
 import {
-  PageIntro,
   Metric,
   Section,
   MonthPicker,
@@ -185,12 +185,7 @@ export function TransactionsPage() {
   );
   return (
     <div className="finance-page finance-transactions">
-      <PageIntro
-        icon={ArrowLeftRight}
-        eyebrow={text("Ghi nhận & đối soát")}
-        title={text("Giao dịch")}
-        description={text("Ghi lại và tìm các khoản thu chi.")}
-      >
+      <FinancePageHeader>
         <div className="flex flex-wrap gap-2">
           <MonthPicker />
           <Button variant="outline" onClick={() => setImporting(true)}>
@@ -211,7 +206,7 @@ export function TransactionsPage() {
             {text("Xuất")}
           </Button>
         </div>
-      </PageIntro>
+      </FinancePageHeader>
       <FinanceBoard>
         <div className="finance-metrics finance-metrics-three">
           <Metric
