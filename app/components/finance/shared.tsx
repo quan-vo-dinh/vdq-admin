@@ -36,7 +36,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { ButtonGroup } from "@/components/ui/button-group";
 import { Slider } from "@/components/ui/slider";
 import { NumberTicker } from "./number-ticker";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -426,10 +425,10 @@ export function MonthPicker() {
     date.setUTCMonth(date.getUTCMonth() + amount);
     setMonth(date.toISOString().slice(0, 7));
   };
-  return <ButtonGroup aria-label={text("Kỳ báo cáo")}>
+  return <div role="group" aria-label={text("Kỳ báo cáo")} className="flex min-w-0 items-center gap-2">
     <Button variant="outline" size="icon" aria-label={text("Kỳ trước")} disabled={month === '0001-01'} onClick={() => shift(-1)}><ChevronLeft /></Button>
     <Input type="month" aria-label={text("Kỳ báo cáo")} className="w-auto min-w-0" min="0001-01" max="9999-12" value={month}
       onChange={event => { const value = event.target.value; if (/^[0-9]{4}-(0[1-9]|1[0-2])$/.test(value) && value >= '0001-01') setMonth(value); }} />
     <Button variant="outline" size="icon" aria-label={text("Kỳ sau")} disabled={month === '9999-12'} onClick={() => shift(1)}><ChevronRight /></Button>
-  </ButtonGroup>;
+  </div>;
 }
