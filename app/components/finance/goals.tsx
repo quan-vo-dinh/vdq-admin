@@ -48,13 +48,12 @@ import { overview, type Goal } from "@/lib/finance/model";
 import {
   Metric,
   MoneyInput,
-  FinanceIcon,
   FinanceBadge,
   NoResults,
 } from "./shared";
 import { ProgressRing } from "./dashboard-widgets";
 import type { FinanceTone } from "./appearance";
-import { GoalCover, GoalVisualPicker, goalVisuals } from "./goal-visuals";
+import { GoalCover, GoalVisualPicker } from "./goal-visuals";
 function GoalEditor({
   initial,
   onClose,
@@ -311,16 +310,17 @@ export function GoalsPage() {
                 data-finance-surface="goal"
                 className="finance-goal-card"
               >
-                <CardHeader>
-                  <FinanceIcon icon={goalVisuals[g.visual ?? "study"].icon} />
+                <div className="finance-goal-card-art">
+                  <GoalCover visual={g.visual} image={g.image} alt={goalName(g)} showIcon={false} />
+                </div>
+                <CardHeader className="finance-goal-card-header">
                   <CardTitle>
                     <FinanceHeading>{goalName(g)}</FinanceHeading>
                   </CardTitle>
                   <CardDescription>
                     {text("Mong muốn đạt")} {date(g.deadline)}
                   </CardDescription>
-                  <CardAction className="finance-goal-preview">
-                    <GoalCover visual={g.visual} image={g.image} alt={goalName(g)} />
+                  <CardAction>
                     <Button
                       size="icon-sm"
                       variant="ghost"
