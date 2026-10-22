@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { useFinance } from "@/app/context/finance-context";
 import { CategoryManager } from "./category-manager";
+import { ReconciliationDialog } from "./reconciliation";
 import { FinanceManage } from "./manage";
 import { TransactionEditor } from "./transaction-editor";
 import { useFinanceLocale } from "./locale";
@@ -21,6 +22,7 @@ export function FinancePageHeader({ children }: { children?: ReactNode }) {
       <div className="finance-page-actions flex min-w-0 flex-wrap items-center gap-2">
         {children}
         <FinanceManage />
+        {data && <ReconciliationDialog/>}
         <CategoryManager />
         <Button disabled={!data?.accounts.some(account => !account.archivedAt)} size="sm" onClick={() => setAdding(true)}>
           <Plus data-icon="inline-start" />{text("Ghi giao dịch")}

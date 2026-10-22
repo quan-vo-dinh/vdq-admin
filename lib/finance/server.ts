@@ -11,15 +11,15 @@ import type { FinanceData } from './model';
 import type { Database } from '@/types/database';
 
 type Table = Extract<keyof Database['public']['Tables'], `finance_${string}`>;
-const resources = ['accounts','categories','transactions','budgets','budget_months','goals','bills','settings'] as const;
+const resources = ['accounts','categories','transactions','budgets','budget_months','goals','bills','settings','checkpoints','scope_events'] as const;
 type Resource = typeof resources[number];
 const fields: Record<Resource,string[]> = {
- accounts:['name','opening','note','archived_at'], categories:['code','name','kind','archived_at'],
- transactions:['date','description','amount','kind','account_id','destination_account_id','category_id','source'],
+ accounts:['name','opening','note','archived_at','opening_on','opening_excluded'], categories:['code','name','kind','archived_at'],
+ transactions:['date','description','amount','kind','account_id','destination_account_id','category_id','source','reference','occurred_at','reporting_role','report_group','cash_account_id','cash_received','funding_transaction_id'],
  budgets:['category_id','name','default_limit','fixed'], budget_months:['budget_id','month','limit_amount'],
- goals:['name','target','allocated','monthly','deadline','priority','visual'], bills:['name','due_on','amount'], settings:['starts_on'],
+ goals:['name','target','allocated','monthly','deadline','priority','visual'], bills:['name','due_on','amount'], settings:['starts_on'], checkpoints:['account_id','observed_at','amount','evidence'], scope_events:['account_id','occurred_at','amount','kind','evidence'],
 };
-const moneyFields = new Set(['opening','amount','default_limit','limit_amount','target','allocated','monthly']);
+const moneyFields = new Set(['opening','opening_excluded','cash_received','amount','default_limit','limit_amount','target','allocated','monthly']);
 function checkedMoney(value: unknown) {
  if(typeof value!=='string' || !/^-?\d{1,18}$/.test(value)) throw new AccessError(400,'invalid_money');
  const exact=BigInt(value);
@@ -38,27 +38,26 @@ export async function financeOverview(): Promise<FinanceData> {
  }
  const settings=await db.from('finance_settings').select().eq('owner_id',user.id).maybeSingle(); dbError(settings.error);
  if(!settings.data) { const r=await db.from('finance_settings').insert({id:user.id}); if(r.error?.code!=='23505') dbError(r.error); }
- // Read every row in stable UUID order: PostgREST's 1000-row cap must not truncate reports.
- async function all<T>(query:(from:number,to:number)=>PromiseLike<{data:T[]|null;error:{code?:string;message:string}|null}>) {
-  const rows:T[]=[]; for(let offset=0;;offset+=500) {const r=await query(offset,offset+499); dbError(r.error); rows.push(...r.data!); if(r.data!.length<500) return rows;}
- }
- const [accounts,categories,transactions,budgets,months,goals,bills,current]=await Promise.all([
- all((a,b)=>db.from('finance_accounts_dto').select().eq('owner_id',user.id).order('id').range(a,b)),
- all((a,b)=>db.from('finance_categories').select().eq('owner_id',user.id).order('id').range(a,b)),
- all((a,b)=>db.from('finance_transactions_dto').select().eq('owner_id',user.id).order('id').range(a,b)),
- all((a,b)=>db.from('finance_budgets_dto').select().eq('owner_id',user.id).order('id').range(a,b)),
- all((a,b)=>db.from('finance_budget_months_dto').select().eq('owner_id',user.id).order('id').range(a,b)),
- all((a,b)=>db.from('finance_goals_dto').select().eq('owner_id',user.id).order('id').range(a,b)),
- all((a,b)=>db.from('finance_bills_dto').select().eq('owner_id',user.id).order('id').range(a,b)),
- db.from('finance_settings').select().eq('owner_id',user.id).single(),
- ]); dbError(current.error);
+ // The typed DTO relations are aggregated in one owner-scoped SQL statement.
+ // JSON aggregation also avoids PostgREST's default row cap.
+ const snapshot=await db.rpc('finance_snapshot');dbError(snapshot.error);
+ type Views=Database['public']['Views'];
+ type Tables=Database['public']['Tables'];
+ const {accounts,categories,transactions,budgets,months,goals,bills,checkpoints,scopeEvents,settings:current}=snapshot.data as unknown as {
+  accounts:Views['finance_accounts_dto']['Row'][]; categories:Tables['finance_categories']['Row'][];
+  transactions:Views['finance_transactions_dto']['Row'][]; budgets:Views['finance_budgets_dto']['Row'][];
+  months:Views['finance_budget_months_dto']['Row'][]; goals:Views['finance_goals_dto']['Row'][];
+  bills:Views['finance_bills_dto']['Row'][]; checkpoints:Views['finance_checkpoints_dto']['Row'][];
+  scopeEvents:Views['finance_scope_events_dto']['Row'][]; settings:Tables['finance_settings']['Row']|null;
+ };
+ if(!current)throw new AccessError(500,'finance_settings_missing');
  // Conservative exact bound covers intermediate sums and differences used by the existing charts.
- const magnitude=[...accounts.map(a=>a.opening),...transactions.map(t=>t.amount),...goals.flatMap(g=>[g.target,g.allocated,g.monthly]),...bills.map(b=>b.amount),...budgets.map(b=>b.default_limit),...months.map(m=>m.limit_amount)].reduce((s,v)=>s+(BigInt(v!)<BigInt(0)?-BigInt(v!):BigInt(v!)),BigInt(0));
+ const magnitude=[...accounts.flatMap(a=>[a.opening,a.opening_excluded]),...transactions.flatMap(t=>[t.amount,t.cash_received]),...checkpoints.map(c=>c.amount),...scopeEvents.map(e=>e.amount),...goals.flatMap(g=>[g.target,g.allocated,g.monthly]),...bills.map(b=>b.amount),...budgets.map(b=>b.default_limit),...months.map(m=>m.limit_amount)].reduce((s,v)=>s+(BigInt(v!)<BigInt(0)?-BigInt(v!):BigInt(v!)),BigInt(0));
  if(magnitude>BigInt(Number.MAX_SAFE_INTEGER)/BigInt(4)) throw new AccessError(400,'money_outside_ui_range');
  const categoryCode=(id:string|null)=>categories.find(c=>c.id===id)?.code??'transfer';
- return {asOf:todayKey(),startsOn:current.data!.starts_on,settings:current.data!,categories,
- accounts:accounts.map(a=>({id:a.id!,name:a.name!,opening:number(a.opening),note:a.note!,revision:a.revision!,archivedAt:a.archived_at})),
- transactions:transactions.map(t=>({id:t.id!,revision:t.revision!,date:t.date!,description:t.description!,amount:number(t.amount),kind:t.kind as 'income'|'expense'|'refund'|'transfer',account:t.account_id!,destination:t.destination_account_id??undefined,category:categoryCode(t.category_id),source:t.source as 'csv'|'manual'})),
+ return {checkpoints:checkpoints.map(c=>({id:c.id!,revision:c.revision!,account:c.account_id!,observedAt:c.observed_at!,amount:number(c.amount),evidence:c.evidence!})),scopeEvents:scopeEvents.map(e=>({id:e.id!,revision:e.revision!,account:e.account_id!,occurredAt:e.occurred_at!,amount:number(e.amount),kind:e.kind as 'exclude'|'release'|'external_outflow',evidence:e.evidence!})),asOf:todayKey(),startsOn:current.starts_on,settings:current,categories,
+ accounts:accounts.map(a=>({id:a.id!,name:a.name!,opening:number(a.opening),note:a.note!,revision:a.revision!,archivedAt:a.archived_at,openingOn:a.opening_on,openingExcluded:number(a.opening_excluded)})),
+ transactions:transactions.map(t=>({id:t.id!,revision:t.revision!,date:t.date!,description:t.description!,amount:number(t.amount),kind:t.kind as 'income'|'expense'|'refund'|'transfer',account:t.account_id!,destination:t.destination_account_id??undefined,category:categoryCode(t.category_id),source:t.source as 'csv'|'manual',reference:t.reference??undefined,occurredAt:t.occurred_at??undefined,reportingRole:t.reporting_role as 'standard'|'support_return'|'cash_withdrawal'|'prepaid_cash',reportGroup:t.report_group??undefined,cashAccount:t.cash_account_id??undefined,cashReceived:number(t.cash_received),fundingTransaction:t.funding_transaction_id??undefined})),
  budgets:categories.filter(c=>c.kind==='expense'||budgets.some(b=>b.category_id===c.id)||transactions.some(t=>t.category_id===c.id&&(t.kind==='expense'||t.kind==='refund'))).map(c=> {const b=budgets.find(b=>b.category_id===c.id);return {id:c.code,archivedAt:c.archived_at,name:c.name,limit:b?number(b.default_limit):0,fixed:b?.fixed??false,resourceId:b?.id??undefined,revision:b?.revision??undefined,categoryId:c.id,monthlyLimits:Object.fromEntries(months.filter(m=>m.budget_id===b?.id).map(m=>[m.month!.slice(0,7),number(m.limit_amount)])),monthRows:months.filter(m=>m.budget_id===b?.id).map(m=>({id:m.id!,month:m.month!,revision:m.revision!}))};}),
  goals:goals.map(g=>({id:g.id!,revision:g.revision!,name:g.name!,target:number(g.target),allocated:number(g.allocated),monthly:number(g.monthly),deadline:g.deadline!,priority:g.priority as 'high'|'normal',visual:g.visual as 'study',image:g.image_path?`/api/finance/goals/image?id=${g.id}`:undefined})),
  bills:bills.map(b=>({id:b.id!,revision:b.revision!,name:b.name!,date:b.due_on!,amount:number(b.amount)}))};
@@ -73,8 +72,10 @@ export async function financeRequest(request:Request,resource?:string) {
   const id=uuid(body.id); if(typeof body.csv!=='string'||Buffer.byteLength(body.csv)>1_000_000) throw new AccessError(400,'invalid');
   let parsed; const data=await financeOverview(); try{parsed=parseFinanceCsv(body.csv,data);}catch{throw new AccessError(400,'invalid_csv');}
   if(parsed.some(r=>r.error)) throw new AccessError(400,'invalid_csv');
-  const rows=parsed.map(({row},i)=>({id:stableRowId(id,i),date:row.date,description:row.description,amount:String(row.amount),kind:row.kind,account_id:row.account,destination_account_id:row.destination??null,category_code:row.kind==='transfer'?null:row.category}));
-  const r=await db.rpc('finance_import',{p_id:id,p_rows:rows}); dbError(r.error); return Response.json({count:r.data});
+  const importedIds=new Map(parsed.map(({row},i)=>[row.id,stableRowId(id,i)]));
+  const rows=parsed.map(({row},i)=>({id:stableRowId(id,i),date:row.date,description:row.description,amount:String(row.amount),kind:row.kind,account_id:row.account,destination_account_id:row.destination??null,category_code:row.kind==='transfer'?null:row.category,reference:row.reference??null,occurred_at:row.occurredAt??null,reporting_role:row.reportingRole??'standard',report_group:row.reportGroup??null,cash_account_id:row.cashAccount??null,cash_received:String(row.cashReceived??0),funding_transaction_id:row.fundingTransaction?(importedIds.get(row.fundingTransaction)??row.fundingTransaction):null}));
+  const r=await db.rpc('finance_import',{p_id:id,p_rows:rows}); if(r.error?.code==='23505') throw new AccessError(409,'duplicate_transaction');
+  dbError(r.error); return Response.json({count:r.data});
  }
  if(!resources.includes(resource as Resource)) throw new AccessError(404,'missing');
  const key=resource as Resource,table=`finance_${key}` as Table;
@@ -88,9 +89,10 @@ export async function financeRequest(request:Request,resource?:string) {
   else if(field.endsWith('_id')) values[field]=value===null?null:uuid(value);
   else {
    if(value!==null&&typeof value!=='string')throw new AccessError(400,'invalid');
-   if(value===null&&field!=='archived_at')throw new AccessError(400,'invalid');
-   if(['date','month','deadline','due_on','starts_on'].includes(field)&&
+   if(value===null&&!['archived_at','opening_on','reference','occurred_at','report_group'].includes(field))throw new AccessError(400,'invalid');
+   if(['date','month','deadline','due_on','starts_on','opening_on'].includes(field)&&value!==null&&
      (typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value)||!Number.isFinite(Date.parse(value))||new Date(value).toISOString().slice(0,10)!==value))throw new AccessError(400,'invalid_date');
+   if(['occurred_at','observed_at'].includes(field)&&value!==null&&(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)||!Number.isFinite(Date.parse(value))||Date.parse(value)>Date.now()))throw new AccessError(400,'invalid_timestamp');
    values[field]=value;
   }
  }
@@ -98,6 +100,14 @@ export async function financeRequest(request:Request,resource?:string) {
  // CAS mutations never accept owner, timestamps, revisions or an entire FinanceData object.
  const perform = async () => {
   switch(key) {
+   case 'checkpoints': {
+    const q=db.from('finance_checkpoints');
+    return request.method==='POST'?await q.insert({id,...values} as unknown as Database['public']['Tables']['finance_checkpoints']['Insert']).select('id,revision'):request.method==='DELETE'?await q.delete().eq('id',id).eq('owner_id',user.id).eq('revision',revision(body.expectedRevision)).select('id,revision'):await q.update(values as Database['public']['Tables']['finance_checkpoints']['Update']).eq('id',id).eq('owner_id',user.id).eq('revision',revision(body.expectedRevision)).select('id,revision');
+   }
+   case 'scope_events': {
+    const q=db.from('finance_scope_events');
+    return request.method==='POST'?await q.insert({id,...values} as unknown as Database['public']['Tables']['finance_scope_events']['Insert']).select('id,revision'):request.method==='DELETE'?await q.delete().eq('id',id).eq('owner_id',user.id).eq('revision',revision(body.expectedRevision)).select('id,revision'):await q.update(values as Database['public']['Tables']['finance_scope_events']['Update']).eq('id',id).eq('owner_id',user.id).eq('revision',revision(body.expectedRevision)).select('id,revision');
+   }
    case 'accounts': {
     const q=db.from('finance_accounts');
     return request.method==='POST'? await q.insert({id,...values} as unknown as Database['public']['Tables']['finance_accounts']['Insert']).select('id,revision') : request.method==='DELETE'?await q.delete().eq('id',id).eq('owner_id',user.id).eq('revision',revision(body.expectedRevision)).select('id,revision'):await q.update(values as Database['public']['Tables']['finance_accounts']['Update']).eq('id',id).eq('owner_id',user.id).eq('revision',revision(body.expectedRevision)).select('id,revision');

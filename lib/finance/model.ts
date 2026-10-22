@@ -11,6 +11,13 @@ export type Transaction = {
   account: string;
   destination?: string;
   source: "demo" | "manual" | "csv";
+  reference?: string;
+  occurredAt?: string;
+  reportingRole?: "standard" | "support_return" | "cash_withdrawal" | "prepaid_cash";
+  reportGroup?: string;
+  cashAccount?: string;
+  cashReceived?: number;
+  fundingTransaction?: string;
 };
 export type Account = {
   id: string;
@@ -19,6 +26,8 @@ export type Account = {
   opening: number;
   note: string;
   archivedAt?: string | null;
+  openingOn?: string | null;
+  openingExcluded?: number;
 };
 export type Budget = {
   archivedAt?: string | null;
@@ -56,6 +65,8 @@ export type GoalVisual =
   | "study"
   | "travel";
 export type FinanceData = {
+  checkpoints?: BalanceCheckpoint[];
+  scopeEvents?: ScopeEvent[];
   settings?: {id: string; starts_on: string; revision: number};
   categories?: {id: string; code: string; name: string; kind: string; archived_at: string | null; revision: number}[];
   asOf: string;
@@ -66,6 +77,27 @@ export type FinanceData = {
   goals: Goal[];
   bills: { id: string; revision?: number; name: string; date: string; amount: number }[];
 };
+export type BalanceCheckpoint = {
+  id: string; revision: number; account: string; observedAt: string;
+  amount: number; evidence: string;
+};
+export type ScopeEvent = {
+  id: string; revision: number; account: string; occurredAt: string;
+  amount: number; kind: "exclude" | "release" | "external_outflow"; evidence: string;
+};
+// Reporting convention and asset movement are deliberately separate.
+export function reportingEffect(t: Transaction) {
+  if (t.reportingRole === "support_return") return {income: -t.amount, expense: 0, refund: 0};
+  if (t.reportingRole === "prepaid_cash") return {income: 0, expense: 0, refund: 0};
+  return {income: t.kind === "income" ? t.amount : 0, expense: t.kind === "expense" ? t.amount : 0, refund: t.kind === "refund" ? t.amount : 0};
+}
+export function assetEffect(t: Transaction, account: string) {
+  const cash = t.reportingRole === "cash_withdrawal" && t.cashAccount === account ? t.cashReceived ?? 0 : 0;
+  if (t.kind === "transfer") return cash + (t.destination === account ? t.amount : 0) - (t.account === account ? t.amount : 0);
+  return cash + (t.account === account ? (t.kind === "expense" ? -t.amount : t.amount) : 0);
+}
+export const financeDay = (timestamp: string) => new Intl.DateTimeFormat("en-CA", {timeZone:"Asia/Ho_Chi_Minh",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(timestamp));
+export const expenseGroup = (code: string): "food" | "transport" | "other" => code === "food" || code === "transport" ? code : "other";
 export const kindLabels: Record<TransactionKind, string> = {
   expense: "Chi tiêu",
   income: "Thu nhập",
@@ -87,16 +119,16 @@ export const sum = <T>(items: T[], get: (item: T) => number) =>
 export function monthlyTotals(transactions: Transaction[], period: FinancePeriod) {
   const rows = transactions.filter((t) => inFinancePeriod(t.date, period));
   const income = sum(
-    rows.filter((t) => t.kind === "income"),
-    (t) => t.amount,
+    rows,
+    (t) => reportingEffect(t).income,
   );
   const expenses = sum(
-    rows.filter((t) => t.kind === "expense"),
-    (t) => t.amount,
+    rows,
+    (t) => reportingEffect(t).expense,
   );
   const refunds = sum(
-    rows.filter((t) => t.kind === "refund"),
-    (t) => t.amount,
+    rows,
+    (t) => reportingEffect(t).refund,
   );
   return {
     income,
@@ -105,18 +137,10 @@ export function monthlyTotals(transactions: Transaction[], period: FinancePeriod
     net: income - expenses + refunds,
   };
 }
-export function accountBalance(account: Account, transactions: Transaction[]) {
+export function accountBalance(account: Account, transactions: Transaction[], asOf = "9999-12-31") {
   return (
     account.opening +
-    sum(transactions, (t) => {
-      if (t.kind === "transfer")
-        return (
-          (t.destination === account.id ? t.amount : 0) -
-          (t.account === account.id ? t.amount : 0)
-        );
-      if (t.account !== account.id) return 0;
-      return t.kind === "expense" ? -t.amount : t.amount;
-    })
+    sum(transactions.filter(t => t.date <= asOf && (!account.openingOn || t.date >= account.openingOn)), t => assetEffect(t, account.id))
   );
 }
 export function categorySpent(
@@ -128,21 +152,29 @@ export function categorySpent(
     transactions.filter(
       (t) => t.category === category && inFinancePeriod(t.date, period),
     ),
-    (t) =>
-      t.kind === "expense" ? t.amount : t.kind === "refund" ? -t.amount : 0,
+    (t) => reportingEffect(t).expense - reportingEffect(t).refund,
   );
 }
+export function accountPosition(data: FinanceData, account: Account) {
+  const events=(data.scopeEvents??[]).filter(e=>e.account===account.id && financeDay(e.occurredAt)<=data.asOf && (!account.openingOn || financeDay(e.occurredAt)>=account.openingOn));
+  const balance=accountBalance(account,data.transactions,data.asOf)-sum(events.filter(e=>e.kind==="external_outflow"),e=>e.amount);
+  const excluded=(account.openingExcluded??0)+sum(events,e=>e.kind==="exclude"?e.amount:-e.amount);
+  return {balance,excluded,tracked:balance-excluded,known:!!account.openingOn&&account.openingOn<=data.asOf&&excluded>=0};
+}
 export function overview(data: FinanceData) {
-  const balance = sum(data.accounts, (a) =>
-    accountBalance(a, data.transactions),
-  );
+  const positions=data.accounts.map(a=>accountPosition(data,a));
+  const balance=sum(positions,p=>p.balance),excluded=sum(positions,p=>p.excluded);
+  const balanceKnown=positions.length>0&&positions.every(p=>p.known);
   const allocated = sum(data.goals, (g) => g.allocated);
   const committed = sum(data.bills, (b) => b.amount);
   return {
     balance,
+    excluded,
+    balanceKnown,
+    tracked: balance - excluded,
     allocated,
     committed,
-    available: balance - allocated - committed,
+    available: balance - excluded - allocated - committed,
   };
 }
 export type ForecastInputs = {

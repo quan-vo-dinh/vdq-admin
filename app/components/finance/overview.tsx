@@ -65,8 +65,8 @@ export function OverviewPage() {
             icon={Landmark}
             items={[
               {
-                label: text("Tổng số dư hiện tại"),
-                value: money(totals.balance),
+                label: text("Số dư ngân hàng tính từ sổ"),
+                value: totals.balanceKnown?money(totals.balance):"Chưa đủ dữ liệu",
                 icon: Wallet,
                 tone: "balance",
                 detail: text("Tổng số dư trên {0} tài khoản", [
@@ -83,7 +83,7 @@ export function OverviewPage() {
                     ? Math.round((totals.allocated / totals.balance) * 100)
                     : 0,
                 ]),
-                progress: totals.balance
+                progress: totals.balanceKnown && totals.balance
                   ? (totals.allocated / totals.balance) * 100
                   : 0,
               },
@@ -95,20 +95,20 @@ export function OverviewPage() {
                 detail: text("{0} khoản cần chi đã ghi nhận", [
                   data.bills.length,
                 ]),
-                progress: totals.balance
+                progress: totals.balanceKnown && totals.balance
                   ? (totals.committed / totals.balance) * 100
                   : 0,
               },
               {
                 label: text("Tiền chưa phân bổ"),
-                value: money(totals.available),
+                value: totals.balanceKnown?money(totals.available):"Chưa đủ dữ liệu",
                 icon: Landmark,
                 tone: totals.available < 0 ? "danger" : "balance",
                 detail:
-                  totals.available < 0
+                  !totals.balanceKnown ? "Cần mốc đầu kỳ và dữ liệu đầy đủ từng nơi giữ tiền" : totals.available < 0
                     ? text("Cần giảm phân bổ hoặc khoản đã cam kết")
                     : text("Có thể dùng sau mục tiêu và khoản sắp đến"),
-                progress: totals.balance
+                progress: totals.balanceKnown && totals.balance
                   ? (totals.available / totals.balance) * 100
                   : 0,
               },

@@ -74,7 +74,7 @@ export function TransactionsPage() {
   const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState<Transaction>();
   const [importing, setImporting] = useState(false);
-  const stats = monthlyTotals(data.transactions, period);
+
   const accounts = data.accounts;
   const categories = data.categories?.map(c => ({id: c.code, name: c.name})) ?? data.budgets;
   const inScope = data.transactions
@@ -91,6 +91,7 @@ export function TransactionsPage() {
     )
     .sort((a, b) => b.date.localeCompare(a.date));
   const filtered = inScope.filter((t) => kind === "all" || t.kind === kind);
+  const stats = monthlyTotals(filtered, period);
   const columns = useMemo<ColumnDef<Transaction>[]>(
     () => [
       {
@@ -119,6 +120,11 @@ export function TransactionsPage() {
                   {t.destination &&
                     ` → ${text(accounts.find((a) => a.id === t.destination)?.name ?? "")}`}
                 </span>
+                {t.reference && <span className="text-xs text-muted-foreground">{t.reference}</span>}
+                {t.reportGroup && <span className="text-xs text-muted-foreground">Nhóm: {t.reportGroup}</span>}
+                {t.reportingRole === "support_return" && <span className="text-xs text-muted-foreground">Trả hỗ trợ · giảm thu nhập giữ lại</span>}
+                {t.reportingRole === "cash_withdrawal" && <span className="text-xs text-muted-foreground">Nhận {money(t.cashReceived??0)} tiền mặt · chi ngân sách tại ATM</span>}
+                {t.reportingRole === "prepaid_cash" && <span className="text-xs text-muted-foreground">Giảm tiền mặt · đã tính ngân sách tại ATM</span>}
               </div>
             </div>
           );
@@ -204,7 +210,7 @@ export function TransactionsPage() {
             }
           >
             <Download data-icon="inline-start" />
-            {text("Xuất")}
+            {text("Xuất")} {filtered.length} dòng
           </Button>
         </div>
       </FinancePageHeader>
@@ -290,6 +296,7 @@ export function TransactionsPage() {
                 </Button>
               )}
             </div>
+            <p className="text-sm text-muted-foreground">Đang lọc {filtered.length}/{data.transactions.filter(t=>inFinancePeriod(t.date,period)).length} dòng trong kỳ. Chỉ số và CSV dùng cùng tập dữ liệu, bao gồm mọi trang của bảng.</p>
             <div className="overflow-x-auto">
               <Tabs value={kind} onValueChange={(v) => setKind(String(v))}>
                 <TabsList

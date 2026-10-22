@@ -48,6 +48,13 @@ export function TransactionEditor({
     initial?.destination ?? data?.accounts.filter(a=>!a.archivedAt)[1]?.id ?? "",
   );
   const [category, setCategory] = useState(initial?.category ?? "food");
+  const [reference,setReference]=useState(initial?.reference??"");
+  const [occurredAt,setOccurredAt]=useState(initial?.occurredAt?new Date(Date.parse(initial.occurredAt)+7*3600000).toISOString().slice(0,19):"");
+  const [role,setRole]=useState<Transaction["reportingRole"]>(initial?.reportingRole??"standard");
+  const [group,setGroup]=useState(initial?.reportGroup??"");
+  const [cashAccount,setCashAccount]=useState(initial?.cashAccount??"");
+  const [cashReceived,setCashReceived]=useState(initial?.cashReceived??0);
+  const [funding,setFunding]=useState(initial?.fundingTransaction??"");
   const [error, setError] = useState("");
   if (!data) return null;
   const categories = financeCategories(data)
@@ -71,6 +78,9 @@ export function TransactionEditor({
       );
       return;
     }
+    if ((role==="support_return"&&!group.trim())||(role==="cash_withdrawal"&&(!cashAccount||cashAccount===account||cashReceived<=0||cashReceived>amount))||(role==="prepaid_cash"&&!funding)) {setError("Kiểm tra nhóm hoàn hỗ trợ, tài khoản tiền mặt và số tiền nhận / nguồn ATM.");return;}
+    const timestamp=occurredAt?`${occurredAt.length===16?occurredAt+":00":occurredAt}+07:00`:null;
+    if(timestamp&&occurredAt.slice(0,10)!==date){setError("Thời điểm phải cùng ngày ghi nhận, theo giờ Việt Nam.");return;}
     const row: Transaction = {
       id: initial?.id ?? createId,
       description: description.trim(),
@@ -87,7 +97,7 @@ export function TransactionEditor({
         id: row.id, expectedRevision: initial?.revision, date, description: row.description,
         amount, kind, account_id: account, destination_account_id: row.destination ?? null,
         category_id: kind === 'transfer' ? null : data!.categories?.find(c=>c.code===selectedCategory)?.id,
-        source: 'manual',
+        source: initial?.source==='csv'?'csv':'manual', reference:reference.trim()||null, occurred_at:timestamp, reporting_role:role,report_group:group.trim()||null,cash_account_id:role==='cash_withdrawal'?cashAccount:null,cash_received:role==='cash_withdrawal'?cashReceived:0,funding_transaction_id:role==='prepaid_cash'?funding:null,
       });
     } catch (e) { setError(e instanceof Error ? e.message : 'Không lưu được.'); return; }
     notify(
@@ -134,7 +144,7 @@ export function TransactionEditor({
               <Choice
                 label={text("Loại giao dịch")}
                 value={kind}
-                onChange={(v) => setKind(v as TransactionKind)}
+                onChange={(v) => {setKind(v as TransactionKind);setRole("standard");}}
                 options={Object.entries(kindLabels).map(([value, label]) => ({
                   value,
                   label,
@@ -206,6 +216,12 @@ export function TransactionEditor({
                 options={categories}
               />
             )}
+            <Field><FieldLabel htmlFor="tx-reference">Mã tham chiếu ngân hàng</FieldLabel><Input id="tx-reference" value={reference} maxLength={120} onChange={e=>setReference(e.target.value)}/></Field>
+            <Field><FieldLabel htmlFor="tx-time">Thời điểm chứng từ (giờ Việt Nam, nếu có)</FieldLabel><Input id="tx-time" type="datetime-local" step="1" value={occurredAt} onChange={e=>setOccurredAt(e.target.value)}/></Field>
+            <Field><FieldLabel htmlFor="tx-group">Nhóm liên quan (ví dụ: lương tháng, chuyến đi)</FieldLabel><Input id="tx-group" maxLength={80} value={group} onChange={e=>setGroup(e.target.value)}/></Field>
+            {kind==="expense"&&<SelectField id="tx-reporting-role" label="Cách tính báo cáo" value={role??"standard"} onChange={v=>setRole(v as Transaction["reportingRole"])} options={[{value:"standard",label:"Chi tiêu thông thường"},{value:"support_return",label:"Trả lại tiền hỗ trợ (giảm thu nhập)"},{value:"cash_withdrawal",label:"Rút ATM tính vào ngân sách, còn nhận tiền mặt"},{value:"prepaid_cash",label:"Chi tiền mặt đã tính vào ngân sách tại ATM"}]}/>}
+            {role==="cash_withdrawal"&&<><SelectField id="tx-cash-account" label="Nhận về tài khoản tiền mặt" value={cashAccount} onChange={setCashAccount} options={accounts.filter(a=>a.value!==account)}/><MoneyInput id="tx-cash-received" label="Tiền mặt thực nhận (VND)" value={cashReceived} onChange={setCashReceived} min={0}/><p className="text-sm text-muted-foreground">Toàn bộ tiền trừ ngân hàng tính chi theo danh mục đã chọn. Tiền mặt nhận về vẫn nằm trong tài sản; chi từ khoản này cần liên kết nguồn ATM để không tính ngân sách lần hai.</p></>}
+            {role==="prepaid_cash"&&<><SelectField id="tx-funding" label="Khoản ATM đã tính ngân sách" value={funding} onChange={setFunding} options={data.transactions.filter(t=>t.reportingRole==="cash_withdrawal"&&t.cashAccount===account&&t.date<=date).map(t=>({value:t.id,label:`${t.date} · ${t.description}`}))}/><p className="text-sm text-muted-foreground">Chỉ giảm tiền mặt còn giữ. Không cộng chi ngân sách lần nữa. Chỉ chọn khi đã xác nhận tiền này thuộc khoản ATM đã chọn.</p></>}
             {error && <FieldError>{text(error)}</FieldError>}
           </FieldGroup>
           <DialogFooter>

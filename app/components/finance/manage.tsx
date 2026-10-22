@@ -25,11 +25,12 @@ export function FinanceManage(){
  const [resource,setResource]=useState<Resource>("accounts");
  const [id,setId]=useState(()=>crypto.randomUUID()),[expected,setExpected]=useState<number>();
  const [name,setName]=useState(""),[amount,setAmount]=useState("0"),[note,setNote]=useState(""),[date,setDate]=useState(()=>todayKey()),[error,setError]=useState("");
+ const [openingOn,setOpeningOn]=useState(""),[openingExcluded,setOpeningExcluded]=useState("0");
  const [query,setQuery]=useState(""),[status,setStatus]=useState("active");
  const [deleting,setDeleting]=useState<{resource:"accounts"|"bills";id:string;name:string;revision?:number}>();
- function reset(next:Resource){setResource(next);setId(crypto.randomUUID());setExpected(undefined);setName("");setAmount("0");setNote("");setDate(next==="settings"?data!.startsOn:todayKey());setError("");}
+ function reset(next:Resource){setResource(next);setId(crypto.randomUUID());setExpected(undefined);setName("");setAmount("0");setNote("");setOpeningOn("");setOpeningExcluded("0");setDate(next==="settings"?data!.startsOn:todayKey());setError("");}
  if(!data)return null;
- function edit(a:Account|Bill){setId(a.id);setExpected(a.revision);setName(a.name);setError("");if("opening" in a){setAmount(String(a.opening));setNote(a.note);}else{setAmount(String(a.amount));setDate(a.date);}}
+ function edit(a:Account|Bill){setId(a.id);setExpected(a.revision);setName(a.name);setError("");if("opening" in a){setAmount(String(a.opening));setNote(a.note);setOpeningOn(a.openingOn??"");setOpeningExcluded(String(a.openingExcluded??0));}else{setAmount(String(a.amount));setDate(a.date);}}
  async function archive(a:Account){setError("");try{await action("accounts","PATCH",{id:a.id,expectedRevision:a.revision,archived_at:a.archivedAt?null:new Date().toISOString()});if(id===a.id)reset(resource);notify(a.archivedAt?"Đã khôi phục tài khoản.":"Đã lưu trữ tài khoản.");}catch(e){setError(e instanceof Error?e.message:"Không lưu được.");}}
  const accountColumns:ColumnDef<Account>[]=[
   {accessorKey:"name",header:text("Tên")},
@@ -56,13 +57,14 @@ export function FinanceManage(){
    <form className="flex flex-col gap-3" onSubmit={async e=>{
     e.preventDefault();setError("");
     if(resource!=="settings"&&(!name.trim()||!Number.isSafeInteger(Number(amount))||(resource==="bills"&&Number(amount)<=0))){setError("Nhập tên và số tiền VND nguyên hợp lệ.");return;}
-    try{await action(resource,resource==="settings"||expected?"PATCH":"POST",resource==="settings"?{id:data.settings!.id,expectedRevision:data.settings!.revision,starts_on:date}:resource==="accounts"?{id,expectedRevision:expected,name:name.trim(),opening:amount,note}:{id,expectedRevision:expected,name:name.trim(),amount,due_on:date});reset(resource);notify("Đã lưu thiết lập tài chính.");}catch(e){setError(e instanceof Error?e.message:"Không lưu được.");}
+    try{await action(resource,resource==="settings"||expected?"PATCH":"POST",resource==="settings"?{id:data.settings!.id,expectedRevision:data.settings!.revision,starts_on:date}:resource==="accounts"?{id,expectedRevision:expected,name:name.trim(),opening:amount,note,opening_on:openingOn||null,opening_excluded:openingExcluded}:{id,expectedRevision:expected,name:name.trim(),amount,due_on:date});reset(resource);notify("Đã lưu thiết lập tài chính.");}catch(e){setError(e instanceof Error?e.message:"Không lưu được.");}
    }}>
     <FieldGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
      {resource!=="settings"&&<>
       <Field><FieldLabel htmlFor="finance-manage-name">{text("Tên")}</FieldLabel><Input id="finance-manage-name" required maxLength={80} disabled={busy} value={name} onChange={e=>setName(e.target.value)}/></Field>
       <Field><FieldLabel htmlFor="finance-manage-amount">{text(resource==="accounts"?"Số dư đầu kỳ":"Số tiền dự kiến")}</FieldLabel><Input id="finance-manage-amount" required type="number" step="1" min={resource==="bills"?1:undefined} disabled={busy} value={amount} onChange={e=>setAmount(e.target.value)}/>{resource==="accounts"&&<FieldDescription>{text("Số dư đầu kỳ có thể âm. Thay đổi số này sẽ điều chỉnh số dư và báo cáo hiện có.")}</FieldDescription>}</Field>
      </>}
+     {resource==="accounts"&&<><Field><FieldLabel htmlFor="finance-opening-on">Ngày hiệu lực số dư đầu kỳ</FieldLabel><Input id="finance-opening-on" type="date" max={data.asOf} value={openingOn} onChange={e=>setOpeningOn(e.target.value)}/><FieldDescription>Số dư ngay trước 00:00 ngày này theo giờ Việt Nam. Để trống nếu chưa có chứng cứ; không mặc định bằng ngày bắt đầu báo cáo.</FieldDescription></Field><Field><FieldLabel htmlFor="finance-opening-excluded">Trong số dư đầu kỳ, tiền ngoài phạm vi</FieldLabel><Input id="finance-opening-excluded" type="number" min="0" step="1" value={openingExcluded} onChange={e=>setOpeningExcluded(e.target.value)}/></Field></>}
      {resource==="accounts"?<Field><FieldLabel htmlFor="finance-manage-note">{text("Ghi chú")}</FieldLabel><Input id="finance-manage-note" maxLength={500} disabled={busy} value={note} onChange={e=>setNote(e.target.value)}/></Field>:<Field><FieldLabel htmlFor="finance-manage-date">{text(resource==="settings"?"Ngày đầu kỳ":"Ngày đến hạn")}</FieldLabel><Input id="finance-manage-date" type="date" required disabled={busy} value={date} onChange={e=>setDate(e.target.value)}/></Field>}
     </FieldGroup>
     <div className="flex flex-wrap gap-2"><Button disabled={busy} type="submit">{text(resource==="settings"?"Lưu":expected?"Lưu thay đổi":"Thêm mới")}</Button>{expected&&<Button type="button" variant="outline" disabled={busy} onClick={()=>reset(resource)}>{text("Hủy chỉnh sửa")}</Button>}</div>
