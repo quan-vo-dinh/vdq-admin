@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useFinance } from "@/app/context/finance-context";
 import { ApiError } from "@/app/api/global-fetcher";
 import { FinancePageHeader } from "./page-header";
+import { cn } from "@/lib/utils";
 
 const links = [
   { slug: "", label: "Tổng quan" },
@@ -39,11 +40,11 @@ export function FinanceLoading() {
     </div>
   );
 }
-export function FinanceShell({ children }: { children: ReactNode }) {
+export function FinanceShell({ children, className }: { children: ReactNode; className?: string }) {
   const { text, formatMessage } = useFinanceLocale();
   const { data, error, reload, notice, notify } = useFinance();
   return (
-    <div className="finance-workspace">
+    <div className={cn("finance-workspace", className)}>
       <Suspense fallback={null}><FinanceDocumentTitle /></Suspense>
       {!data && <FinancePageHeader />}
       {notice && (

@@ -1,0 +1,318 @@
+.scope {
+  min-width: 0;
+}
+
+.scope :global(.finance-budget-chart) {
+  height: 320px;
+}
+
+.scope :global(.finance-goal-grid) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  background: transparent;
+}
+
+.scope :global(.finance-goal-cover) {
+  position: relative;
+  grid-row: 1 / span 2;
+  width: 58px;
+  height: 58px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: transparent;
+}
+
+.scope :global(.finance-goal-cover > img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scope :global(.finance-goal-cover > img.finance-goal-cover-image-custom) {
+  object-fit: contain;
+}
+
+.scope :global(.finance-workspace .finance-goal-grid) {
+  align-items: stretch;
+}
+
+.scope :global(.finance-board .finance-goal-card) {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  grid-template-rows: auto 1fr auto;
+  min-width: 0;
+  border: 1px solid var(--border);
+  background: transparent;
+}
+
+.scope :global(.finance-goal-card-art) {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  display: flex;
+  min-width: 0;
+  min-height: 260px;
+  padding: 18px;
+}
+
+.scope :global(.finance-goal-card-art .finance-goal-cover) {
+  width: 100%;
+  height: auto;
+  min-height: 220px;
+  flex: 1;
+  border-radius: var(--radius-lg);
+}
+
+.scope :global(.finance-goal-card-art .finance-goal-cover-icon),
+.scope :global(.finance-spotlight-art .finance-goal-cover-icon) {
+  display: none;
+}
+
+.scope :global(.finance-board .finance-goal-card > [data-slot="card-header"]) {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-content: start;
+  gap: 4px 8px;
+  padding: 22px 20px 8px 4px;
+  border-bottom: 0;
+}
+
+.scope :global(.finance-goal-card [data-slot="card-title"]) {
+  min-height: 1.4em;
+}
+
+.scope :global(.finance-board .finance-goal-card > [data-slot="card-content"]) {
+  grid-column: 2;
+  grid-row: 2;
+  gap: 12px;
+  padding: 8px 20px 12px 4px;
+}
+
+.scope :global(.finance-board .finance-goal-card > [data-slot="card-footer"]) {
+  grid-column: 2;
+  grid-row: 3;
+  margin-top: auto;
+  padding: 8px 20px 20px 4px;
+}
+
+.scope :global(.finance-goal-card > [data-slot="card-header"] > [data-slot="card-title"]),
+.scope :global(.finance-goal-card > [data-slot="card-header"] > [data-slot="card-description"]) {
+  grid-column: 1;
+}
+
+.scope :global(.finance-goal-card > [data-slot="card-header"] > [data-slot="card-action"]) {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.scope :global(.finance-goal-status) {
+  min-height: 24px;
+}
+
+.scope :global(.finance-goal-card .finance-goal-amount) {
+  min-height: 70px;
+}
+
+.scope :global(.finance-goal-card .finance-goal-amount + div) {
+  min-height: 60px;
+}
+
+.scope :global(.finance-spotlight-body) {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 16px;
+  min-height: 138px;
+}
+
+.scope :global(.finance-spotlight-art) {
+  min-width: 0;
+  height: 138px;
+}
+
+.scope :global(.finance-spotlight-art .finance-goal-cover) {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+}
+
+.scope :global(.finance-spotlight-copy) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scope :global(.finance-spotlight-progress) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.scope :global(.finance-budget-list) {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.scope :global(.finance-budget-legend) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 8px;
+  color: var(--muted-foreground);
+  font-size: var(--text-sm);
+}
+
+.scope :global(.finance-budget-legend > span) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.scope :global(.finance-budget-legend i) {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.scope :global(.finance-budget-list-row) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  background: transparent;
+}
+
+.scope :global(.finance-budget-list-row:hover),
+.scope :global(.finance-budget-list-row[data-selected="true"]) {
+  background: var(--muted);
+}
+
+.scope :global(.finance-budget-list-copy) {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 5px 12px;
+}
+
+.scope :global(.finance-budget-list-name) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+.scope :global(.finance-budget-list-values) {
+  color: var(--muted-foreground);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.scope :global(.finance-budget-list-meter) {
+  grid-column: 1 / -1;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--muted);
+}
+
+.scope :global(.finance-budget-list-meter > span) {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--chart-2);
+}
+
+.scope :global(.finance-budget-list-status) {
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 639px) {
+  .scope :global(.finance-goal-grid) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .scope :global(.finance-board .finance-goal-card) {
+    grid-template-columns: minmax(100px, 0.75fr) minmax(0, 1.25fr);
+  }
+
+  .scope :global(.finance-goal-card-art) {
+    min-height: 238px;
+    padding: 12px;
+  }
+
+  .scope :global(.finance-goal-card-art .finance-goal-cover) {
+    min-height: 210px;
+  }
+
+  .scope :global(.finance-board .finance-goal-card > [data-slot="card-header"]) {
+    gap: 4px 6px;
+    padding: 16px 12px 6px 0;
+  }
+
+  .scope :global(.finance-board .finance-goal-card > [data-slot="card-content"]) {
+    gap: 10px;
+    padding: 6px 12px 10px 0;
+  }
+
+  .scope :global(.finance-board .finance-goal-card > [data-slot="card-footer"]) {
+    flex-wrap: wrap;
+    padding: 6px 12px 14px 0;
+  }
+
+  .scope :global(.finance-goal-card .finance-goal-amount) {
+    gap: 6px;
+  }
+
+  .scope :global(.finance-goal-card .finance-progress-ring[data-small="true"]) {
+    width: 58px;
+    height: 58px;
+  }
+
+  .scope :global(.finance-spotlight-body) {
+    grid-template-columns: minmax(96px, 0.85fr) minmax(0, 1.15fr);
+    gap: 12px;
+    min-height: 116px;
+  }
+
+  .scope :global(.finance-spotlight-art) {
+    height: 116px;
+  }
+
+  .scope :global(.finance-spotlight-progress) {
+    gap: 8px;
+  }
+
+  .scope :global(.finance-budget-list-row) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .scope :global(.finance-budget-list-copy) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .scope :global(.finance-budget-list-meter) {
+    grid-column: 1;
+  }
+
+  .scope :global(.finance-budget-list-status) {
+    justify-self: end;
+  }
+}
