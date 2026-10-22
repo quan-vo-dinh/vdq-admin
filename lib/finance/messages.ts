@@ -378,6 +378,9 @@ export const financeEnglish: Record<string, string> = {
   ". Cần giảm phân bổ trước khi thêm tiền cho mục tiêu.":
     ". Reduce allocations before adding funds to a goal.",
   "Mong muốn đạt": "Target date",
+  "Danh sách ngân sách": "Budget list",
+  "Chú giải biểu đồ": "Chart legend",
+  "Cột nhạt là hạn mức, cột đậm là chi ròng. Chọn cột hoặc dòng danh mục bên dưới để xem phần còn lại và điều chỉnh hạn mức.": "Light columns show the limit; dark columns show net spending. Select a column or budget row below to see what remains and adjust the limit.",
   "Sửa mục tiêu {0}": "Edit goal {0}",
   "Đã đủ mục tiêu": "Goal funded",
   "Chưa đặt nhịp góp": "No contribution set",

@@ -78,30 +78,19 @@ export function GoalSpotlight() {
             <CarouselItem key={g.id} className="sm:basis-1/2">
               <div className="finance-spotlight-item">
                 <div className="flex items-center justify-between gap-3">
-                  <FinanceBadge
-                    tone={g.priority === "high" ? "goal" : "neutral"}
-                  >
-                    {text(g.priority === "high" ? "Ưu tiên cao" : "Mục tiêu")}
-                  </FinanceBadge>
+                  {g.priority === "high" ? <FinanceBadge tone="goal">{text("Ưu tiên cao")}</FinanceBadge> : <span />}
                   <span className="text-sm text-muted-foreground">
                     {date(g.deadline, { month: "short", year: "numeric" })}
                   </span>
                 </div>
-                <div className="flex items-center gap-5">
-                  <GoalCover visual={g.visual} image={g.image} alt={goalName(g)} />
-                  <ProgressRing
-                    value={g.target ? (g.allocated / g.target) * 100 : 0}
-                    label={goalName(g)}
-                    small
-                  />
-                  <div className="flex min-w-0 flex-col gap-1">
+                <div className="finance-spotlight-body">
+                  <div className="finance-spotlight-art"><GoalCover visual={g.visual} image={g.image} alt={goalName(g)} showIcon={false} /></div>
+                  <div className="finance-spotlight-copy">
                     <FinanceHeading>{goalName(g)}</FinanceHeading>
-                    <strong className="tabular-nums">
-                      {money(g.allocated)}
-                    </strong>
-                    <p className="text-sm text-muted-foreground">
-                      {text("trên mục tiêu")} {money(g.target)}
-                    </p>
+                    <div className="finance-spotlight-progress">
+                      <ProgressRing value={g.target ? (g.allocated / g.target) * 100 : 0} label={goalName(g)} small />
+                      <div><strong className="tabular-nums">{money(g.allocated)}</strong><p className="text-sm text-muted-foreground">{text("trên mục tiêu")} {money(g.target)}</p></div>
+                    </div>
                   </div>
                 </div>
                 <Separator />

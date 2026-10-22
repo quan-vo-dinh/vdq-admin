@@ -3,7 +3,6 @@
 import { FinancePageHeader } from "./page-header";
 
 import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,7 +16,6 @@ import { Field, FieldLabel, FieldDescription, FieldGroup } from "@/components/ui
 import { useFinance } from "@/app/context/finance-context";
 import { budgetLimit, type Budget } from "@/lib/finance/model";
 import { BudgetComparison } from "./analysis-charts";
-import { BudgetRadar } from "./explore-widgets";
 import { BudgetPulse } from "./dashboard-widgets";
 import { FinanceBoard } from "./template-layout";
 import { Switch } from "@/components/ui/switch";
@@ -33,7 +31,6 @@ export function BudgetsPage() {
   const [limit, setLimit] = useState(0);
   const [scope, setScope] = useState("month");
   const [fixed, setFixed] = useState(false);
-  const [view, setView] = useState<"bars" | "radar">("bars");
   return (
     <div className="finance-page finance-budgets">
       <FinancePageHeader>
@@ -41,32 +38,15 @@ export function BudgetsPage() {
       </FinancePageHeader>
       <FinanceBoard>
         <div className="finance-budget-main">
-          <Tabs
-            value={view}
-            onValueChange={(value) => {
-              if (value === "bars" || value === "radar") setView(value);
+          <BudgetComparison
+            onEdit={(b) => {
+              const editMonth=periodMode==="recent-month"?data!.asOf.slice(0,7):month;
+              if(periodMode==="recent-month"){setMonth(editMonth);setPeriodMode("calendar");}
+              setError(""); setScope("month"); setFixed(b.fixed);
+              setEditing(b);
+              setLimit(budgetLimit(b, editMonth));
             }}
-            className="finance-chart-tabs"
-          >
-            <TabsList aria-label={text("Góc nhìn ngân sách")}>
-              <TabsTrigger value="bars">{text("So sánh hạn mức")}</TabsTrigger>
-              <TabsTrigger value="radar">{text("Radar danh mục")}</TabsTrigger>
-            </TabsList>
-            <TabsContent value="bars" keepMounted>
-              <BudgetComparison
-                onEdit={(b) => {
-                  const editMonth=periodMode==="recent-month"?data!.asOf.slice(0,7):month;
-                  if(periodMode==="recent-month"){setMonth(editMonth);setPeriodMode("calendar");}
-                  setError(""); setScope("month"); setFixed(b.fixed);
-                  setEditing(b);
-                  setLimit(budgetLimit(b, editMonth));
-                }}
-              />
-            </TabsContent>
-            <TabsContent value="radar" keepMounted>
-              <BudgetRadar />
-            </TabsContent>
-          </Tabs>
+          />
           <BudgetPulse />
         </div>
       </FinanceBoard>

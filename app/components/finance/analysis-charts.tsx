@@ -22,7 +22,7 @@ import {
   categorySpent,
   type Budget,
 } from "@/lib/finance/model";
-import { Section, Choice, SelectField } from "./shared";
+import { Section, Choice } from "./shared";
 import { ChartHelp, FinanceChartTooltip, SeriesControl } from "./chart-tools";
 import { useFinanceLocale } from "./locale";
 
@@ -214,7 +214,7 @@ export function BudgetComparison({
     .sort((a, b) => b.spent - a.spent);
   const current = rows.find((r) => r.id === selected) ?? rows[0];
   const series = [
-    { key: "cap", label: text("Hạn mức"), color: "var(--border)" },
+    { key: "cap", label: text("Hạn mức"), color: "var(--muted-foreground)" },
     { key: "spent", label: text("Đã chi ròng"), color: "var(--chart-2)" },
   ];
   return (
@@ -225,7 +225,7 @@ export function BudgetComparison({
       action={
         <ChartHelp>
           {text(
-            "Thanh mờ là hạn mức, thanh đậm là chi ròng. Chọn thanh hoặc tên danh mục để xem phần còn lại và điều chỉnh hạn mức.",
+            "Cột nhạt là hạn mức, cột đậm là chi ròng. Chọn cột hoặc dòng danh mục bên dưới để xem phần còn lại và điều chỉnh hạn mức.",
           )}
         </ChartHelp>
       }
@@ -237,29 +237,27 @@ export function BudgetComparison({
         }}
         className="finance-budget-chart"
       >
-        <BarChart
-          accessibilityLayer
-          layout="vertical"
-          data={rows}
-          margin={{ left: 0, right: 12 }}
-        >
-          <CartesianGrid horizontal={false} strokeDasharray="4 4" />
+        <BarChart accessibilityLayer data={rows} margin={{ top: 10, right: 8, bottom: 0, left: 0 }}>
+          <CartesianGrid vertical={false} strokeDasharray="4 4" />
           <XAxis
-            type="number"
-            tickFormatter={compactMoney}
-            includeHidden
+            dataKey="name"
+            interval={0}
+            angle={-25}
+            textAnchor="end"
+            height={66}
             axisLine={false}
             tickLine={false}
+            tick={{ fontSize: 12 }}
           />
           <YAxis
-            type="category"
-            dataKey="name"
-            width={115}
+            type="number"
+            tickFormatter={(value) => value < 1_000_000 ? money(value) : compactMoney(value)}
+            width={88}
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 14 }}
+            tick={{ fontSize: 12 }}
           />
-          <ReferenceLine x={0} stroke="var(--border)" />
+          <ReferenceLine y={0} stroke="var(--border)" />
           <ChartTooltip
             cursor={{ fill: "var(--muted)", fillOpacity: 0.5 }}
             content={<FinanceChartTooltip series={series} />}
@@ -269,20 +267,45 @@ export function BudgetComparison({
               key={s.key}
               dataKey={s.key}
               fill={s.color}
-              radius={[0, 3, 3, 0]}
+              radius={[4, 4, 0, 0]}
               onClick={(_, index) => setSelected(rows[index].id)}
               isAnimationActive={false}
             />
           ))}
         </BarChart>
       </ChartContainer>
-      <SelectField
-        id="budget-category"
-        label="Chọn danh mục ngân sách"
-        value={current?.id ?? ""}
-        onChange={setSelected}
-        options={rows.map((r) => ({ value: r.id, label: r.name }))}
-      />
+      <div className="finance-budget-legend" aria-label={text("Chú giải biểu đồ")}>
+        {series.map((item) => <span key={item.key}><i style={{ backgroundColor: item.color }} />{item.label}</span>)}
+      </div>
+      <div className="finance-budget-list" aria-label={text("Danh sách ngân sách")}>
+        {rows.map((row) => {
+          const remaining = row.cap - row.spent;
+          const ratio = row.cap > 0 ? Math.min(100, Math.max(0, (row.spent / row.cap) * 100)) : 0;
+          return (
+            <button
+              key={row.id}
+              type="button"
+              className="finance-budget-list-row"
+              data-selected={current?.id === row.id}
+              aria-pressed={current?.id === row.id}
+              onClick={() => setSelected(row.id)}
+            >
+              <span className="finance-budget-list-copy">
+                <strong>{row.name}</strong>
+                <span className="finance-budget-list-values">
+                  {text("Đã chi ròng")} {money(row.spent)} <span aria-hidden="true">/</span> {text("Hạn mức")} {money(row.cap)}
+                </span>
+                <span className="finance-budget-list-meter" aria-hidden="true">
+                  <span style={{ width: `${ratio}%` }} />
+                </span>
+              </span>
+              <strong className="finance-budget-list-status" data-finance-tone={remaining < 0 ? "danger" : "balance"}>
+                {remaining < 0 ? text("Vượt {0}", [money(-remaining)]) : text("Còn {0}", [money(remaining)])}
+              </strong>
+            </button>
+          );
+        })}
+      </div>
       {current && (
         <div className="finance-chart-selection" aria-live="polite">
           <div>
