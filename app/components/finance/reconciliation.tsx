@@ -20,13 +20,13 @@ export function BalanceEvidenceNotice() {
   if (!data) return null;
   const issues=financeIssues(data);
   return <Alert><AlertDescription>
-    Số dư tính từ sổ cần số dư đầu kỳ có ngày hiệu lực và giao dịch đầy đủ cho từng nơi giữ tiền.
+    Tổng số dư chỉ cộng các tài khoản đang sử dụng; tài khoản đã lưu trữ giữ nguyên lịch sử nhưng không cộng vào số hiện tại.
     {!!issues.missingBaselines && ` Còn ${issues.missingBaselines} tài khoản chưa có mốc đầu kỳ.`}
     {!!issues.beforeBaseline && ` Có ${issues.beforeBaseline} giao dịch trước mốc đầu kỳ; chúng vẫn có trong báo cáo nhưng không cộng lại vào số dư.`}
     {!!issues.duplicateCandidates && ` Có ${issues.duplicateCandidates} dòng nghi trùng cần kiểm tra.`}
     {!!issues.missingReferences && ` Có ${issues.missingReferences} dòng CSV chưa lưu mã tham chiếu.`}
     {!!issues.suspiciousTransfers && ` Có ${issues.suspiciousTransfers} dòng mang danh mục chuyển nội bộ nhưng chưa được lưu đúng loại chuyển khoản.`}
-    {" "}Mốc ngân hàng đã xác nhận chỉ có giá trị tại thời điểm ghi nhận. Chưa có dữ liệu ACB, MoMo hoặc tiền mặt thì tổng sổ chưa đại diện toàn bộ tiền đang giữ.
+    {" "}Mốc ngân hàng đã xác nhận chỉ có giá trị tại ngày ghi nhận. Chỉ bật những nơi giữ tiền bạn muốn đưa vào tổng khả dụng.
   </AlertDescription></Alert>;
 }
 
@@ -54,7 +54,8 @@ export function ReconciliationPanel() {
       const c=(data.checkpoints??[]).filter(c=>c.account===a.id).sort((a,b)=>Date.parse(b.observedAt)-Date.parse(a.observedAt))[0];
       if(!c)return "Chưa có";
       const r=reconcileAccount(data,a,c.observedAt,c.amount);
-      return <span>{money(c.amount)}<br/><small>{new Date(c.observedAt).toLocaleString("vi-VN",{timeZone:"Asia/Ho_Chi_Minh"})}</small><br/><small>{r.difference===null?`Chưa thể đối soát${r.ambiguous?`: ${r.ambiguous} dòng thiếu giờ`:" (thiếu mốc đầu kỳ)"}`:`Chênh xác nhận − sổ: ${money(r.difference)}`}</small></span>;
+      const status=r.difference!==null?`Chênh xác nhận − sổ: ${money(r.difference)}`:r.beforeBaseline?"Mốc này trước ngày bắt đầu theo dõi":r.ambiguous?`Chưa thể đối soát: ${r.ambiguous} dòng thiếu giờ`:"Chưa thể đối soát vì thiếu dữ liệu";
+      return <span>{money(c.amount)}<br/><small>{new Date(c.observedAt).toLocaleString("vi-VN",{timeZone:"Asia/Ho_Chi_Minh"})}</small><br/><small>{status}</small></span>;
     }},
   ];
   return <>
@@ -63,7 +64,7 @@ export function ReconciliationPanel() {
       <div className="grid gap-3 py-4 sm:grid-cols-3">
         {[{name:"Tiền trong phạm vi theo sổ",value:totals.tracked},{name:"Tiền ngoài phạm vi",value:totals.excluded},{name:"Khả dụng sau phân bổ",value:totals.available}].map(item=><div key={item.name} className="rounded-lg border p-3"><div className="text-sm text-muted-foreground">{item.name}</div><strong className="text-lg tabular-nums">{totals.balanceKnown?money(item.value):"Chưa đủ dữ liệu"}</strong></div>)}
       </div>
-      <FeatureDataTable label="Đối soát từng tài khoản" data={data.accounts} columns={columns} empty={<NoResults/>}/>
+    <FeatureDataTable label="Đối soát tài khoản đang theo dõi" data={data.accounts.filter(a=>!a.archivedAt)} columns={columns} empty={<NoResults/>}/>
       <p className="mt-3 text-sm text-muted-foreground">Khả dụng sau phân bổ = tiền trong phạm vi − mục tiêu đã dành − khoản dự kiến đã khai báo. Đây là kế hoạch; không trừ các khoản này lần nữa vào số dư ngân hàng.</p>
     </Section>
     <Section title="Ba nhóm chi phí trong kỳ" icon={Wallet} description="Tất cả danh mục chi tiết được gom về Ăn uống, Di chuyển hoặc Chi phí phát sinh. Hoàn hỗ trợ làm giảm thu nhập; chuyển nội bộ không tạo thu chi.">

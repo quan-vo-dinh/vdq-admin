@@ -138,6 +138,8 @@ export function monthlyTotals(transactions: Transaction[], period: FinancePeriod
   };
 }
 export function accountBalance(account: Account, transactions: Transaction[], asOf = "9999-12-31") {
+  // A baseline dated after the requested cutoff is not part of that historical position.
+  if (account.openingOn && account.openingOn > asOf) return 0;
   return (
     account.opening +
     sum(transactions.filter(t => t.date <= asOf && (!account.openingOn || t.date >= account.openingOn)), t => assetEffect(t, account.id))
@@ -156,13 +158,15 @@ export function categorySpent(
   );
 }
 export function accountPosition(data: FinanceData, account: Account) {
+  const hasBaseline=!!account.openingOn&&account.openingOn<=data.asOf;
   const events=(data.scopeEvents??[]).filter(e=>e.account===account.id && financeDay(e.occurredAt)<=data.asOf && (!account.openingOn || financeDay(e.occurredAt)>=account.openingOn));
   const balance=accountBalance(account,data.transactions,data.asOf)-sum(events.filter(e=>e.kind==="external_outflow"),e=>e.amount);
-  const excluded=(account.openingExcluded??0)+sum(events,e=>e.kind==="exclude"?e.amount:-e.amount);
-  return {balance,excluded,tracked:balance-excluded,known:!!account.openingOn&&account.openingOn<=data.asOf&&excluded>=0};
+  const excluded=(hasBaseline?(account.openingExcluded??0):0)+sum(events,e=>e.kind==="exclude"?e.amount:-e.amount);
+  return {balance,excluded,tracked:balance-excluded,known:hasBaseline&&excluded>=0};
 }
 export function overview(data: FinanceData) {
-  const positions=data.accounts.map(a=>accountPosition(data,a));
+  const activeAccounts=data.accounts.filter(a=>!a.archivedAt);
+  const positions=activeAccounts.map(a=>accountPosition(data,a));
   const balance=sum(positions,p=>p.balance),excluded=sum(positions,p=>p.excluded);
   const balanceKnown=positions.length>0&&positions.every(p=>p.known);
   const allocated = sum(data.goals, (g) => g.allocated);
@@ -171,6 +175,7 @@ export function overview(data: FinanceData) {
     balance,
     excluded,
     balanceKnown,
+    accountCount:positions.length,
     tracked: balance - excluded,
     allocated,
     committed,

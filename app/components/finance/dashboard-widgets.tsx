@@ -78,7 +78,7 @@ export function AccountSummary() {
       description="Số dư tính từ sổ; cần mốc đầu kỳ cho từng tài khoản"
     >
       <div className="finance-breakdown-list">
-        {data.accounts.map((a) => (
+        {data.accounts.filter(a=>!a.archivedAt).map((a) => (
           <div key={a.id} className="flex items-center gap-3 py-3">
             <FinanceIcon icon={Landmark} size="sm" />
             <span className="flex-1 text-sm">{text(a.name)}</span>

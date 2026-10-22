@@ -144,7 +144,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
         </FieldGroup>
         <p className="text-sm text-muted-foreground">
           {text(
-            `Ngày YYYY-MM-DD không sau ${data!.asOf}; VND nguyên dương, tối đa 1 tỷ. Tài khoản: ${data!.accounts.map(a=>`${a.name} = ${a.id}`).join('; ')}. Danh mục: ${financeCategories(data!).filter(c=>!c.archived_at).map(c=>c.code).join(', ')}.`,
+            `Ngày YYYY-MM-DD không sau ${data!.asOf}; VND nguyên dương, tối đa 1 tỷ. Tài khoản đang dùng: ${data!.accounts.filter(a=>!a.archivedAt).map(a=>`${a.name} = ${a.id}`).join('; ')}. Danh mục: ${financeCategories(data!).filter(c=>!c.archived_at).map(c=>c.code).join(', ')}.`,
           )}
         </p>
         <p className="text-sm text-muted-foreground">{text("Mã category chưa tồn tại sẽ được tạo khi xác nhận nhập, tên ban đầu giống mã. Một mã dùng được cho cả thu nhập, chi tiêu và hoàn tiền; loại thu/chi được xác định bởi kind của từng giao dịch. Mã cần 1–40 ký tự chữ thường, số, _ hoặc -, bắt đầu bằng chữ; không dùng transfer.")}</p>

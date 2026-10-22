@@ -16,6 +16,8 @@ The old CSV preview explicitly allowed duplicate-looking rows, while database un
 
 ## Definitions and equations
 
+Only active accounts contribute to current balance and available-money totals. Archiving an account removes it from those totals while preserving its transactions and historical reporting. A checkpoint before a later opening date remains visible as older evidence and cannot be compared against that later baseline.
+
 - Account opening balance is the value immediately before 00:00 on `opening_on`, Asia/Ho_Chi_Minh. A null date means the starting point is unverified, not that the balance is zero. Earlier backfilled records remain in period reporting but are not counted again after a later baseline.
 - Account balance = dated opening + signed account movements through the cutoff − already excluded funds paid out. Transfers decrease the source and increase the destination once. They contribute no income or expense.
 - Within-scope money = total account balances − excluded money still held. This includes counted physical cash, even if its withdrawal was charged to a budget in advance.

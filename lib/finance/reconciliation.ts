@@ -15,7 +15,7 @@ export function reconcileAccount(data: FinanceData, account: Account, observedAt
   const calculated = account.opening + sum(included, t => assetEffect(t, account.id)) - sum(events.filter(e => e.kind === "external_outflow"), e => e.amount);
   const excluded = (account.openingExcluded ?? 0) + sum(events, e => e.kind === "exclude" ? e.amount : -e.amount);
   const ready = !!account.openingOn && account.openingOn <= day && ambiguous.length === 0 && excluded >= 0;
-  return {calculated, excluded, tracked: calculated - excluded, difference: ready ? observed - calculated : null, ready, ambiguous: ambiguous.length};
+  return {calculated, excluded, tracked: calculated - excluded, difference: ready ? observed - calculated : null, ready, beforeBaseline:!!account.openingOn&&account.openingOn>day, ambiguous: ambiguous.length};
 }
 
 export function expenseGroups(transactions: Transaction[], period: FinancePeriod) {
@@ -35,13 +35,14 @@ export function transactionGroups(transactions: Transaction[], period: FinancePe
   });
 }
 export function financeIssues(data: FinanceData) {
+  const accounts=data.accounts.filter(a=>!a.archivedAt);
   const keys = new Map<string, number>();
   for (const t of data.transactions) keys.set(transactionKey(t), (keys.get(transactionKey(t)) ?? 0) + 1);
   return {
-    missingBaselines: data.accounts.filter(a => !a.openingOn).length,
+    missingBaselines: accounts.filter(a => !a.openingOn).length,
     duplicateCandidates: [...keys.values()].filter(n => n > 1).reduce((s,n) => s+n-1,0),
     missingReferences: data.transactions.filter(t => t.source === "csv" && !t.reference).length,
-    beforeBaseline: data.transactions.filter(t => data.accounts.some(a => a.openingOn && t.date < a.openingOn && (a.id === t.account || a.id === t.destination || a.id === t.cashAccount))).length,
+    beforeBaseline: data.transactions.filter(t => accounts.some(a => a.openingOn && t.date < a.openingOn && (a.id === t.account || a.id === t.destination || a.id === t.cashAccount))).length,
     // A label does not turn a one-sided entry into an internal transfer.
     suspiciousTransfers: data.transactions.filter(t => t.kind !== "transfer" && /^(internal_transfer|transfer|cashin|cashout)$/.test(t.category)).length,
   };

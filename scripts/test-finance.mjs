@@ -133,6 +133,19 @@ try {
       accountBalance(data.accounts[1], without.transactions) + 2_000_000,
     );
   });
+  test("current balance includes only active accounts and respects a baseline date", () => {
+    const vcb={...data.accounts[0],id:"vcb",name:"Vietcombank",opening:818_564,openingOn:"2026-10-22",openingExcluded:0,archivedAt:null};
+    const archived=data.accounts.slice(1).map((a)=>({...a,archivedAt:"2026-10-22T00:00:00Z"}));
+    const scoped={...data,asOf:"2026-10-22",accounts:[vcb,...archived]};
+    assert.equal(overview(scoped).accountCount,1);
+    assert.equal(overview(scoped).balanceKnown,true);
+    assert.equal(overview(scoped).balance,818_564);
+    assert.equal(accountBalance(vcb,data.transactions,"2026-10-21"),0);
+    const oldCheckpoint=reconcileAccount(scoped,vcb,"2026-10-21T12:58:28Z",818_564);
+    assert.equal(oldCheckpoint.difference,null);
+    assert.equal(oldCheckpoint.beforeBaseline,true);
+    assert.equal(overview({...scoped,accounts:[{...vcb,openingOn:null},...archived]}).balanceKnown,false);
+  });
   test("refund reduces its category expense and never inflates income", () => {
     assert.equal(
       categorySpent(data.transactions, "shopping", "2026-10"),
