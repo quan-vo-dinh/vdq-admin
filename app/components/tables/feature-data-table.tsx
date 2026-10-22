@@ -79,7 +79,7 @@ export function FeatureDataTable<T>({
   }, [data, columns, sorting, pagination, scrollRows]);
   if (!data.length) return empty;
   return (
-    <div className="feature-data-table flex min-w-0 flex-col gap-3">
+    <div data-mobile-layout={scrollRows ? "scroll" : "cards"} className="feature-data-table flex min-w-0 flex-col gap-3">
       <Table aria-label={label}>
         <TableHeader>
           {table.getHeaderGroups().map((group) => (
@@ -115,6 +115,7 @@ export function FeatureDataTable<T>({
             <TableRow key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>
+                  {typeof cell.column.columnDef.header === "string" && cell.column.columnDef.header && <span className="feature-cell-label" aria-hidden="true">{cell.column.columnDef.header}</span>}
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}

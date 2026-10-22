@@ -105,13 +105,13 @@ export function Overview() {
     >
       <div className="col-span-12 self-start lg:col-span-7">
         <DashboardCard className="flex flex-col gap-0! pt-0!">
-          <CardHeader className="flex h-12 flex-row flex-nowrap items-center justify-between gap-2 border-b border-border px-4 py-1!">
+          <CardHeader className="developer-chart-header flex h-12 flex-row flex-nowrap items-center justify-between gap-2 border-b border-border px-4 py-1!">
             <CardTitle className="flex shrink-0 items-center gap-2">
               <Sparkles />
               {text("Tổng quan sử dụng AI", "AI usage overview")}
             </CardTitle>
-            <CardAction className="col-auto row-auto flex min-w-0 items-center gap-2 overflow-x-auto self-auto [&_[data-slot=select-trigger]]:h-8 [&_[data-slot=select-trigger]]:max-w-32 [&_[data-slot=select-trigger]]:text-xs">
-            <div className="flex shrink-0 items-center gap-2">
+            <CardAction className="developer-chart-actions col-auto row-auto flex min-w-0 items-center gap-2 overflow-x-auto self-auto [&_[data-slot=select-trigger]]:h-8 [&_[data-slot=select-trigger]]:max-w-32 [&_[data-slot=select-trigger]]:text-xs">
+            <div className="developer-chart-filters flex shrink-0 items-center gap-2">
               <Choice label={text("Thời gian chart", "Chart period")} value={String(days)} onChange={v => { setDays(Number(v)); setModel("all"); }} items={[7, 14, 30].map(value => ({ value: String(value), label: `${value} ${text("ngày", "days")}` }))} />
               <Choice label={text("Hãng AI", "AI provider")} value={provider} onChange={v => { setProvider(v); setSource("all"); setModel("all"); }} items={[
                 { value: "all", label: text("Mọi hãng", "All providers") },

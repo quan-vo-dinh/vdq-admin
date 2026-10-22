@@ -127,3 +127,78 @@ Luồng: nhánh codex/* → push/PR → Preview build → kiểm tra → merge m
 ## P12 thực thi — 21/10/2026 (ưu tiên hơn trạng thái planned ở trên)
 
 Đã có mobile React/Vite entry dùng chung views/adapters, Capacitor8 Android project, owner bearer xuyên repository/RLS, secure vault native, credentials/PKCE flow và scripts/build. Web/mobile typecheck/build và Android debug/unsigned release PASS local. **P12 IN PROGRESS, chưa PASS**: browser hiện bị host disable; CSV/full module UI, thiết bị thật, OAuth native, performance, signed release/cloud rollout chưa nghiệm thu. Không deploy/commit/push/cloud migrate. Xem [P12 evidence](evidence/P12.md) và [mobile runbook](../../mobile/README.md). User đã tự login preview localhost5173 và sẽ kết nối Android. Không import cookie/JWT tự ký để vượt gate.
+
+### P12 hosted login limiter — 21/10/2026, latest
+
+User authorized and migration20261021000200 was applied to production in an isolated
+transaction (no other migration/deploy). Table/function/history/RLS/grants PASS,
+one enabled owner preserved. Mobile credentials API now returns401 invalid_credentials
+for invalid input instead of503 rate_limit_unavailable. User must retry actual phone
+login; APK reinstall unnecessary. [Evidence](evidence/P12-hosted-limiter.json).
+
+### Finance CSV category migration — 21/10/2026, latest
+
+User authorized applying the missing production migration after the 24-row CSV
+preview passed but saving returned `invalid`. Applied only
+`20261021000300_finance_import_categories` to project `wcgdvsiiemurehkprvqw`
+and recorded its migration history in one guarded transaction. Independent
+verification confirms category_code support, owner guard, security definer,
+anon denied/authenticated execute, RLS enabled and one enabled owner. Category,
+transaction and import-batch counts were unchanged during migration. Local SQL
+regression passed 20/20 before apply. No real CSV imported and no app deploy or
+other migration performed. User should retry the same CSV in production; actual
+24-row import acceptance remains user-controlled.
+[Evidence](evidence/finance-categories-production.json).
+
+
+### 2026-10-21 — Phone layout correction, APK 0.1.1-p12 (versionCode 2)
+
+User reported cramped/broken layouts on Realme Q3 5G (1080×2400 physical pixels).
+CSS viewport/density/font scale have not been measured on that phone. Shared
+phone rules target widths below 640 CSS px, with a narrower filter layout below
+360px; they do not hard-code the phone's physical resolution or shrink the root font.
+
+Implemented in `app/css/mobile-layout.css`, imported by both Next root layout
+and the Vite entry, with explicit feature hooks:
+- Compact single-row header; matching control/input-group/tab heights. Removed
+  native blanket button height that broke small fixed-height parents/date grids.
+- Phone dialog width, title/close spacing, native portal safe-area padding.
+- Finance full-width metric/summary amounts, month toolbar wrapping, and stacked
+  paginated FeatureDataTable rows with labels. Same table/handlers/sorting and
+  pagination; `scrollRows` tables retain their internal scroll presentation.
+- Developer overview filter grid and growing chart headers; navigation scrolls
+  within its row. Profile spacing/long links and Learning milestone columns.
+- Notes document scrolling and horizontal formatting toolbar. Calendar document
+  scrolling with a usable inner viewport; month/week keep horizontal scrolling
+  instead of compressing seven columns. Desktop breakpoints remain unchanged.
+
+Validation: web build/typecheck, mobile build/typecheck, debug APK, scoped ESLint,
+10 existing mobile contract tests, whitespace check and bundle/APK secret scan pass.
+These tests do **not** validate responsive geometry. Browser visual QA is blocked
+by host Local browser use being disabled; `adb devices` has no device. No Realme
+visual acceptance, keyboard/font-scale acceptance or performance measurement is
+claimed. P12E/P12F remain pending. Details/hash: `evidence/P12-mobile-layout.json`.
+
+Build commands: `pnpm dev`, `pnpm mobile:preview:build && pnpm mobile:preview`,
+`pnpm build`, `pnpm android:debug`, `pnpm mobile:scan`.
+Export: `/Users/vodinhquan/Downloads/bin-dashboard-0.1.1-p12-debug.apk` (debug,
+47,101,695 bytes); adjacent `.apk.sha256` file contains its checksum. Same app ID
+and verified debug certificate as 0.1.0; versionCode increased from 1 to 2.
+The previous unsigned release APK is stale and is not this delivery.
+
+Install/update: transfer the new APK to the phone, open it and choose Update.
+Do not uninstall or clear app storage; an in-place update is designed to retain
+local session storage. Verify it actually retains the session on the Realme.
+No new server configuration or production deploy is needed for these layout
+assets. API origin remains the existing configured hosted backend; no credentials
+were added to assets. To roll back without clearing local state, rebuild the
+prior frontend with a versionCode greater than the installed build and the same
+certificate; ordinary Android install will reject the old lower versionCode.
+
+Device acceptance next: capture the current CSS viewport/font settings; review
+Developer/AI/Feed/Connections, all five Finance pages, Profile, Notes and Calendar
+plus retained template routes. Check portrait/landscape, font scale 100/130/150%,
+amounts/actions, safe bars, dialog keyboard/scroll, Notes IME, calendar horizontal
+and vertical scroll, and update/session preservation. Screenshots from the Realme
+are required to resolve any remaining device-specific defects. No real data was
+created/changed for layout testing; no cloud mutation, commit, push or deploy.

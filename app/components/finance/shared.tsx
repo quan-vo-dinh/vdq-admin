@@ -421,12 +421,15 @@ export function MonthPicker() {
   const { text, date: formatDate } = useFinanceLocale();
   const { month, setMonth, period, periodMode, setPeriodMode } = useFinance();
   const modes=[{value:"calendar",label:text("Tháng lịch")},{value:"recent-month",label:text("1 tháng gần đây")}];
+  const { text, date: formatDate } = useFinanceLocale();
+  const { month, setMonth, period, periodMode, setPeriodMode } = useFinance();
+  const modes=[{value:"calendar",label:text("Tháng lịch")},{value:"recent-month",label:text("1 tháng gần đây")}];
   const shift = (amount: number) => {
     const date = new Date(`${month}-01T12:00:00Z`);
     date.setUTCMonth(date.getUTCMonth() + amount);
     setMonth(date.toISOString().slice(0, 7));
   };
-  return <div role="group" aria-label={text("Kỳ báo cáo")} className="flex min-w-0 flex-wrap items-center gap-2">
+  return <div role="group" aria-label={text("Kỳ báo cáo")} className="finance-period flex min-w-0 flex-wrap items-center gap-2">
     <Select items={modes} value={periodMode} onValueChange={value=>{if(value==="calendar"||value==="recent-month")setPeriodMode(value);}}>
       <SelectTrigger aria-label={text("Loại kỳ báo cáo")}><SelectValue /></SelectTrigger>
       <SelectContent><SelectGroup>{modes.map(mode=><SelectItem key={mode.value} value={mode.value}>{mode.label}</SelectItem>)}</SelectGroup></SelectContent>

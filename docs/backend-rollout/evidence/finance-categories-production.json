@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-10-21T10:28:54.974Z",
+  "projectRef": "wcgdvsiiemurehkprvqw",
+  "migration": "20261021000300_finance_import_categories",
+  "result": "PASS",
+  "verification": {
+    "anon_execute": false,
+    "authenticated_execute": true,
+    "enabled_owner_count": 1,
+    "migration_recorded": true,
+    "owner_guard_present": true,
+    "rls_enabled": true,
+    "security_definer": true,
+    "supports_category_code": true
+  },
+  "businessRowsUnchanged": true,
+  "boundary": "Applied only the reviewed category import migration and recorded its history in one guarded transaction. No real CSV imported, app deployment, owner reset, or unrelated migration.",
+  "localRegression": "20/20 finance_import_categories SQL tests passed immediately before apply",
+  "remainingGate": "User retries original 24-row CSV in the existing production UI."
+}

@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-10-21T14:34:23.094157+00:00",
+  "url": "https://vdq-admin.vercel.app",
+  "mergeCommit": "d970d85f7aa8d331ddf4e1f5fd793852a25ad979",
+  "pullRequests": [
+    "https://github.com/quan-vo-dinh/vdq-admin/pull/4",
+    "https://github.com/quan-vo-dinh/vdq-admin/pull/5"
+  ],
+  "deployment": "https://vercel.com/bins-projects-c818da1e/vdq-admin/9guR5WS5vBHnb5Xh3ViV9WpLht8X",
+  "state": "ready and aliased to production",
+  "validation": {
+    "productionBuild": "pass",
+    "scopedEslint": "pass",
+    "automatedTests": "11 passed",
+    "fullLint": "existing 17 errors and 43 warnings outside hotfix",
+    "productionBrowser": [
+      "light to dark and dark to light",
+      "both tabs synchronize without reverting",
+      "light and dark survive reload",
+      "toggle icons agree with theme",
+      "no visible preference errors; no console errors in final browser check",
+      "wipe transition visibly captured in theme-hotfix-transition.png"
+    ]
+  },
+  "scope": "Theme/preferences only. No financial or other business-data mutations.",
+  "screenshots": [
+    "theme-hotfix-transition.png",
+    "theme-hotfix-dark.png"
+  ]
+}

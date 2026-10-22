@@ -18,11 +18,11 @@ const Header = () => {
 
   return (
     <>
-      <header className={cn(`sticky top-0 z-2 bg-background border-b border-border`)}>
+      <header className={cn(`dashboard-header sticky top-0 z-2 bg-background border-b border-border`)}>
         <nav>
-          <div className="mx-auto flex flex-wrap items-center justify-between p-2">
+          <div className="dashboard-header-row mx-auto flex min-w-0 items-center justify-between gap-2 p-2">
             <div className="flex gap-2 items-center">
-              <div className="block lg:hidden">
+              <div className="dashboard-header-brand block lg:hidden">
                 <FullLogo />
               </div>
 

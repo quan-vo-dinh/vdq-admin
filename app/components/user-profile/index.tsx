@@ -71,7 +71,7 @@ const UserProfile = () => {
   ].filter((item) => item.href)
 
   return (
-    <div className="flex flex-col p-px bg-border gap-px">
+    <div className="profile-workspace flex min-w-0 flex-col p-px bg-border gap-px">
       <BreadcrumbComp title="User Profile" items={BCrumb} />
       <StyleDivider />
       <div className='flex flex-col gap-px bg-border'>

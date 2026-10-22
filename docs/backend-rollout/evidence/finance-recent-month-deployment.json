@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-10-21T13:39:47.658Z",
+  "url": "https://vdq-admin.vercel.app/finance",
+  "pullRequest": "https://github.com/quan-vo-dinh/vdq-admin/pull/3",
+  "mergeCommit": "bab63d5a4e8cde13206fc6db2ead090c069790ae",
+  "deployment": "https://vercel.com/bins-projects-c818da1e/vdq-admin/Gv7P8gqzTcMn5nfYT7XpvhuM37mL",
+  "state": "success",
+  "checks": [
+    {
+      "path": "/finance",
+      "status": 307,
+      "location": "/auth/auth2/login?next=%2Ffinance",
+      "cacheControl": "private, no-store"
+    },
+    {
+      "path": "/api/finance",
+      "status": 401,
+      "location": null,
+      "cacheControl": "private, no-store"
+    },
+    {
+      "path": "/api/finance/categories",
+      "status": 401,
+      "location": null,
+      "cacheControl": "private, no-store"
+    }
+  ],
+  "validation": [
+    "19 Finance tests",
+    "scoped ESLint",
+    "auth-policy tests",
+    "developer-feed tests",
+    "isolated release production build"
+  ],
+  "localBrowser": "Previously verified Overview/Transactions/Budgets retain rolling date range; actual CSV download contains only in-range rows.",
+  "productionBrowser": "Unavailable: host reports Local browser use disabled in Work settings.",
+  "assets": "Local static chunk names differ from production (404); asset-content verification is not claimed.",
+  "boundary": "No database migration, production business-data writes, native APK release or unrelated mobile-layout changes."
+}

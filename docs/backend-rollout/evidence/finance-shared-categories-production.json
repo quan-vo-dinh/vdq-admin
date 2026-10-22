@@ -1,0 +1,27 @@
+{
+  "migration": "20261021000400",
+  "verification": {
+    "archive_guard_retained": true,
+    "authenticated_can_import": true,
+    "budget_allows_shared_category": true,
+    "categories_rls": true,
+    "import_allows_shared_category": true,
+    "migration_recorded": true,
+    "rpc_owner_guard_retained": true,
+    "transaction_allows_shared_category": true,
+    "transactions_rls": true,
+    "anon_can_import": false
+  },
+  "sourceCommit": "27f5235",
+  "apk": {
+    "versionName": "0.1.2-p12",
+    "versionCode": 3,
+    "path": "/Users/vodinhquan/Downloads/bin-dashboard-0.1.2-p12-debug.apk",
+    "bytes": 47081155,
+    "sha256": "796b62685d03f584fc29c9428ea44c4e2510a2c42b37f23fd11189bb9d089011",
+    "type": "debug"
+  },
+  "nativeVisualAcceptance": "PENDING",
+  "productionDataFixtures": "None",
+  "vercelGitDeployment": "success"
+}

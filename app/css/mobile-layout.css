@@ -1,0 +1,97 @@
+/* Shared phone layout: CSS pixels, also used by the packaged Android frontend.
+   Keep desktop layout intact and let text grow with the user's font settings. */
+.feature-cell-label { display: none; }
+
+@media (max-width: 639px) {
+  .dashboard-inset { margin: 0; outline: 0; }
+  .dashboard-content { padding: 12px; }
+  .dashboard-header-row { flex-wrap: nowrap; }
+  .dashboard-header-brand a > span { display: none; }
+  .dashboard-header-row > div { min-width: 0; }
+  .dashboard-header :is(button, [data-slot="button"]) { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+
+  /* Grow the parent together with its controls; a 44px input in a 32px group clips. */
+  :is(.dashboard-inset, [role="dialog"], [role="alertdialog"]) :is([data-slot="button"]:not([data-day]), [data-slot="select-trigger"], [data-slot="input"], [data-slot="input-group"]) { min-height: 44px; }
+  [data-slot="input-group"] > input { min-height: 0; height: 100%; }
+  :is(input, textarea, select) { max-width: 100%; }
+  :is([data-slot="input"], [data-slot="textarea"], [data-slot="input-group-control"]) { font-size: 16px; }
+  [data-slot="tabs"][data-orientation="horizontal"] > [data-slot="tabs-list"] {
+    height: auto; min-height: 48px; max-width: 100%; justify-content: flex-start; overflow-x: auto;
+  }
+  [data-slot="tabs-trigger"] { min-height: 42px; flex-shrink: 0; padding-inline: 12px; }
+  [data-slot="toggle-group"] { max-width: 100%; overflow-x: auto; }
+  [data-slot="toggle-group-item"] { min-height: 44px; flex-shrink: 0; }
+  /* Date grids have seven columns; use their own coherent cell geometry. */
+  [data-slot="calendar"] { --cell-size: 36px; }
+  :is(.dashboard-inset, [role="dialog"]) [data-slot="calendar"] [data-slot="button"] { min-height: var(--cell-size); }
+  [data-slot="card-content"], [data-slot="card-header"] { min-width: 0; }
+  [data-slot="dialog-content"], [data-slot="alert-dialog-content"] {
+    width: calc(100% - 16px); max-width: calc(100% - 16px);
+    max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain;
+  }
+  [data-slot="dialog-header"] { padding-right: 40px; }
+  [data-slot="dialog-title"] { line-height: 1.4; overflow-wrap: anywhere; }
+  [data-slot="dialog-close"] { min-width: 44px; min-height: 44px; }
+  [data-slot="sheet-content"] { max-width: calc(100vw - 32px); }
+
+  .profile-workspace > div > [data-slot="card"] { padding: 16px; }
+  .profile-workspace :is(p, a) { overflow-wrap: anywhere; }
+  .learning-milestones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .finance-page-header > div, .finance-page-actions { width: 100%; }
+  .finance-page-actions > div { max-width: 100%; flex-wrap: wrap; }
+  .finance-period { width: 100%; }
+  .finance-period > input { width: 0; flex: 1; }
+  .finance-page-actions > [data-slot="button"] { flex: 1 1 auto; }
+  /* Full VND amounts need space. Two 150px cards force numbers onto several lines. */
+  .finance-metrics, .finance-metrics-two, .finance-metrics-three, .finance-summary-grid { grid-template-columns: minmax(0, 1fr); }
+  .finance-board .finance-metrics > [data-finance-surface] { grid-column: auto; border-left: 0; }
+  .finance-board .finance-metrics > [data-finance-surface] + [data-finance-surface] { border-top: 1px solid var(--border); border-left: 0; }
+  .finance-board .finance-summary > .finance-summary-grid { grid-template-columns: minmax(0, 1fr); }
+  .finance-summary-cell { padding: 16px; gap: 12px; }
+  .finance-panel-header { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .finance-panel-header [data-slot="card-action"] { grid-column: 1; grid-row: auto; justify-self: start; max-width: 100%; }
+  .finance-transaction-description { flex: 1; }
+  .finance-transaction-description > span { max-width: none; white-space: normal; overflow-wrap: anywhere; }
+
+  /* Same table, data, sorting, pagination and action handlers; stack its cells on phones. */
+  .feature-data-table[data-mobile-layout="cards"] :is(table, thead, tbody) { display: block; width: 100%; }
+  .feature-data-table[data-mobile-layout="cards"] thead > tr { display: flex; flex-wrap: wrap; gap: 4px; padding-bottom: 12px; }
+  .feature-data-table[data-mobile-layout="cards"] th { display: block; height: auto; padding: 0; }
+  .feature-data-table[data-mobile-layout="cards"] th:empty { display: none; }
+  .feature-data-table[data-mobile-layout="cards"] tbody { display: grid; gap: 12px; }
+  .feature-data-table[data-mobile-layout="cards"] tbody > tr { display: grid; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); }
+  .feature-data-table[data-mobile-layout="cards"] td { display: block; min-width: 0; padding: 6px 0; white-space: normal; overflow-wrap: anywhere; }
+  .feature-data-table[data-mobile-layout="cards"] .feature-cell-label { display: block; margin-bottom: 4px; color: var(--muted-foreground); font-size: var(--text-xs); }
+  .feature-data-table[data-mobile-layout="cards"] [data-finance-value] { white-space: normal; }
+
+  .developer-page-header { margin-bottom: 0; }
+  .developer-page-header > *, .developer-tools { width: 100%; flex-basis: 100%; }
+  .developer-navigation { width: 100%; overflow-x: auto; padding-bottom: 4px; }
+  .developer-navigation > * { flex-shrink: 0; }
+  .developer-board [data-slot="card-header"] { height: auto; }
+  .developer-chart-header { height: auto; flex-direction: column; align-items: stretch; padding-block: 16px !important; }
+  .developer-chart-header [data-slot="card-title"] { white-space: normal; }
+  .developer-chart-actions { width: 100%; flex-wrap: wrap; overflow: visible; }
+  .developer-chart-filters { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .developer-chart-actions [data-slot="select-trigger"] { width: 100%; max-width: none; }
+  .developer-chart-filters > * { min-width: 0; }
+  /* On a phone the toolbar needs multiple rows. Let the document scroll and
+     keep a usable inner calendar instead of squeezing it into the leftover height. */
+  .dashboard-inset[data-workspace-layout="viewport"] { height: auto; min-height: 100dvh; }
+  .dashboard-inset[data-workspace-layout="viewport"] .dashboard-content { overflow: visible; }
+  .calendar-workspace { height: auto; }
+  .calendar-main { height: 75dvh; min-height: 520px; }
+  .calendar-month-grid { min-width: 560px; }
+  .calendar-workspace-header > div { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+  .calendar-toolbar [data-slot="toggle-group"] { flex-wrap: nowrap; }
+  .calendar-toolbar > div > div { max-width: 100%; }
+  .notes-workspace-body { height: auto; min-height: 0; }
+  .notes-workspace-content { overflow-y: visible; }
+  .notes-workspace [role="toolbar"] { flex-wrap: nowrap; overflow-x: auto; }
+  .notes-workspace [role="toolbar"] > * { flex-shrink: 0; min-width: 44px; min-height: 44px; }
+}
+
+/* Large font settings and compact phones benefit from one filter per line. */
+@media (max-width: 359px) {
+  .developer-chart-filters { grid-template-columns: minmax(0, 1fr); }
+}

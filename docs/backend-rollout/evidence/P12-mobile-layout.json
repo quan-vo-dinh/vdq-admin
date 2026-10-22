@@ -1,0 +1,52 @@
+{
+  "scope": "P12 responsive phone layout correction; native visual acceptance remains pending",
+  "deviceReportedByUser": {
+    "model": "Realme Q3 5G",
+    "physicalResolution": "1080x2400",
+    "displayInches": 6.5,
+    "cssViewport": "not measured; do not equate physical pixels with CSS pixels"
+  },
+  "layoutTargetsCssPixels": [
+    320,
+    360,
+    393,
+    412,
+    480
+  ],
+  "targetsAreNotVisualTestResults": true,
+  "checks": {
+    "webBuild": "PASS",
+    "mobileTypecheckBuild": "PASS",
+    "debugApkBuild": "PASS",
+    "scopedEslint": "PASS (no output)",
+    "existingMobileContracts": "10/10 PASS",
+    "secretScan": "PASS",
+    "diffWhitespace": "PASS",
+    "browserVisual": "BLOCKED: Local browser use disabled by host",
+    "physicalDevice": "PENDING: adb devices empty"
+  },
+  "apk": {
+    "path": "mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "bytes": 47101695,
+    "sha256": "b5a227ff8ff16fb7b0130d64569e9113d94a26643ef2e810a7f2d7e1f2a8a41d",
+    "exportedPath": "/Users/vodinhquan/Downloads/bin-dashboard-0.1.1-p12-debug.apk",
+    "applicationId": "dev.vodinhquan.dashboard",
+    "versionCode": 2,
+    "versionName": "0.1.1-p12",
+    "type": "debug",
+    "signerSha256": "d5bf07c7f93ba75b8d6ab9fca7929b851ec3d98db05f0c722455a18b86f50ad5"
+  },
+  "bundle": {
+    "initialJsBytes": 834351,
+    "totalJsGzipBytes": 1194626,
+    "lazyEntries": 34,
+    "devicePerformance": "NOT MEASURED"
+  },
+  "releaseUnsignedArtifact": "Older 0.1.0 artifact, not rebuilt or delivered for this change",
+  "pending": [
+    "Realme screenshots and visual acceptance",
+    "360/393/412 CSS viewport and landscape visual verification",
+    "font scaling 100/130/150 percent",
+    "IME dialogs/Notes, Calendar scroll, install-over preservation on device"
+  ]
+}

@@ -23,8 +23,15 @@ Validation:
   working-tree edits. Unit suite ran in the main checkout; its isolated runner
   was blocked by pnpm's external node_modules symlink safety guard.
 
-Production migration requires separate user approval; pushing code alone does
-not update Supabase functions. Existing APKs also contain the old CSV validator:
+User explicitly approved this migration on production. Applied only
+`20261021000400` in a guarded transaction and recorded migration history;
+verified the three guards, archive protection, owner checks and RLS. Anonymous
+RPC execution remains denied. No production business rows were written for testing. Existing APKs also contain the old CSV validator:
 install the new 0.1.2-p12 debug APK in place (versionCode 3), using the same debug
 certificate/app ID. Production website deploy is not manually invoked here.
 Native visual acceptance remains pending; this change does not claim P12 complete.
+
+APK exported: `/Users/vodinhquan/Downloads/bin-dashboard-0.1.2-p12-debug.apk`; 47081155 bytes.
+SHA-256: `796b62685d03f584fc29c9428ea44c4e2510a2c42b37f23fd11189bb9d089011`. Bundle/APK secret scan: PASS; same debug signer as prior builds.
+Production website: Vercel Git deployment started automatically from commit
+`27f5235`; its GitHub Vercel status is success (verified after push).

@@ -2,15 +2,30 @@ html { min-height: 100%; -webkit-text-size-adjust: 100%; }
 body { margin: 0; min-width: 320px; overscroll-behavior-y: contain; }
 #root { padding: var(--safe-area-inset-top, env(safe-area-inset-top)) var(--safe-area-inset-right, env(safe-area-inset-right)) var(--safe-area-inset-bottom, env(safe-area-inset-bottom)) var(--safe-area-inset-left, env(safe-area-inset-left)); min-height: 100dvh; }
 input, textarea, [contenteditable=true] { scroll-margin-block: 6rem; }
-[role=dialog], [role=alertdialog] { max-height: calc(100dvh - var(--safe-area-inset-top, env(safe-area-inset-top)) - var(--safe-area-inset-bottom, env(safe-area-inset-bottom)) - 2rem); overflow-y: auto; }
+
 @media (max-width: 640px) {
  .dashboard-inset { margin: 0 !important; border: 0; }
  .dashboard-content { padding: .75rem; }
  .dashboard-page { min-height: calc(100dvh - 8rem); }
  .dashboard-footer { padding-bottom: 1rem; }
- button, [role=button], input, select { min-height: 2.75rem; }
+
  .ProseMirror { min-height: 12rem; padding-bottom: 4rem; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 
 body { font-family: Geist, sans-serif; --font-geist: Geist; }
+
+/* Portals live outside #root, so they must account for native system bars too. */
+[role=dialog], [role=alertdialog] {
+ max-height: calc(100dvh - var(--safe-area-inset-top, env(safe-area-inset-top)) - var(--safe-area-inset-bottom, env(safe-area-inset-bottom)) - 24px);
+ overflow-y: auto;
+}
+[data-slot="dialog-content"], [data-slot="alert-dialog-content"] {
+ top: calc((100dvh + var(--safe-area-inset-top, env(safe-area-inset-top)) - var(--safe-area-inset-bottom, env(safe-area-inset-bottom))) / 2);
+}
+[data-slot="sheet-content"] {
+ padding-top: var(--safe-area-inset-top, env(safe-area-inset-top));
+ padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom));
+}
+#root > main { min-height: calc(100dvh - var(--safe-area-inset-top, env(safe-area-inset-top)) - var(--safe-area-inset-bottom, env(safe-area-inset-bottom))); }
+#root > main :is(input, button) { min-height: 44px; }

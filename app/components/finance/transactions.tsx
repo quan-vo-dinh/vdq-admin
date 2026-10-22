@@ -110,7 +110,7 @@ export function TransactionsPage() {
           return (
             <div className="flex items-center gap-3">
               <FinanceIcon icon={Icon} tone={transactionTone[t.kind]} />
-              <div className="flex min-w-40 flex-col gap-0.5">
+              <div className="finance-transaction-description flex min-w-0 flex-col gap-0.5">
                 <span className="max-w-64 truncate font-medium">
                   {transactionDescription(t)}
                 </span>

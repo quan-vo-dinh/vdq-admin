@@ -15,6 +15,7 @@ import { initSession, verifySession, handleCallback, pauseSession } from './sess
 import { configureNativeFiles, nativeListeners, dismissKeyboard, nativeActivity } from './native';
 import { Login } from './login';
 import '@/app/globals.css';
+import '@/app/css/mobile-layout.css';
 import './mobile.css';
 import '@fontsource/geist/latin-400.css';
 import '@fontsource/geist/latin-500.css';

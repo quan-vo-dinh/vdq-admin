@@ -1,0 +1,22 @@
+{
+  "verification": {
+    "anon_execute": false,
+    "authenticated_execute": false,
+    "enabled_owner_count": 1,
+    "function_exists": true,
+    "issuance_service_execute": true,
+    "migration_recorded": true,
+    "rls_enabled": true,
+    "table_exists": true
+  },
+  "api": {
+    "checkedAt": "2026-10-21T10:20:00.189Z",
+    "status": 401,
+    "body": {
+      "code": "invalid_credentials"
+    },
+    "cors": "https://localhost",
+    "cache": "private, no-store",
+    "test": "Deliberately invalid credentials; no owner password used"
+  }
+}

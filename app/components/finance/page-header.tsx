@@ -16,9 +16,9 @@ export function FinancePageHeader({ children }: { children?: ReactNode }) {
   const [adding, setAdding] = useState(false);
 
   return <>
-    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+    <div className="finance-page-header flex min-w-0 flex-wrap items-center justify-between gap-3">
       <div className="min-w-0 flex-1 basis-80"><PersonalizedIntro /></div>
-      <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <div className="finance-page-actions flex min-w-0 flex-wrap items-center gap-2">
         {children}
         <FinanceManage />
         <CategoryManager />

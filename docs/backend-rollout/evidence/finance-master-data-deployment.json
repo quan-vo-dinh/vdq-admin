@@ -1,0 +1,45 @@
+{
+  "checkedAt": "2026-10-21T11:02:49.650Z",
+  "url": "https://vdq-admin.vercel.app/finance/transactions",
+  "pullRequest": "https://github.com/quan-vo-dinh/vdq-admin/pull/2",
+  "mergeCommit": "c270215320bcb32527f9328ad2ed244a7d473a7f",
+  "deployment": "https://vercel.com/bins-projects-c818da1e/vdq-admin/F6evtFkW747uu2b5RMjGqEDNuwBm",
+  "deploymentState": "success",
+  "productionBrowser": [
+    "category list/search/actions visible",
+    "default category code locked",
+    "referenced category/account deletion disabled",
+    "account management visible",
+    "monthly/default budget scope and fixed switch visible"
+  ],
+  "anonymousChecks": [
+    {
+      "path": "/api/finance",
+      "status": 401,
+      "code": "unauthenticated",
+      "cacheControl": "private, no-store"
+    },
+    {
+      "path": "/api/finance/categories",
+      "status": 401,
+      "code": "unauthenticated",
+      "cacheControl": "private, no-store"
+    },
+    {
+      "path": "/api/finance/accounts",
+      "status": 401,
+      "code": "unauthenticated",
+      "cacheControl": "private, no-store"
+    }
+  ],
+  "validation": [
+    "16 Finance tests",
+    "auth-policy tests",
+    "feed tests",
+    "scoped ESLint",
+    "fresh combined-source build",
+    "shared-category rollback-only regression"
+  ],
+  "database": "Existing migration 20261021000400 verified as applied; no migration executed in this deployment.",
+  "boundary": "Production browser inspection was read-only. No real transactions/categories/accounts/budgets were changed. Native APK and unrelated local mobile-layout changes were not deployed. Full lint baseline remains outside release scope."
+}

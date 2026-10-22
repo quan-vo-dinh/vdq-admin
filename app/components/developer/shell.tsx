@@ -30,8 +30,8 @@ function QuickTools() {
   const content = reportText(data, days, language);
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2">
-        <nav className="flex gap-1" aria-label="Developer">
+      <div className="developer-tools flex min-w-0 flex-wrap items-center gap-2">
+        <nav className="developer-navigation flex min-w-0 gap-1" aria-label="Developer">
           <Button
             size="sm"
             variant={path === "/developer" ? "secondary" : "ghost"}
@@ -144,7 +144,7 @@ function QuickTools() {
 }
 function DeveloperHeader() {
   return (
-    <div className="-mb-3 flex flex-wrap items-center justify-between gap-4 pb-1">
+    <div className="developer-page-header -mb-3 flex min-w-0 flex-wrap items-center justify-between gap-4 pb-1">
       <PersonalizedIntro compact />
       <QuickTools />
     </div>

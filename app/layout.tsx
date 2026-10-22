@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import "./globals.css"
+import "./css/mobile-layout.css"
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/Themeprovider";
 import { OfflineBanner } from "@/app/components/shared/offline-banner";
