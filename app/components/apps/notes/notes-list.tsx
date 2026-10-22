@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { useContext, useId, useState } from "react";
 import { Search, Trash2, CalendarDays, X } from "lucide-react";
 import { NotesContext } from "@/app/context/notes-context";
@@ -40,7 +42,7 @@ export default function Notelist({ onSelect }: { onSelect?: () => void }) {
         <ToggleGroupItem value="all">{text("Tất cả", "All")}</ToggleGroupItem><ToggleGroupItem value="today">{text("Hôm nay", "Today")}</ToggleGroupItem><ToggleGroupItem value="week">{text("7 ngày", "7 days")}</ToggleGroupItem>
       </ToggleGroup>
       <Field><FieldLabel htmlFor={filterId} className="flex items-center gap-2"><CalendarDays className="size-3" />{text("Theo ngày", "By date")}</FieldLabel><div className="flex items-center gap-1"><Input id={filterId} type="date" value={date} onInput={e => setDate(e.currentTarget.value)} />{date && <Button variant="ghost" size="icon-sm" aria-label={text("Xóa lọc ngày", "Clear date filter")} onClick={() => { setDate(""); setRange("all"); }}><X /></Button>}</div></Field>
-      <span className="text-xs text-muted-foreground">{filtered.length} {text("ghi chú", "notes")}</span>
+      <span className="text-xs text-muted-foreground"><NumberTicker value={filtered.length} /> {text("ghi chú", "notes")}</span>
     </div>
     {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
     <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto pr-1">

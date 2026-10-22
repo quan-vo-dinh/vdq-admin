@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 
 import type { ComponentProps, ReactNode } from "react";
 import { Info, MousePointer2 } from "lucide-react";
@@ -126,7 +128,7 @@ export function FinanceChartTooltip({
                 />
                 {config?.label ?? name}
               </span>
-              <strong className="tabular-nums">{money(Number(value))}</strong>
+              <strong className="tabular-nums"><NumberTicker value={money(Number(value))} /></strong>
             </div>
             {index === shown.length - 1 && extra.length > 0 && (
               <>

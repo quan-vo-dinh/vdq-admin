@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { DashboardCard } from "@/app/components/shared/dashboard-card";
 import { Check, Flame, Pencil, Archive, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -72,7 +74,7 @@ export function HabitCard({
         <div className="flex flex-wrap gap-2">
           <Badge variant={stats.current ? "default" : "secondary"}>
             <Flame data-icon="inline-start" />
-            {stats.current} {t("ngày liên tiếp", "day streak")}
+            <NumberTicker value={stats.current} /> {t("ngày liên tiếp", "day streak")}
           </Badge>
           <Badge variant="outline">
             {h.minutes} {t("phút / ngày", "min / day")}
@@ -128,8 +130,8 @@ export function HabitCard({
       </CardContent>
       <CardFooter className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-xs text-muted-foreground">
-          {t("Kỷ lục", "Best")}: {stats.best} {t("ngày", "days")} ·{" "}
-          {h.entries.length} {t("buổi học", "sessions")}
+          {t("Kỷ lục", "Best")}: <NumberTicker value={stats.best} /> {t("ngày", "days")} ·{" "}
+          <NumberTicker value={h.entries.length} /> {t("buổi học", "sessions")}
         </span>
         <div className="flex flex-wrap gap-2">
           {done ? (

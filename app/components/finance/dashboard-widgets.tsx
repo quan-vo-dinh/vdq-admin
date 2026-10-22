@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
 import { ChartPie, Landmark } from "lucide-react";
 import { ChartContainer } from "@/components/ui/chart";
@@ -58,7 +60,7 @@ export function ProgressRing({
       </ChartContainer>
       <span>
         <strong>
-          {number(value, { maximumFractionDigits: 0 })}
+          <NumberTicker value={number(value, { maximumFractionDigits: 0 })} />
           <small>%</small>
         </strong>
         {!small && <span>{label}</span>}
@@ -89,7 +91,7 @@ export function AccountSummary() {
                 accountPosition(data,a).tracked < 0 ? "danger" : "balance"
               }
             >
-              {a.openingOn?money(accountPosition(data,a).tracked):"Chưa có mốc đầu kỳ"}
+              <NumberTicker value={a.openingOn?money(accountPosition(data,a).tracked):"Chưa có mốc đầu kỳ"} />
             </strong>
           </div>
         ))}
@@ -98,7 +100,7 @@ export function AccountSummary() {
       <div className="flex justify-between pt-3 text-sm text-muted-foreground">
         <span>{text("Tổng số dư")}</span>
         <strong className="text-foreground">
-          {overview(data).balanceKnown?money(overview(data).balance):"Chưa đủ dữ liệu"}
+          <NumberTicker value={overview(data).balanceKnown?money(overview(data).balance):"Chưa đủ dữ liệu"} />
         </strong>
       </div>
     </Section>
@@ -142,27 +144,27 @@ export function BudgetPulse() {
               data-finance-value
               data-finance-tone={spent > limit ? "danger" : "balance"}
             >
-              {money(Math.abs(remaining))}
+              <NumberTicker value={money(Math.abs(remaining))} />
             </p>
           </div>
           <div className="finance-budget-pulse-stats">
             <div>
               <span>{text(typeof period === "string" ? "Hạn mức tháng" : "Hạn mức trong kỳ")}</span>
-              <strong>{money(limit)}</strong>
+              <strong><NumberTicker value={money(limit)} /></strong>
             </div>
             <div>
               <span>{text("Đã chi ròng")}</span>
-              <strong>{money(spent)}</strong>
+              <strong><NumberTicker value={money(spent)} /></strong>
             </div>
             <div>
               <span>{text("Danh mục trong hạn")}</span>
               <strong data-finance-value data-finance-tone={over ? "warning" : "income"}>
-                {number(withinLimit)}/{number(data.budgets.length)}
+                <NumberTicker value={number(withinLimit)} />/<NumberTicker value={number(data.budgets.length)} />
               </strong>
             </div>
             <div>
               <span>{text("Chi phí cố định")}</span>
-              <strong>{money(fixed)}</strong>
+              <strong><NumberTicker value={money(fixed)} /></strong>
             </div>
           </div>
         </div>

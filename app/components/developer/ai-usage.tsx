@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { useDeveloper } from "@/app/context/developer-context";
@@ -66,7 +68,7 @@ export function AIUsage() {
           ]}
         />
         <Badge variant="outline">
-          {rows.length} {text("phiên", "sessions")} · {days}{" "}
+          <NumberTicker value={rows.length} /> {text("phiên", "sessions")} · {days}{" "}
           {text("ngày", "days")}
         </Badge>
       </div>

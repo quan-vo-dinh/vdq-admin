@@ -404,7 +404,7 @@ export function AmountRow({
           amount < 0 && emphasis && "text-destructive",
         )}
       >
-        {money(amount)}
+        <NumberTicker value={money(amount)} />
       </span>
     </div>
   );

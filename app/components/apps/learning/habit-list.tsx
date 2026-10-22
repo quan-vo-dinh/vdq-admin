@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { DashboardCard } from "@/app/components/shared/dashboard-card";
 import { HabitCard } from "./habit-card";
 import { useState } from "react";
@@ -97,7 +99,7 @@ export function HabitList({
                   <DashboardCard key={h.id}>
                     <CardContent className="flex flex-wrap items-center justify-between gap-2 bg-background p-4">
                       <span className="text-sm">
-                        {h.title} · {h.entries.length}{" "}
+                        {h.title} · <NumberTicker value={h.entries.length} />{" "}
                         {t("buổi học", "sessions")}
                       </span>
                       <Button

@@ -1,4 +1,6 @@
 "use client";
+import { toast } from "@/components/ui/toast";
+import { useLanguage } from "@/app/context/language-context";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type {
   Connection,
@@ -6,9 +8,12 @@ import type {
 } from "@/lib/developer/connections/types";
 import { validateConnection } from "@/lib/developer/connections/model";
 function useConnectionState() {
+  const { language } = useLanguage();
+  const message = (vi: string, en: string, type = "success") => toast.add({title: language === "vi" ? vi : en, type});
   const [connections, setConnections] = useState<Connection[]>([]);
   function save(input: ConnectionInput, id?: string) {
-    if (validateConnection(input)) return false;
+    if (validateConnection(input)) {message("Thông tin kết nối chưa hợp lệ.", "Invalid connection details.", "error");return false;}
+    if (id && !connections.some(c => c.id === id)) return false;
     const now = new Date().toISOString();
     const values = {
       ...input,
@@ -36,12 +41,15 @@ function useConnectionState() {
             },
           ],
     );
+    message(id ? "Đã sửa kết nối trong phiên hiện tại." : "Đã thêm kết nối trong phiên hiện tại.", id ? "Connection updated for this session." : "Connection added for this session.");
     return true;
   }
   function pause(id: string, paused: boolean) {
+    if (!connections.some(c => c.id === id)) return;
     setConnections((previous) =>
       previous.map((c) => (c.id === id ? { ...c, paused } : c)),
     );
+    message(paused ? "Đã tạm dừng kết nối trong phiên." : "Đã bật lại kết nối trong phiên.", paused ? "Connection paused for this session." : "Connection resumed for this session.");
   }
   function check(id: string) {
     setConnections((previous) =>
@@ -51,7 +59,9 @@ function useConnectionState() {
     );
   }
   function remove(id: string) {
+    if (!connections.some(c => c.id === id)) return;
     setConnections((previous) => previous.filter((c) => c.id !== id));
+    message("Đã xóa kết nối khỏi phiên hiện tại.", "Connection removed from this session.");
   }
   return { connections, save, pause, check, remove };
 }

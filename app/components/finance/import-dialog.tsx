@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { FinanceHeading } from "./heading";
 import { useFinanceLocale } from "./locale";
 import { useMemo, useState } from "react";
@@ -56,7 +58,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
     {
       id: "amount",
       header: text("Số tiền"),
-      cell: ({ row }) => money(row.original.row.amount || 0),
+      cell: ({ row }) => <NumberTicker value={money(row.original.row.amount || 0)} />,
     },
     { id: "category", header: text("Danh mục"), accessorFn: r => r.row.category },
     { id: "account", header: "Tài khoản nguồn → nhận", accessorFn: r => [r.row.account,r.row.destination,r.row.cashAccount].filter(Boolean).map(id=>data!.accounts.find(a=>a.id===id)?.name??id).join(" → ") },
@@ -160,7 +162,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             <p className="text-sm">
               {filename}:{" "}
               <strong>
-                {valid.length} {text("dòng mới")}
+                <NumberTicker value={valid.length} /> {text("dòng mới")}
               </strong>{" "}
               · {rows.filter((r) => r.duplicate && !r.error).length}{" "}
               {text("trùng ·")} {rows.filter((r) => r.error).length}{" "}

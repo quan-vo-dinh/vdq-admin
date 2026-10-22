@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import {
   LineChart,
   Line,
@@ -132,7 +134,7 @@ export function TokenComposition({ rows }: { rows: Session[] }) {
       <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
         {data.map((d) => (
           <span key={d.name}>
-            {config[d.name as keyof typeof config].label}: {number(d.value)}
+            {config[d.name as keyof typeof config].label}: <NumberTicker value={number(d.value)} />
           </span>
         ))}
       </div>
@@ -154,7 +156,7 @@ export function QuotaRing({ source }: { source: Source }) {
           usage: { label: text("Đã dùng", "Used"), color: "var(--chart-1)" },
         }}
         className="developer-quota-chart size-32"
-        aria-label={`${source.name}: ${source.quota}%`}
+        aria-label={`${source.name}: $<NumberTicker value={source.quota ?? "—"} />%`}
       >
         <RadialBarChart
           data={[{ usage: source.quota, fill: "var(--color-usage)" }]}
@@ -173,7 +175,7 @@ export function QuotaRing({ source }: { source: Source }) {
         </RadialBarChart>
       </ChartContainer>
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-2xl font-semibold tabular-nums">
-        {source.quota}%
+        <NumberTicker value={source.quota ?? "—"} />%
       </div>
     </div>
   );

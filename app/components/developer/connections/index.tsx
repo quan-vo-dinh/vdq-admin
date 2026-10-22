@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -161,12 +163,12 @@ export function DeveloperConnections() {
                         : text("Công việc", "Work")}
                     </Badge>
                     <Badge variant="outline">
-                      {connection.capabilities.length}{" "}
+                      <NumberTicker value={connection.capabilities.length} />{" "}
                       {text("loại dữ liệu", "data types")}
                     </Badge>
                     {connection.repositories.length > 0 && (
                       <Badge variant="outline">
-                        {connection.repositories.length} repositories
+                        <NumberTicker value={connection.repositories.length} /> repositories
                       </Badge>
                     )}
                   </div>

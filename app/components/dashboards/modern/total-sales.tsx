@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { NumberTicker } from "@/components/ui/number-ticker";
 import type { ActivityPoint } from "@/lib/today/activity";
 import { useTodayLocale } from "@/app/components/today/shared";
 import { TrendingUp } from "lucide-react";
@@ -19,37 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-function useAnimatedNumber(target: number, duration = 450) {
-  const [display, setDisplay] = useState(0);
-  const currentRef = useRef(0);
-  const rafRef = useRef<number>(0);
-  useEffect(() => {
-    cancelAnimationFrame(rafRef.current);
-    const from = currentRef.current;
-    const diff = target - from;
-    if (diff === 0) return;
-    const startTime = performance.now();
-    const tick = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const next = Math.round(from + diff * eased);
-      currentRef.current = next;
-      setDisplay(next);
-      if (progress < 1) { rafRef.current = requestAnimationFrame(tick); }
-      else { currentRef.current = target; setDisplay(target); }
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [target, duration]);
-  return display;
-}
-
-function AnimatedValue({ value }: { value: number }) {
-  const animated = useAnimatedNumber(value);
-  return <>{animated.toLocaleString()}</>;
-}
 
 type TooltipItem = { name?: string; value?: number; color?: string; dataKey?: string; type?: string };
 type ConfigEntry = { label?: string; color?: string };
@@ -70,7 +39,7 @@ function AnimatedTooltipContent({ active, payload, label, hideLabel = false, con
             <div className="h-2.5 w-2.5 shrink-0 rounded-[2px]" style={{ backgroundColor: item.color }} />
             <span className="text-muted-foreground">{config?.[item.dataKey ?? ""]?.label ?? item.name}</span>
             <span className="ml-auto font-mono font-medium tabular-nums text-foreground">
-              <AnimatedValue value={item.value as number} />
+              <NumberTicker value={item.value as number} />
             </span>
           </div>
         ))}
@@ -111,9 +80,9 @@ export default function TotalSales({ chartData, period, onPeriodChange }: {
             <span className="text-base font-normal text-foreground leading-6">{text("Việc ưu tiên đã hoàn thành", "Completed priorities")}</span>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-2xl font-semibold tracking-[-0.3px] text-foreground leading-8">
-                {completed}/{planned}
+                <NumberTicker value={completed} />/<NumberTicker value={planned} />
               </span>
-              <span className="text-sm font-medium text-chart-2">{planned ? `${Math.round(completed / planned * 100)}%` : "—"}</span>
+              <span className="text-sm font-medium text-chart-2"><NumberTicker value={planned ? `${Math.round(completed / planned * 100)}%` : "—"} /></span>
               <span className="text-sm font-normal text-muted-foreground">{text(`trong ${period} ngày`, `in ${period} days`)}</span>
             </div>
           </div>

@@ -1,3 +1,5 @@
+
+import { NumberTicker } from "@/components/ui/number-ticker";
 import { apiFetch } from "@/lib/api/transport";
 import { HeadingText } from "@/app/components/shared/heading-text";
 import React, { useContext, useEffect } from "react";
@@ -60,7 +62,7 @@ const TicketFilter = () => {
             className="p-8 bg-primary/5 border  border-primary/20 text-center rounded-lg cursor-pointer"
             onClick={() => setFilter("total_tickets")}
           >
-            <h3 className="text-2xl">{tickets.length}</h3>
+            <h3 className="text-2xl"><NumberTicker value={tickets.length} /></h3>
             <h6 className="text-base "><HeadingText>Total Tickets</HeadingText></h6>
           </div>
         </div>

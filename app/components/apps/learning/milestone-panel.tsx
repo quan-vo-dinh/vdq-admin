@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { DashboardCard } from "@/app/components/shared/dashboard-card";
 
 import { Flame, Trophy } from "lucide-react";
@@ -44,7 +46,7 @@ export function MilestonePanel() {
         <CardContent className="flex flex-col gap-5">
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-semibold tabular-nums">
-              {nextMilestone}
+              <NumberTicker value={nextMilestone} />
             </span>
             <span className="text-sm text-muted-foreground">
               {t("ngày liên tiếp", "consecutive days")}

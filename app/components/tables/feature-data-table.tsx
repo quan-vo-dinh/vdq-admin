@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { useMemo, useState, type ReactNode } from "react";
 import { useLanguage } from "@/app/context/language-context";
 import {
@@ -125,9 +127,9 @@ export function FeatureDataTable<T>({
       </Table>
       {!scrollRows && <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
         <span>
-          {number(data.length)} {t(data.length === 1 ? "item" : "items")} ·{" "}
-          {t("Page")} {number(table.getState().pagination.pageIndex + 1)}/
-          {number(table.getPageCount())}
+          <NumberTicker value={number(data.length)} /> {t(data.length === 1 ? "item" : "items")} ·{" "}
+          {t("Page")} <NumberTicker value={number(table.getState().pagination.pageIndex + 1)} />/
+          <NumberTicker value={number(table.getPageCount())} />
         </span>
         <div className="flex gap-1">
           <Button

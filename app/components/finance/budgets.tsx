@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 
 import { FinancePageHeader } from "./page-header";
 
@@ -102,7 +104,7 @@ export function BudgetsPage() {
                   sliderMax={10_000_000}
                 />
                 {scope === "default" && <Field orientation="horizontal"><Switch id="budget-fixed" checked={fixed} disabled={busy} onCheckedChange={setFixed}/><FieldLabel htmlFor="budget-fixed">{text("Chi phí cố định")}</FieldLabel></Field>}
-                <FieldDescription>{text("Hạn mức mặc định")}: {editing.limit.toLocaleString("vi-VN")} ₫</FieldDescription>
+                <FieldDescription>{text("Hạn mức mặc định")}: <NumberTicker value={editing.limit} /> ₫</FieldDescription>
               </FieldGroup>
               {scope === "month" && editing.monthRows?.some(r=>r.month===month+"-01") && <Button type="button" variant="outline" disabled={busy} onClick={async()=>{
                 const row=editing.monthRows!.find(r=>r.month===month+"-01")!;

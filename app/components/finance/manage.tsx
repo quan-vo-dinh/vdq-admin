@@ -1,4 +1,5 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
 import {useState} from "react";
 import type {ColumnDef} from "@tanstack/react-table";
 import {useFinance} from "@/app/context/finance-context";
@@ -34,7 +35,7 @@ export function FinanceManage(){
  async function archive(a:Account){setError("");try{await action("accounts","PATCH",{id:a.id,expectedRevision:a.revision,archived_at:a.archivedAt?null:new Date().toISOString()});if(id===a.id)reset(resource);notify(a.archivedAt?"Đã khôi phục tài khoản.":"Đã lưu trữ tài khoản.");}catch(e){setError(e instanceof Error?e.message:"Không lưu được.");}}
  const accountColumns:ColumnDef<Account>[]=[
   {accessorKey:"name",header:text("Tên")},
-  {id:"opening",header:text("Số dư đầu kỳ"),cell:({row})=>money(row.original.opening)},
+  {id:"opening",header:text("Số dư đầu kỳ"),cell:({row})=><NumberTicker value={money(row.original.opening)} />},
   {id:"status",header:text("Trạng thái"),cell:({row})=><Badge variant="outline">{text(row.original.archivedAt?"Đã lưu trữ":"Đang sử dụng")}</Badge>},
   {id:"actions",header:text("Thao tác"),cell:({row:{original:a}})=><div className="flex flex-wrap gap-2">
    <Button size="sm" variant="ghost" disabled={busy} onClick={()=>edit(a)}>{text("Sửa")}</Button>
@@ -44,7 +45,7 @@ export function FinanceManage(){
  ];
  const billColumns:ColumnDef<Bill>[]=[
   {accessorKey:"name",header:text("Tên")}, {accessorKey:"date",header:text("Ngày đến hạn")},
-  {id:"amount",header:text("Số tiền"),cell:({row})=>money(row.original.amount)},
+  {id:"amount",header:text("Số tiền"),cell:({row})=><NumberTicker value={money(row.original.amount)} />},
   {id:"actions",header:text("Thao tác"),cell:({row:{original:b}})=><div className="flex flex-wrap gap-2"><Button size="sm" variant="ghost" disabled={busy} onClick={()=>edit(b)}>{text("Sửa")}</Button><Button size="sm" variant="outline" disabled={busy} onClick={()=>setDeleting({resource:"bills",...b})}>{text("Xóa")}</Button></div>},
  ];
  const matches=(a:{name:string})=>a.name.toLocaleLowerCase().includes(query.toLocaleLowerCase());

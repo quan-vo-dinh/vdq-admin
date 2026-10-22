@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { Layers3 } from "lucide-react";
 import PieChart03 from "@/components/shadcn-dashboard/pie-chart/pie-chart-03";
 import { useDeveloper } from "@/app/context/developer-context";
@@ -41,7 +43,7 @@ export function UsageAllowances() {
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs">
           {rings.map(ring => <span key={ring.key} className="flex items-center gap-1">
             <span className="size-2 rounded-full" style={{ background: ring.color }} />
-            {ring.label}: <strong>{ring.remaining}%</strong>
+            {ring.label}: <strong><NumberTicker value={ring.remaining} />%</strong>
           </span>)}
         </div>
       </div>;
@@ -49,7 +51,7 @@ export function UsageAllowances() {
     <div className="flex min-w-0 flex-col items-center justify-center gap-1 bg-background p-3">
       <span className="text-sm font-medium">{text("Phân bổ token", "Token breakdown")}</span>
       <PieChart03 size={80} rings={composition} icon={<Layers3 className="size-6 text-primary" />} title={text("Phân bổ token", "Token breakdown")} />
-      <span className="text-xs tabular-nums"><strong>{number(total)}</strong> tokens · {sessions.length} {text("phiên", "sessions")}</span>
+      <span className="text-xs tabular-nums"><strong><NumberTicker value={number(total)} /></strong> tokens · <NumberTicker value={sessions.length} /> {text("phiên", "sessions")}</span>
       <span className="sr-only">{days} {text("ngày", "days")}</span>
       <div className="flex flex-wrap justify-center gap-2 text-xs">
         {composition.map(ring => <span key={ring.key} className="flex items-center gap-1"><span className="size-2 rounded-full" style={{ background: ring.color }} />{ring.label}</span>)}

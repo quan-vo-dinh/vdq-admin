@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { saveTextFile } from "@/lib/platform/files";
 import { useSearchParams } from "@/lib/platform/navigation";
 import { validDay } from "@/lib/today/model";
@@ -512,7 +514,7 @@ function CalendarWorkspace({ initialDate }: { initialDate?: string }) {
                       </ToggleGroup>
                     )}
                     <span className="hidden shrink-0 text-xs text-muted-foreground sm:inline">
-                      {visible.length} {text("kế hoạch", "plans")}
+                      <NumberTicker value={visible.length} /> {text("kế hoạch", "plans")}
                     </span>
                     <div className="w-36">
                       <Choice

@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { DashboardCard } from "@/app/components/shared/dashboard-card";
 
 import { BookOpen, Check, Flame, Trophy, CalendarDays } from "lucide-react";
@@ -55,10 +57,10 @@ export function LearningOverview() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <span className="text-5xl font-semibold tracking-tighter tabular-nums">
-                {completed}
+                <NumberTicker value={completed} />
                 <span className="text-xl text-muted-foreground">
                   {" "}
-                  / {active.length}
+                  / <NumberTicker value={active.length} />
                 </span>
               </span>
               <p className="mt-2 text-sm text-muted-foreground">
@@ -138,7 +140,7 @@ export function LearningOverview() {
               </div>
               <div>
                 <strong className="text-xl tabular-nums">
-                  {value.toLocaleString(language === "vi" ? "vi-VN" : "en-GB")}
+                  <NumberTicker value={value.toLocaleString(language === "vi" ? "vi-VN" : "en-GB")} />
                 </strong>
                 <p className="text-xs text-muted-foreground">{label}</p>
               </div>

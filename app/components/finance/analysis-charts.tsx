@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 
 import { periodDays, periodRange } from "@/lib/finance/period";
 import { useState } from "react";
@@ -86,7 +88,7 @@ export function IncomeSpendingChart() {
                 : "balance"
             }
           >
-            {money(monthlyTotals(data.transactions, period).net)}
+            <NumberTicker value={money(monthlyTotals(data.transactions, period).net)} />
           </p>
         </div>
         <Choice
@@ -299,7 +301,7 @@ export function BudgetComparison({
               <span className="finance-budget-list-copy">
                 <strong>{row.name}</strong>
                 <span className="finance-budget-list-values">
-                  {text("Đã chi ròng")} {money(row.spent)} <span aria-hidden="true">/</span> {text("Hạn mức")} {money(row.cap)}
+                  {text("Đã chi ròng")} <NumberTicker value={money(row.spent)} /> <span aria-hidden="true">/</span> {text("Hạn mức")} <NumberTicker value={money(row.cap)} />
                 </span>
                 <span className="finance-budget-list-meter" aria-hidden="true">
                   <span style={{ width: `${ratio}%` }} />
@@ -367,7 +369,7 @@ export function BudgetTransactionHistory({ categoryId }: { categoryId: string | 
               <p className="text-xs text-muted-foreground">{text(transaction.kind === "refund" ? "Hoàn tiền" : "Chi tiêu")} · {date(transaction.date)}</p>
             </div>
             <strong className="shrink-0 text-sm tabular-nums" data-finance-tone={transaction.kind === "refund" ? "balance" : "danger"}>
-              {transaction.kind === "refund" ? "+" : "−"}{money(transaction.amount)}
+              {transaction.kind === "refund" ? "+" : "−"}<NumberTicker value={money(transaction.amount)} />
             </strong>
           </div>
         ))}

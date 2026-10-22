@@ -6,6 +6,7 @@ import "./globals.css"
 import "./css/mobile-layout.css"
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/Themeprovider";
+import { MutationToaster } from "@/app/components/shared/mutation-toaster";
 import { OfflineBanner } from "@/app/components/shared/offline-banner";
 import { LanguageProvider } from "@/app/context/language-context";
 
@@ -65,6 +66,7 @@ export default function RootLayout({
           <LanguageProvider>
             {children}
             <OfflineBanner />
+            <MutationToaster />
           </LanguageProvider>
         </ThemeProvider>
       </body>

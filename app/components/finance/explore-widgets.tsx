@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import {expenseGroups} from "@/lib/finance/reconciliation";
 
 import { useState } from "react";
@@ -89,7 +91,7 @@ export function GoalSpotlight() {
                     <FinanceHeading>{goalName(g)}</FinanceHeading>
                     <div className="finance-spotlight-progress">
                       <ProgressRing value={g.target ? (g.allocated / g.target) * 100 : 0} label={goalName(g)} small />
-                      <div><strong className="tabular-nums">{money(g.allocated)}</strong><p className="text-sm text-muted-foreground">{text("trên mục tiêu")} {money(g.target)}</p></div>
+                      <div><strong className="tabular-nums"><NumberTicker value={money(g.allocated)} /></strong><p className="text-sm text-muted-foreground">{text("trên mục tiêu")} <NumberTicker value={money(g.target)} /></p></div>
                     </div>
                   </div>
                 </div>
@@ -98,7 +100,7 @@ export function GoalSpotlight() {
                   <span className="text-muted-foreground">
                     {text("Dự kiến góp / tháng")}
                   </span>
-                  <strong>{money(g.monthly)}</strong>
+                  <strong><NumberTicker value={money(g.monthly)} /></strong>
                 </div>
               </div>
             </CarouselItem>
@@ -194,7 +196,7 @@ export function SpendingExplorer() {
               </ChartContainer>
               <div className="finance-donut-label">
                 <span>{current?.name ?? text("Tổng chi ròng dương")}</span>
-                <strong>{compactMoney(current?.net ?? total)}</strong>
+                <strong><NumberTicker value={compactMoney(current?.net ?? total)} /></strong>
               </div>
             </div>
           ) : (
@@ -217,10 +219,10 @@ export function SpendingExplorer() {
                   {r.name}
                 </span>
                 <span className="tabular-nums">
-                  {number(r.net / total, {
+                  <NumberTicker value={number(r.net / total, {
                     style: "percent",
                     maximumFractionDigits: 0,
-                  })}
+                  })} />
                 </span>
               </Button>
             ))}
@@ -237,7 +239,7 @@ export function SpendingExplorer() {
                   <FinanceIcon icon={categoryIcon(r.id)} size="sm" />
                   {r.name}
                 </span>
-                <strong className="tabular-nums">{money(r.net)}</strong>
+                <strong className="tabular-nums"><NumberTicker value={money(r.net)} /></strong>
               </div>
             ))}
           </div>
@@ -299,13 +301,13 @@ export function BudgetRadar() {
                         )}
                         :{" "}
                         <strong>
-                          {number(Number(value), { maximumFractionDigits: 0 })}%
+                          <NumberTicker value={number(Number(value), { maximumFractionDigits: 0 })} />%
                         </strong>
                       </span>
                       {item.dataKey === "used" && (
                         <span>
-                          {money(item.payload.spent)} /{" "}
-                          {money(item.payload.cap)}
+                          <NumberTicker value={money(item.payload.spent)} /> /{" "}
+                          <NumberTicker value={money(item.payload.cap)} />
                         </span>
                       )}
                     </div>
@@ -427,14 +429,14 @@ export function CashFlowCalendar({
               <ArrowDownLeft className="size-4" />
               {text("Thu nhập")}
             </span>
-            <strong>{money(current.income)}</strong>
+            <strong><NumberTicker value={money(current.income)} /></strong>
           </div>
           <div className="flex items-center justify-between gap-3 text-sm">
             <span className="flex items-center gap-2">
               <ArrowUpRight className="size-4" />
               {text("Chi tiêu")}
             </span>
-            <strong>{money(current.expense)}</strong>
+            <strong><NumberTicker value={money(current.expense)} /></strong>
           </div>
           <Separator />
           <p className="text-sm text-muted-foreground">
@@ -445,7 +447,7 @@ export function CashFlowCalendar({
             data-finance-value
             data-finance-tone={current.balance < reserve ? "danger" : "balance"}
           >
-            {money(current.balance)}
+            <NumberTicker value={money(current.balance)} />
           </strong>
         </div>
       </div>

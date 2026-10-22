@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api/transport";
 import { createContext, useContext, useRef, useState, type ReactNode } from "react";
 import useSWR from "swr";
 import { getFetcher } from "@/app/api/global-fetcher";
@@ -14,7 +15,7 @@ function useTodayData() {
     try {
       if (method === "POST") { pendingId.current ||= crypto.randomUUID(); body = { ...body, id: pendingId.current }; }
       else body = { ...body, expectedRevision: data?.find(item => item.id === body.id)?.revision };
-      const response = await fetch("/api/today", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const response = await apiFetch("/api/today", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.code ?? "unavailable");
       if (method === "POST") pendingId.current = "";

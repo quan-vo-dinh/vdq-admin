@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { cloneElement, useState, useSyncExternalStore } from "react";
 import { ActivityCalendar } from "react-activity-calendar";
 import { useTheme } from "next-themes";
@@ -63,7 +65,7 @@ export function GitHubAnalytics() {
           ]}
         />
         <Badge variant="outline">
-          {number(count)} contributions / {days} {text("ngày", "days")}
+          <NumberTicker value={number(count)} /> contributions / {days} {text("ngày", "days")}
         </Badge>
       </div>
       <Panel
@@ -161,7 +163,7 @@ export function GitHubAnalytics() {
           {selectedRows.map((r) => (
             <div key={r.sourceId} className="flex justify-between gap-4">
               <span>{data.sources.find((s) => s.id === r.sourceId)?.name}</span>
-              <Badge variant="secondary">{r.count}</Badge>
+              <Badge variant="secondary"><NumberTicker value={r.count} /></Badge>
             </div>
           ))}
         </DialogContent>

@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Scale, Wallet } from "lucide-react";
@@ -48,30 +50,30 @@ export function ReconciliationPanel() {
     {id:"ledger",header:"Số dư tính từ sổ",cell:({row:{original:a}})=>{
       if(!a.openingOn)return "Chưa đủ dữ liệu";
       const {balance:bank,excluded:outside}=accountPosition(data,a);
-      return <span>{money(bank)}<br/><small className="text-muted-foreground">Trong phạm vi: {money(bank-outside)}</small></span>;
+      return <span><NumberTicker value={money(bank)} /><br/><small className="text-muted-foreground">Trong phạm vi: <NumberTicker value={money(bank-outside)} /></small></span>;
     }},
     {id:"observed",header:"Mốc xác nhận gần nhất",cell:({row:{original:a}})=>{
       const c=(data.checkpoints??[]).filter(c=>c.account===a.id).sort((a,b)=>Date.parse(b.observedAt)-Date.parse(a.observedAt))[0];
       if(!c)return "Chưa có";
       const r=reconcileAccount(data,a,c.observedAt,c.amount);
       const status=r.difference!==null?`Chênh xác nhận − sổ: ${money(r.difference)}`:r.beforeBaseline?"Mốc này trước ngày bắt đầu theo dõi":r.ambiguous?`Chưa thể đối soát: ${r.ambiguous} dòng thiếu giờ`:"Chưa thể đối soát vì thiếu dữ liệu";
-      return <span>{money(c.amount)}<br/><small>{new Date(c.observedAt).toLocaleString("vi-VN",{timeZone:"Asia/Ho_Chi_Minh"})}</small><br/><small>{status}</small></span>;
+      return <span><NumberTicker value={money(c.amount)} /><br/><small>{new Date(c.observedAt).toLocaleString("vi-VN",{timeZone:"Asia/Ho_Chi_Minh"})}</small><br/><small>{status}</small></span>;
     }},
   ];
   return <>
     <Section title="Số dư & đối soát" icon={Scale} description={`Sổ tính đến hết ${data.asOf}, theo giờ Việt Nam. Không tự điều chỉnh khi có chênh lệch.`} action={<Button variant="outline" onClick={()=>{setOpen(true);setError("");}}>Ghi mốc / tiền ngoài phạm vi</Button>}>
       <BalanceEvidenceNotice/>
       <div className="grid gap-3 py-4 sm:grid-cols-3">
-        {[{name:"Tiền trong phạm vi theo sổ",value:totals.tracked},{name:"Tiền ngoài phạm vi",value:totals.excluded},{name:"Khả dụng sau phân bổ",value:totals.available}].map(item=><div key={item.name} className="rounded-lg border p-3"><div className="text-sm text-muted-foreground">{item.name}</div><strong className="text-lg tabular-nums">{totals.balanceKnown?money(item.value):"Chưa đủ dữ liệu"}</strong></div>)}
+        {[{name:"Tiền trong phạm vi theo sổ",value:totals.tracked},{name:"Tiền ngoài phạm vi",value:totals.excluded},{name:"Khả dụng sau phân bổ",value:totals.available}].map(item=><div key={item.name} className="rounded-lg border p-3"><div className="text-sm text-muted-foreground">{item.name}</div><strong className="text-lg tabular-nums"><NumberTicker value={totals.balanceKnown?money(item.value):"Chưa đủ dữ liệu"} /></strong></div>)}
       </div>
     <FeatureDataTable label="Đối soát tài khoản đang theo dõi" data={data.accounts.filter(a=>!a.archivedAt)} columns={columns} empty={<NoResults/>}/>
       <p className="mt-3 text-sm text-muted-foreground">Khả dụng sau phân bổ = tiền trong phạm vi − mục tiêu đã dành − khoản dự kiến đã khai báo. Đây là kế hoạch; không trừ các khoản này lần nữa vào số dư ngân hàng.</p>
     </Section>
     <Section title="Ba nhóm chi phí trong kỳ" icon={Wallet} description="Tất cả danh mục chi tiết được gom về Ăn uống, Di chuyển hoặc Chi phí phát sinh. Hoàn hỗ trợ làm giảm thu nhập; chuyển nội bộ không tạo thu chi.">
-      <div className="grid gap-3 sm:grid-cols-3">{expenseGroups(data.transactions,period).map(g=><div key={g.code} className="rounded-lg border p-3"><p>{({food:"Ăn uống",transport:"Di chuyển",other:"Chi phí phát sinh"})[g.code]}</p><strong className="tabular-nums">{money(g.amount)}</strong></div>)}</div>
-      <p className="mt-3 text-sm text-muted-foreground">Chi theo quy ước ngân sách: {money(spending.budget)}. Chi làm giảm tài sản tiền: {money(spending.assetExpense)}. Chênh {money(spending.difference)} do tiền mặt đã tính ngân sách tại ATM nhưng chưa ghi nhận sử dụng. Thiếu giao dịch tiền mặt thì chưa thể khẳng định tiền này vẫn còn giữ.</p>
-      <p className="mt-3 text-sm">Chuyển nội bộ trong kỳ: {transfers.length} giao dịch, {money(sum(transfers,t=>t.amount))}. Chỉ thay đổi nơi giữ tiền.</p>
-      {groups.length>0&&<div className="mt-4 space-y-2">{groups.map(g=><div key={g.name} className="rounded-lg border p-3 text-sm"><strong>{g.name}</strong><p>{g.count} dòng · Thu gốc {money(g.grossIncome)} · Trả hỗ trợ {money(g.returned)} · Thu giữ lại {money(g.income)}</p><p>Chi ngân sách {money(g.expenses)} · Chi giảm tài sản tiền {money(g.assetExpense)} · Ròng ngân sách {money(g.net)}</p></div>)}</div>}
+      <div className="grid gap-3 sm:grid-cols-3">{expenseGroups(data.transactions,period).map(g=><div key={g.code} className="rounded-lg border p-3"><p>{({food:"Ăn uống",transport:"Di chuyển",other:"Chi phí phát sinh"})[g.code]}</p><strong className="tabular-nums"><NumberTicker value={money(g.amount)} /></strong></div>)}</div>
+      <p className="mt-3 text-sm text-muted-foreground">Chi theo quy ước ngân sách: <NumberTicker value={money(spending.budget)} />. Chi làm giảm tài sản tiền: <NumberTicker value={money(spending.assetExpense)} />. Chênh <NumberTicker value={money(spending.difference)} /> do tiền mặt đã tính ngân sách tại ATM nhưng chưa ghi nhận sử dụng. Thiếu giao dịch tiền mặt thì chưa thể khẳng định tiền này vẫn còn giữ.</p>
+      <p className="mt-3 text-sm">Chuyển nội bộ trong kỳ: <NumberTicker value={transfers.length} /> giao dịch, <NumberTicker value={money(sum(transfers,t=>t.amount))} />. Chỉ thay đổi nơi giữ tiền.</p>
+      {groups.length>0&&<div className="mt-4 space-y-2">{groups.map(g=><div key={g.name} className="rounded-lg border p-3 text-sm"><strong>{g.name}</strong><p><NumberTicker value={g.count} /> dòng · Thu gốc <NumberTicker value={money(g.grossIncome)} /> · Trả hỗ trợ <NumberTicker value={money(g.returned)} /> · Thu giữ lại <NumberTicker value={money(g.income)} /></p><p>Chi ngân sách <NumberTicker value={money(g.expenses)} /> · Chi giảm tài sản tiền <NumberTicker value={money(g.assetExpense)} /> · Ròng ngân sách <NumberTicker value={money(g.net)} /></p></div>)}</div>}
     </Section>
     <Dialog open={open} onOpenChange={v=>{if(!busy)setOpen(v);}}><DialogContent size="xl" className="max-h-[90dvh] overflow-y-auto" data-readable-feature data-finance-typography>
       <DialogHeader><DialogTitle>Mốc số dư & tiền ngoài phạm vi</DialogTitle><DialogDescription>Ghi chứng cứ và thời điểm thực tế. Mốc số dư chỉ dùng so sánh, không tạo thu nhập hay chi phí.</DialogDescription></DialogHeader>
@@ -91,7 +93,7 @@ export function ReconciliationPanel() {
         {resource==="scope_events"&&<p className="text-sm text-muted-foreground sm:col-span-2">Cần có mốc đầu kỳ. Khi tiền ngoài phạm vi được chuyển đi, cả số dư ngân hàng và phần ngoài phạm vi cùng giảm nên tiền trong phạm vi không giảm lần hai. Không ghi khoản này thêm vào sổ thu chi.</p>}
         <Button type="submit" disabled={busy}>Lưu ghi nhận</Button>
       </form>
-      <div className="space-y-2">{(resource==="checkpoints"?data.checkpoints??[]:data.scopeEvents??[]).map(item=><div key={item.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 text-sm"><span>{data.accounts.find(a=>a.id===item.account)?.name} · {"observedAt" in item?item.observedAt:item.occurredAt} · {money(item.amount)}<br/>{item.evidence}</span><Button variant="outline" size="sm" disabled={busy} onClick={async()=>{try{await action(resource,"DELETE",{id:item.id,expectedRevision:item.revision});}catch(e){setError(e instanceof Error?e.message:"Không xóa được.");}}}>Xóa ghi nhận</Button></div>)}</div>
+      <div className="space-y-2">{(resource==="checkpoints"?data.checkpoints??[]:data.scopeEvents??[]).map(item=><div key={item.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 text-sm"><span>{data.accounts.find(a=>a.id===item.account)?.name} · {"observedAt" in item?item.observedAt:item.occurredAt} · <NumberTicker value={money(item.amount)} /><br/>{item.evidence}</span><Button variant="outline" size="sm" disabled={busy} onClick={async()=>{try{await action(resource,"DELETE",{id:item.id,expectedRevision:item.revision});}catch(e){setError(e instanceof Error?e.message:"Không xóa được.");}}}>Xóa ghi nhận</Button></div>)}</div>
     </DialogContent></Dialog>
   </>;
 }

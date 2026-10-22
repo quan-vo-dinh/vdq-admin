@@ -1,4 +1,5 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
 import type { ColumnDef } from "@tanstack/react-table";
 import { FeatureDataTable } from "@/app/components/tables/feature-data-table";
 import {
@@ -38,7 +39,7 @@ export function ModelUsage({
     ...(["input", "output", "cache", "total"] as const).map((key) => ({
       accessorKey: key,
       header: key === "total" ? text("Tổng token", "Total tokens") : key,
-      cell: (c: { row: { original: Row } }) => number(c.row.original[key]),
+      cell: (c: { row: { original: Row } }) => <NumberTicker value={number(c.row.original[key])} />,
     })),
     {
       accessorKey: "throughput",

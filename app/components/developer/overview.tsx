@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { useState } from "react";
 import Link from "@/lib/platform/link";
 import {
@@ -144,7 +146,7 @@ export function Overview() {
               </span>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-2xl font-semibold leading-8 tracking-[-0.3px] tabular-nums">
-                  {number(tokens(sessions))}
+                  <NumberTicker value={number(tokens(sessions))} />
                 </span>
                 <span className="text-sm text-muted-foreground">
                   tokens · {days} {text("ngày", "days")}
@@ -179,7 +181,7 @@ export function Overview() {
                     </div>
                     <div className="flex items-center gap-2" title={m.sub}>
                       <h3 className="text-2xl font-semibold tabular-nums">
-                        {number(m.value)}
+                        <NumberTicker value={number(m.value)} />
                       </h3>
                       {!("changes" in m) && <Badge
                         variant={m.tinted ? "default" : "outline"}
@@ -189,8 +191,8 @@ export function Overview() {
                       </Badge>}
                     {"changes" in m && m.changes && (
                       <span className="inline-flex shrink-0 items-center gap-2 text-sm font-medium tabular-nums">
-                        <span className="text-success-foreground" aria-label={text(`${number(m.changes.additions)} dòng thêm`, `${number(m.changes.additions)} lines added`)}>+{number(m.changes.additions)}</span>
-                        <span className="text-destructive" aria-label={text(`${number(m.changes.deletions)} dòng xóa`, `${number(m.changes.deletions)} lines deleted`)}>−{number(m.changes.deletions)}</span>
+                        <span className="text-success-foreground" aria-label={text(`${number(m.changes.additions)} dòng thêm`, `${number(m.changes.additions)} lines added`)}>+<NumberTicker value={number(m.changes.additions)} /></span>
+                        <span className="text-destructive" aria-label={text(`${number(m.changes.deletions)} dòng xóa`, `${number(m.changes.deletions)} lines deleted`)}>−<NumberTicker value={number(m.changes.deletions)} /></span>
                       </span>
                     )}
                       <span className="sr-only">{m.sub}</span>

@@ -1,4 +1,7 @@
 "use client";
+import { toast } from "@/components/ui/toast";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { apiFetch } from "@/lib/api/transport";
 
 import { FinancePageHeader } from "./page-header";
@@ -140,17 +143,18 @@ function GoalEditor({
             };
             setReadingImage(true);
             try {
-              const saved=await action('goals',initial||savedRevision?'PATCH':'POST',{...goal, expectedRevision:savedRevision??initial?.revision});
+              const saved=await action('goals',initial||savedRevision?'PATCH':'POST',{...goal, expectedRevision:savedRevision??initial?.revision},false);
               setSavedRevision(saved.revision);
               if(file||removeImage){
-                const r=await apiFetch(`/api/finance/goals/image?id=${goal.id}&revision=${saved.revision}`,{method:file?'POST':'DELETE',headers:file?{'Content-Type':file.type}:undefined,body:file});
+                const r=await apiFetch(`/api/finance/goals/image?id=${goal.id}&revision=${saved.revision}`,{feedback:false,method:file?'POST':'DELETE',headers:file?{'Content-Type':file.type}:undefined,body:file});
                 if(!r.ok)throw new Error(r.status===409?'Mục tiêu đã thay đổi. Ảnh cũ được giữ; tải lại trước khi lưu.':'Đã lưu thông tin mục tiêu, nhưng chưa lưu ảnh. Giữ bản nháp để thử lại.');
                 const attached=await r.json();setSavedRevision(attached.revision);
                 if(attached.cleanupPending)notify('Đã lưu ảnh; ảnh cũ cần dọn qua media cleanup.');
                 await actionRefresh();
               }
             }
-            catch(e) {setError(e instanceof Error?e.message:'Không lưu được.');return;} finally {setReadingImage(false);}
+            catch(e) {const message=e instanceof Error?e.message:'Không lưu được.';setError(message);toast.add({title:message,type:'error'});return;} finally {setReadingImage(false);}
+            toast.add({title:text("Đã lưu mục tiêu và tính lại phần tiền chưa phân bổ."),type:"success"});
             notify("Đã lưu mục tiêu và tính lại phần tiền chưa phân bổ.");
             onClose();
           }}
@@ -292,7 +296,7 @@ export function GoalsPage() {
           <Alert variant="destructive">
             <AlertDescription>
               {text("Tiền đã dành và nghĩa vụ đang vượt số dư")}{" "}
-              {money(-totals.available)}
+              <NumberTicker value={money(-totals.available)} />
               {text(". Cần giảm phân bổ trước khi thêm tiền cho mục tiêu.")}
             </AlertDescription>
           </Alert>
@@ -346,11 +350,11 @@ export function GoalsPage() {
                         data-finance-tone={goalTone}
                         className="text-2xl font-semibold tabular-nums"
                       >
-                        {money(g.allocated)}
+                        <NumberTicker value={money(g.allocated)} />
                       </p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        {text("trên mục tiêu")} {money(g.target)} ·{" "}
-                        {Math.round((g.allocated / g.target) * 100)}%
+                        {text("trên mục tiêu")} <NumberTicker value={money(g.target)} /> ·{" "}
+                        <NumberTicker value={Math.round((g.allocated / g.target) * 100)} />%
                       </p>
                     </div>
                     <ProgressRing
@@ -365,7 +369,7 @@ export function GoalsPage() {
                         {text("Dự kiến góp / tháng")}
                       </span>
                       <span data-finance-value data-finance-tone={goalTone}>
-                        {money(g.monthly)}
+                        <NumberTicker value={money(g.monthly)} />
                       </span>
                     </div>
                     <p className="text-sm leading-relaxed text-muted-foreground">
@@ -444,7 +448,7 @@ export function GoalsPage() {
                 </FinanceHeading>
               </DialogTitle>
               <DialogDescription>
-                {text("Tối đa")} {money(fundLimit)}{" "}
+                {text("Tối đa")} <NumberTicker value={money(fundLimit)} />{" "}
                 {text("từ tiền chưa phân bổ. Tổng số dư không đổi.")}
               </DialogDescription>
             </DialogHeader>
@@ -506,7 +510,7 @@ export function GoalsPage() {
                 <FinanceHeading as="span">{text("Bỏ mục tiêu này?")}</FinanceHeading>
               </DialogTitle>
               <DialogDescription>
-                {goalName(deleting)}: {money(deleting.allocated)}{" "}
+                {goalName(deleting)}: <NumberTicker value={money(deleting.allocated)} />{" "}
                 {text(
                   "sẽ trở lại tiền chưa phân bổ. Không xóa giao dịch hay số dư tài khoản.",
                 )}

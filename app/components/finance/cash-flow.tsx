@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 
 import { FinancePageHeader } from "./page-header";
 
@@ -242,7 +244,7 @@ export function CashFlowPage() {
               <AccordionItem value="bills">
                 <AccordionTrigger>
                   <FinanceHeading as="span">
-                    {text("Khoản chi sắp đến")} · {data.bills.length}
+                    {text("Khoản chi sắp đến")} · <NumberTicker value={data.bills.length} />
                   </FinanceHeading>
                 </AccordionTrigger>
                 <AccordionContent>
@@ -259,7 +261,7 @@ export function CashFlowPage() {
                           </span>
                         </span>
                         <strong className="tabular-nums">
-                          {money(b.amount)}
+                          <NumberTicker value={money(b.amount)} />
                         </strong>
                       </div>
                     ))}

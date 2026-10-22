@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { NumberTicker } from "@/components/ui/number-ticker";
 import { v4 as uuidv4 } from "uuid";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardCard } from "../../shared/dashboard-card";
@@ -11,37 +11,6 @@ import {
     ChartTooltip,
 } from "@/components/ui/chart";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
-
-function useAnimatedNumber(target: number, duration = 450) {
-    const [display, setDisplay] = useState(0);
-    const currentRef = useRef(0);
-    const rafRef = useRef<number>(0);
-    useEffect(() => {
-        cancelAnimationFrame(rafRef.current);
-        const from = currentRef.current;
-        const diff = target - from;
-        if (diff === 0) return;
-        const startTime = performance.now();
-        const tick = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const next = Math.round(from + diff * eased);
-            currentRef.current = next;
-            setDisplay(next);
-            if (progress < 1) { rafRef.current = requestAnimationFrame(tick); }
-            else { currentRef.current = target; setDisplay(target); }
-        };
-        rafRef.current = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(rafRef.current);
-    }, [target, duration]);
-    return display;
-}
-
-function AnimatedValue({ value }: { value: number }) {
-    const animated = useAnimatedNumber(value);
-    return <>{animated.toLocaleString()}</>;
-}
 
 type TooltipItem = { name?: string; value?: number; color?: string; dataKey?: string; type?: string };
 type ConfigEntry = { label?: string; color?: string };
@@ -62,7 +31,7 @@ function AnimatedTooltipContent({ active, payload, label, hideLabel = false, con
                         <div className="h-2.5 w-2.5 shrink-0 rounded-[2px]" style={{ backgroundColor: item.color }} />
                         <span className="text-muted-foreground">{config?.[item.dataKey ?? ""]?.label ?? item.name}</span>
                         <span className="ml-auto font-mono font-medium tabular-nums text-foreground">
-                            <AnimatedValue value={item.value as number} />
+                            <NumberTicker value={item.value as number} />
                         </span>
                     </div>
                 ))}
@@ -200,7 +169,7 @@ export default function TotalsAssets() {
                                         <h6 className="text-sm font-normal">{item.distribution}</h6>
                                     </div>
                                     <div className="flex items-center gap-1">
-                                        <h6 className="text-sm font-medium">{item.value}</h6>
+                                        <h6 className="text-sm font-medium"><NumberTicker value={item.value} /></h6>
                                         <p className="text-xs font-normal text-muted-foreground">{`(${item.percentage}%)`}</p>
                                     </div>
                                 </div>

@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 
 import { FinancePageHeader } from "./page-header";
 import { FinanceHeading } from "./heading";
@@ -123,7 +125,7 @@ export function TransactionsPage() {
                 {t.reference && <span className="text-xs text-muted-foreground">{t.reference}</span>}
                 {t.reportGroup && <span className="text-xs text-muted-foreground">Nhóm: {t.reportGroup}</span>}
                 {t.reportingRole === "support_return" && <span className="text-xs text-muted-foreground">Trả hỗ trợ · giảm thu nhập giữ lại</span>}
-                {t.reportingRole === "cash_withdrawal" && <span className="text-xs text-muted-foreground">Nhận {money(t.cashReceived??0)} tiền mặt · chi ngân sách tại ATM</span>}
+                {t.reportingRole === "cash_withdrawal" && <span className="text-xs text-muted-foreground">Nhận <NumberTicker value={money(t.cashReceived??0)} /> tiền mặt · chi ngân sách tại ATM</span>}
                 {t.reportingRole === "prepaid_cash" && <span className="text-xs text-muted-foreground">Giảm tiền mặt · đã tính ngân sách tại ATM</span>}
               </div>
             </div>
@@ -155,7 +157,7 @@ export function TransactionsPage() {
             className="whitespace-nowrap font-medium tabular-nums"
           >
             {t.kind === "transfer" ? "" : t.kind === "expense" ? "−" : "+"}
-            {money(t.amount)}
+            <NumberTicker value={money(t.amount)} />
           </span>
         ),
       },
@@ -210,7 +212,7 @@ export function TransactionsPage() {
             }
           >
             <Download data-icon="inline-start" />
-            {text("Xuất")} {filtered.length} dòng
+            {text("Xuất")} <NumberTicker value={filtered.length} /> dòng
           </Button>
         </div>
       </FinancePageHeader>
@@ -296,7 +298,7 @@ export function TransactionsPage() {
                 </Button>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">Đang lọc {filtered.length}/{data.transactions.filter(t=>inFinancePeriod(t.date,period)).length} dòng trong kỳ. Chỉ số và CSV dùng cùng tập dữ liệu, bao gồm mọi trang của bảng.</p>
+            <p className="text-sm text-muted-foreground">Đang lọc <NumberTicker value={filtered.length} />/{data.transactions.filter(t=>inFinancePeriod(t.date,period)).length} dòng trong kỳ. Chỉ số và CSV dùng cùng tập dữ liệu, bao gồm mọi trang của bảng.</p>
             <div className="overflow-x-auto">
               <Tabs value={kind} onValueChange={(v) => setKind(String(v))}>
                 <TabsList
@@ -363,7 +365,7 @@ export function TransactionsPage() {
                 <FinanceHeading as="span">{text("Xóa giao dịch này?")}</FinanceHeading>
               </DialogTitle>
               <DialogDescription>
-                {transactionDescription(deleting)} · {money(deleting.amount)}
+                {transactionDescription(deleting)} · <NumberTicker value={money(deleting.amount)} />
                 {text(". Số dư và báo cáo sẽ được tính lại.")}
                 {deleting.kind === "transfer" &&
                   text(

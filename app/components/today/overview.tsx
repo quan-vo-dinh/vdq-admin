@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import Link from "next/link";
 import { ArrowRight, BookOpen, CalendarDays, CheckCheck, CircleUserRound, Code2, LayoutGrid, NotebookText, Target } from "lucide-react";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +22,7 @@ export function FocusOverview({ values, available }: { values: [number, number, 
     { title: text("Học tập", "Learning"), icon: BookOpen, value: values[2] },
     { title: text("Đã hoàn thành", "Completed"), icon: CheckCheck, value: values[3] },
   ];
-  return <DashboardCard className="flex flex-col gap-0! pb-0!"><CardHeader className="border-b border-border"><CardTitle className="flex items-center gap-2"><LayoutGrid size={16} className="text-muted-foreground" />{text("Hôm nay tập trung gì?", "Today’s focus")}</CardTitle></CardHeader><CardContent className="h-full! px-0!"><div className="grid h-full min-h-64 grid-cols-2 gap-px bg-border">{entries.map(entry => <div key={entry.title} className="flex flex-col justify-between gap-6 bg-background p-6"><div className="w-fit rounded-md border border-border p-2"><entry.icon size={16} /></div><div><p className="text-2xl font-semibold">{available ? entry.value : "—"}</p><p className="text-sm">{entry.title}</p></div></div>)}</div></CardContent></DashboardCard>;
+  return <DashboardCard className="flex flex-col gap-0! pb-0!"><CardHeader className="border-b border-border"><CardTitle className="flex items-center gap-2"><LayoutGrid size={16} className="text-muted-foreground" />{text("Hôm nay tập trung gì?", "Today’s focus")}</CardTitle></CardHeader><CardContent className="h-full! px-0!"><div className="grid h-full min-h-64 grid-cols-2 gap-px bg-border">{entries.map(entry => <div key={entry.title} className="flex flex-col justify-between gap-6 bg-background p-6"><div className="w-fit rounded-md border border-border p-2"><entry.icon size={16} /></div><div><p className="text-2xl font-semibold"><NumberTicker value={available ? entry.value : "—"} /></p><p className="text-sm">{entry.title}</p></div></div>)}</div></CardContent></DashboardCard>;
 }
 export function PersonalMetrics({ waiting, upcoming, notes }: { waiting: number | null; upcoming: number | null; notes: number | null }) {
   const { text } = useTodayLocale();
@@ -29,5 +31,5 @@ export function PersonalMetrics({ waiting, upcoming, notes }: { waiting: number 
     { title: text("Lịch sắp tới · 7 ngày", "Coming up · 7 days"), value: upcoming, icon: CalendarDays, href: "#upcoming-agenda", action: text("Xem kế hoạch", "See plans") },
     { title: text("Ghi chú đang lưu", "Saved notes"), value: notes, icon: NotebookText, href: "/apps/notes", action: text("Mở ghi chú", "Open notes") },
   ];
-  return <>{entries.map(entry => <div key={entry.href} className="col-span-12 lg:col-span-4"><DashboardCard className="py-6"><CardContent className="px-6"><div className="flex w-full flex-col items-start gap-4"><div className="flex w-full items-center justify-between gap-3"><div className="flex flex-col gap-1"><p className="text-sm">{entry.title}</p><p className="text-2xl font-semibold">{entry.value ?? "—"}</p></div><div className="w-fit rounded-md border border-border p-2.5"><entry.icon size={16} /></div></div><Button variant="outline" className="h-auto rounded-md px-4 py-2" nativeButton={false} render={<Link href={entry.href} />}>{entry.action}<ArrowRight size={18} /></Button></div></CardContent></DashboardCard></div>)}</>;
+  return <>{entries.map(entry => <div key={entry.href} className="col-span-12 lg:col-span-4"><DashboardCard className="py-6"><CardContent className="px-6"><div className="flex w-full flex-col items-start gap-4"><div className="flex w-full items-center justify-between gap-3"><div className="flex flex-col gap-1"><p className="text-sm">{entry.title}</p><p className="text-2xl font-semibold"><NumberTicker value={entry.value ?? "—"} /></p></div><div className="w-fit rounded-md border border-border p-2.5"><entry.icon size={16} /></div></div><Button variant="outline" className="h-auto rounded-md px-4 py-2" nativeButton={false} render={<Link href={entry.href} />}>{entry.action}<ArrowRight size={18} /></Button></div></CardContent></DashboardCard></div>)}</>;
 }

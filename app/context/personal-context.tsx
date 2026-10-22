@@ -1,4 +1,5 @@
 'use client';
+import { announceMutation } from "@/lib/api/mutation-feedback";
 import { apiFetch } from "@/lib/api/transport";
 import { createContext, useContext, useEffect, useEffectEvent, useRef, useState, type ReactNode } from 'react';
 import useSWR from 'swr';
@@ -9,8 +10,8 @@ export type Address={location:string;state:string;pin:string;zip:string;taxNo:st
 type Profile={personal:Personal;address:Address;revision:number};
 type Preferences={locale:'vi'|'en';theme:'light'|'dark';revision:number};
 async function read<T>(url:string):Promise<T>{const r=await apiFetch(url);if(!r.ok)throw new Error('Không tải được dữ liệu cá nhân.');return r.json();}
-export async function patchPersonal<T>(url:string,body:unknown):Promise<T>{
- const response=await apiFetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+export async function patchPersonal<T>(url:string,body:unknown,feedback=true):Promise<T>{
+ const response=await apiFetch(url,{feedback,method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
  if(!response.ok){
   const result=await response.json().catch(()=>({}));
   const messages:Record<string,string>={
@@ -40,18 +41,19 @@ function usePersonalState(){
   if(!prefs.data||lock.current)return;lock.current=true;themeTransition.current=!!values.theme;setSaving(true);setError('');
   try{
    let saved:Preferences;
-   try{saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:prefs.data.revision});}
+   try{saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:prefs.data.revision},false);}
    catch(e){
     // A second open tab can advance the revision. Retry this explicit preference
     // once against current data, preserving all fields the user did not change.
     if(!(e instanceof Error)||e.cause!==409)throw e;
     const latest=await read<Preferences>('/api/preferences');
-    saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:latest.revision});
+    saved=await patchPersonal<Preferences>('/api/preferences',{...values,expectedRevision:latest.revision},false);
    }
+   announceMutation({path:'/api/preferences',method:'PATCH',ok:true});
    await prefs.mutate(saved,{revalidate:false});
    if(values.theme){if(applyTheme)await applyTheme(saved.theme);else setTheme(saved.theme);}
   }
-  catch(e){setError((e as Error).message);const latest=await prefs.mutate();if(latest)setTheme(latest.theme);}finally{themeTransition.current=false;lock.current=false;setSaving(false);}
+  catch(e){announceMutation({path:'/api/preferences',method:'PATCH',ok:false,status:e instanceof Error&&typeof e.cause==='number'?e.cause:undefined});setError((e as Error).message);const latest=await prefs.mutate();if(latest)setTheme(latest.theme);}finally{themeTransition.current=false;lock.current=false;setSaving(false);}
  }
  return {profile,prefs,language,theme,preferences,error,saving};
 }

@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 import { HeadingText } from "@/app/components/shared/heading-text";
 import {
   useId,
@@ -70,7 +72,7 @@ export function CalendarSidebar({
         <h2 className="text-base font-semibold"><HeadingText>
           {text("Lịch của tôi", "My calendars")}
         </HeadingText></h2>
-        <Badge variant="outline">{selectedCategories.length}/4</Badge>
+        <Badge variant="outline"><NumberTicker value={selectedCategories.length} />/4</Badge>
       </div>
       <Calendar
         mode="single"
@@ -139,7 +141,7 @@ export function CalendarSidebar({
             {text("Công việc tuần này", "Tasks this week")}
           </HeadingText></h2>
           <Badge variant="secondary">
-            {completed}/{tasks.length}
+            <NumberTicker value={completed} />/<NumberTicker value={tasks.length} />
           </Badge>
         </div>
         <Progress

@@ -1,4 +1,6 @@
 "use client";
+import { NumberTicker } from "@/components/ui/number-ticker";
+
 
 import { useState, useSyncExternalStore } from "react";
 import Image from "@/lib/platform/image";
@@ -186,7 +188,7 @@ export function DeveloperFeed() {
                 </TabsTrigger>
                 <TabsTrigger value="saved">
                   <Bookmark data-icon="inline-start" />
-                  {text("Đã lưu", "Saved")} ({saved.length})
+                  {text("Đã lưu", "Saved")} (<NumberTicker value={saved.length} />)
                 </TabsTrigger>
               </TabsList>
               <Choice
@@ -290,7 +292,7 @@ export function DeveloperFeed() {
                 )}
               </div>
               <p className="text-xs text-muted-foreground" role="status">
-                {posts.length} {text("bài viết đã tải", "loaded articles")}
+                <NumberTicker value={posts.length} /> {text("bài viết đã tải", "loaded articles")}
                 {topic !== "all" && ` · ${topic}`}
               </p>
               <span className="text-xs text-muted-foreground">

@@ -5,6 +5,7 @@ import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { SWRConfig } from 'swr';
 import { ThemeProvider } from '@/components/Themeprovider';
+import { MutationToaster } from '@/app/components/shared/mutation-toaster';
 import { LanguageProvider } from '@/app/context/language-context';
 import DashboardShell from '@/app/(dashboard-layout)/dashboard-shell';
 const DeveloperLayout = React.lazy(() => import('@/app/(dashboard-layout)/developer/layout'));
@@ -69,4 +70,4 @@ function renderRoute(route: (typeof routes)[number]) {
 }
 const reactRoot = import.meta.hot?.data.reactRoot ?? createRoot(document.getElementById('root')!);
 if (import.meta.hot) import.meta.hot.data.reactRoot = reactRoot;
-reactRoot.render(<ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}><LanguageProvider><BrowserRouter><Runtime /></BrowserRouter></LanguageProvider></ThemeProvider>);
+reactRoot.render(<ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}><LanguageProvider><MutationToaster /><BrowserRouter><Runtime /></BrowserRouter></LanguageProvider></ThemeProvider>);
