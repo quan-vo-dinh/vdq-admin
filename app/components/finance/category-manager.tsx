@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Field, FieldGroup, FieldLabel, FieldDescription, FieldError } from "@/components/ui/field";
 import { FeatureDataTable } from "@/app/components/tables/feature-data-table";
 import { categoryCodePattern } from "@/lib/finance/csv";
-import { categoryHasHistory, isDefaultCategory } from "@/lib/finance/master-data";
+import { categoryHasHistory, categoryHasTransactions, isDefaultCategory } from "@/lib/finance/master-data";
 import { Choice, SelectField, NoResults } from "./shared";
 import { MasterDataConfirm } from "./master-data-confirm";
 import { useFinanceLocale } from "./locale";
@@ -46,11 +46,11 @@ export function CategoryManager() {
     {id:"kind",header:text("Loại danh mục"),cell:({row})=>text(row.original.kind === "income" ? "Thu nhập" : "Chi tiêu")},
     {id:"status",header:text("Trạng thái"),cell:({row})=><Badge variant="outline">{text(row.original.archived_at ? "Đã lưu trữ" : "Đang sử dụng")}</Badge>},
     {id:"actions",header:text("Thao tác"),cell:({row:{original:c}})=> {
-      const used = categoryHasHistory(data,c.code), builtin = isDefaultCategory(c.code);
+      const used = categoryHasHistory(data,c.code), hasTransactions = categoryHasTransactions(data,c.code);
       return <div className="flex flex-wrap gap-2">
         <Button size="sm" variant="ghost" disabled={busy} onClick={()=>edit(c)}>{text("Sửa")}</Button>
         <Button size="sm" variant="outline" disabled={busy} onClick={()=>archive(c)}>{text(c.archived_at ? "Khôi phục" : "Lưu trữ")}</Button>
-        <Button size="sm" variant="outline" disabled={busy || used || builtin} title={text(builtin ? "Danh mục mặc định chỉ có thể lưu trữ." : used ? "Đã có lịch sử; hãy dùng lưu trữ." : "Xóa danh mục chưa sử dụng")} onClick={()=>setDeleting(c)}>{text("Xóa")}</Button>
+        <Button size="sm" variant="outline" disabled={busy || hasTransactions} title={text(hasTransactions ? "Danh mục đang có giao dịch nên không thể xóa." : used ? "Xóa danh mục và ngân sách liên kết" : "Xóa danh mục chưa sử dụng")} onClick={()=>setDeleting(c)}>{text("Xóa")}</Button>
       </div>;
     }},
   ];
@@ -66,7 +66,7 @@ export function CategoryManager() {
         </div>
         {error && !draft && <Alert variant="destructive"><AlertDescription>{text(error)}</AlertDescription></Alert>}
         <FeatureDataTable label={text("Danh sách danh mục")} data={rows} columns={columns} empty={<NoResults />} />
-        <p className="text-sm text-muted-foreground">{text("Danh mục mặc định hoặc đã có lịch sử chỉ có thể lưu trữ. Mã và loại được khóa khi đã sử dụng; tên vẫn sửa được.")}</p>
+        <p className="text-sm text-muted-foreground">{text("Có thể xóa danh mục nếu chưa có giao dịch; ngân sách và hạn mức theo tháng liên kết cũng sẽ bị xóa. Mã và loại danh mục đang được dùng sẽ được khóa; tên vẫn sửa được.")}</p>
       </DialogContent>
     </Dialog>
     {draft && <Dialog open onOpenChange={v=>{if(!v&&!busy){setDraft(undefined);setError("");}}}>
@@ -88,6 +88,6 @@ export function CategoryManager() {
         </form>
       </DialogContent>
     </Dialog>}
-    {deleting && <MasterDataConfirm name={deleting.name} busy={busy} onClose={()=>setDeleting(undefined)} onConfirm={async()=>{await action("categories","DELETE",{id:deleting.id,expectedRevision:deleting.revision});notify("Đã xóa danh mục.");}} />}
+    {deleting && <MasterDataConfirm name={deleting.name} description={text("Danh mục, ngân sách và hạn mức theo tháng liên kết sẽ bị xóa. Nếu có giao dịch gắn với danh mục thì hệ thống sẽ giữ nguyên dữ liệu và không xóa.")} busy={busy} onClose={()=>setDeleting(undefined)} onConfirm={async()=>{await action("categories","DELETE",{id:deleting.id,expectedRevision:deleting.revision});notify("Đã xóa danh mục cùng ngân sách liên kết.");}} />}
   </>;
 }

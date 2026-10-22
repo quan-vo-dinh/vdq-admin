@@ -121,6 +121,20 @@ isOneToOne: true
                   Relationships: [
 
                   ]
+                },"finance_category_tombstones": {
+                  Row: {
+                    "code": string,"deleted_at": string,"owner_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "code": string,"deleted_at"?: string,"owner_id"?: string
+                  }
+                  Update: {
+                    "code"?: string,"deleted_at"?: string,"owner_id"?: string
+                  }
+                  Relationships: [
+
+                  ]
                 },"finance_checkpoints": {
                   Row: {
                     "account_id": string,"amount": number,"created_at": string,"evidence": string,"id": string,"observed_at": string,"owner_id": string,"revision": number,"updated_at": string
@@ -628,6 +642,9 @@ isOneToOne: false
       } },
 "finance_import":
 { Args: { "p_id": string,"p_rows": Json }; Returns: number
+                           },
+"finance_delete_category":
+{ Args: { "p_category_id": string,"p_revision": number }; Returns: string
                            },
 "finance_snapshot":
 { Args: Record<PropertyKey, never>; Returns: Json

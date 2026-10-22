@@ -197,8 +197,10 @@ export function IncomeSpendingChart() {
 
 export function BudgetComparison({
   onEdit,
+  onSelectCategory,
 }: {
   onEdit: (budget: Budget) => void;
+  onSelectCategory: (id: string) => void;
 }) {
   const { data: loaded, period } = useFinance();
   const data = loaded!;
@@ -213,6 +215,7 @@ export function BudgetComparison({
     }))
     .sort((a, b) => b.spent - a.spent);
   const current = rows.find((r) => r.id === selected) ?? rows[0];
+  const selectCategory = (id: string) => { setSelected(id); onSelectCategory(id); };
   const series = [
     { key: "cap", label: text("Hạn mức"), color: "var(--muted-foreground)" },
     { key: "spent", label: text("Đã chi ròng"), color: "var(--chart-2)" },
@@ -225,7 +228,7 @@ export function BudgetComparison({
       action={
         <ChartHelp>
           {text(
-            "Cột nhạt là hạn mức, cột đậm là chi ròng. Chọn cột hoặc dòng danh mục bên dưới để xem phần còn lại và điều chỉnh hạn mức.",
+            "Cột nhạt là hạn mức, cột đậm là chi ròng. Chọn danh mục để xem toàn bộ lịch sử ở cột bên phải; dùng nút điều chỉnh để sửa hạn mức.",
           )}
         </ChartHelp>
       }
@@ -268,7 +271,10 @@ export function BudgetComparison({
               dataKey={s.key}
               fill={s.color}
               radius={[4, 4, 0, 0]}
-              onClick={(_, index) => setSelected(rows[index].id)}
+              onClick={(_, index) => {
+                const row = rows[index];
+                if (row) selectCategory(row.id);
+              }}
               isAnimationActive={false}
             />
           ))}
@@ -288,7 +294,7 @@ export function BudgetComparison({
               className="finance-budget-list-row"
               data-selected={current?.id === row.id}
               aria-pressed={current?.id === row.id}
-              onClick={() => setSelected(row.id)}
+              onClick={() => selectCategory(row.id)}
             >
               <span className="finance-budget-list-copy">
                 <strong>{row.name}</strong>
@@ -333,6 +339,39 @@ export function BudgetComparison({
           </Button>
         </div>
       )}
+    </Section>
+  );
+}
+
+export function BudgetTransactionHistory({ categoryId }: { categoryId: string | null }) {
+  const { data: loaded } = useFinance();
+  const data = loaded!;
+  const { text, money, date } = useFinanceLocale();
+  const budget = data.budgets.find((item) => item.id === categoryId);
+  const history = categoryId ? data.transactions
+    .filter((transaction) => transaction.category === categoryId
+      && (transaction.kind === "expense" || transaction.kind === "refund"))
+    .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id)) : [];
+
+  return (
+    <Section
+      title={text("Giao dịch theo danh mục")}
+      description={budget ? text("Toàn bộ giao dịch chi và hoàn tiền · {0}", [text(budget.name)]) : text("Chọn một danh mục trong biểu đồ hoặc danh sách để xem lịch sử.")}
+      className="finance-budget-history"
+    >
+      {budget && history.length > 0 ? <div className="finance-breakdown-list max-h-[420px] overflow-y-auto pr-1">
+        {history.map((transaction) => (
+          <div key={transaction.id} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">{transaction.description}</p>
+              <p className="text-xs text-muted-foreground">{text(transaction.kind === "refund" ? "Hoàn tiền" : "Chi tiêu")} · {date(transaction.date)}</p>
+            </div>
+            <strong className="shrink-0 text-sm tabular-nums" data-finance-tone={transaction.kind === "refund" ? "balance" : "danger"}>
+              {transaction.kind === "refund" ? "+" : "−"}{money(transaction.amount)}
+            </strong>
+          </div>
+        ))}
+      </div> : <p className="text-sm text-muted-foreground">{budget ? text("Không có giao dịch chi hoặc hoàn tiền.") : text("Chọn một danh mục trong biểu đồ hoặc danh sách để xem lịch sử.")}</p>}
     </Section>
   );
 }

@@ -15,7 +15,7 @@ import {
 import { Field, FieldLabel, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { useFinance } from "@/app/context/finance-context";
 import { budgetLimit, type Budget } from "@/lib/finance/model";
-import { BudgetComparison } from "./analysis-charts";
+import { BudgetComparison, BudgetTransactionHistory } from "./analysis-charts";
 import { BudgetPulse } from "./dashboard-widgets";
 import { FinanceBoard } from "./template-layout";
 import { Switch } from "@/components/ui/switch";
@@ -28,6 +28,7 @@ export function BudgetsPage() {
   const { data, month, setMonth, periodMode, setPeriodMode, action, busy, notify } = useFinance();
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<Budget>();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [limit, setLimit] = useState(0);
   const [scope, setScope] = useState("month");
   const [fixed, setFixed] = useState(false);
@@ -39,6 +40,7 @@ export function BudgetsPage() {
       <FinanceBoard>
         <div className="finance-budget-main">
           <BudgetComparison
+            onSelectCategory={setSelectedCategory}
             onEdit={(b) => {
               const editMonth=periodMode==="recent-month"?data!.asOf.slice(0,7):month;
               if(periodMode==="recent-month"){setMonth(editMonth);setPeriodMode("calendar");}
@@ -47,7 +49,10 @@ export function BudgetsPage() {
               setLimit(budgetLimit(b, editMonth));
             }}
           />
-          <BudgetPulse />
+          <div>
+            <BudgetPulse />
+            <BudgetTransactionHistory categoryId={selectedCategory} />
+          </div>
         </div>
       </FinanceBoard>
       {editing && (

@@ -12,7 +12,7 @@
 
 <p align="start">Shadcn Dashboard is a modern, responsive admin dashboard template built with Next.js (App Router), Shadcn UI, Base UI, and Tailwind CSS v4. It ships with a modern dashboard, Blog, Notes & Tickets apps, authentication pages, form layouts, data tables, user profile, and a rich UI component library - giving you everything you need to build your next admin panel faster.
 
-<kbd>[![Shadcn Dashboard - Demo Screenshot](https://shadcndashboard-demo.vercel.app/OG-Image.png)](https://shadcndashboard.dev)</kbd>
+<kbd>[![Shadcn Dashboard - Demo Screenshot](public/wallpaper-readme.png)](https://shadcndashboard.dev)</kbd>
 
 ## Introduction 📊
 
@@ -188,8 +188,7 @@ Dashboard headings share `HeadingText` (`app/components/shared/heading-text.tsx`
   - OTP Input
 - Miscellaneous
   - Icons Showcase
-  - Dark / Light Mode 
-  
+  - Dark / Light Mode
 
 ## 🚀 Quick Start
 

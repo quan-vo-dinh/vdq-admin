@@ -20,7 +20,7 @@ Ghi khoản thu, chi, hoàn tiền hoặc chuyển khoản. Tìm theo nội dung
 
 ## 3. Ngân sách
 
-Chọn tháng, xem mức đã chi so với hạn mức. Chọn danh mục và **Điều chỉnh hạn mức** để sửa. Tabs **So sánh hạn mức / Radar danh mục** cho hai cách nhìn cùng dữ liệu; radar vượt 100% nghĩa là vượt mức.
+Chọn tháng, xem mức đã chi so với hạn mức. Bấm cột hoặc dòng danh mục để xem toàn bộ giao dịch chi và hoàn tiền đã ghi nhận ở cột phải, ngay dưới **Bức tranh ngân sách**. Chọn danh mục rồi bấm **Điều chỉnh hạn mức** để sửa cấu hình ngân sách.
 
 ## 4. Mục tiêu
 
@@ -40,7 +40,7 @@ Phạm vi sản phẩm: [bối cảnh cô đọng](personal-finance-context.md).
 
 ## Quản lý dữ liệu tài chính
 
-- **Danh mục**: xem danh sách, tìm theo tên/mã, lọc đang dùng/đã lưu trữ/tất cả. Có thể sửa tên, lưu trữ và khôi phục. Danh mục tùy tạo chưa dùng được sửa mã/loại hoặc xóa sau xác nhận. Mã/loại danh mục mặc định hoặc đã có giao dịch/ngân sách bị khóa để bảo vệ dữ liệu; dùng lưu trữ thay vì xóa.
+- **Danh mục**: xem danh sách, tìm theo tên/mã, lọc đang dùng/đã lưu trữ/tất cả. Có thể sửa tên, lưu trữ và khôi phục. Có thể xóa danh mục nếu chưa có giao dịch; ngân sách và hạn mức tháng liên kết sẽ được xóa cùng lúc. Danh mục có giao dịch không thể xóa để giữ lịch sử. Mã/loại danh mục mặc định hoặc đã có lịch sử vẫn được khóa khi sửa.
 - **Tài khoản & khoản dự kiến**: thêm/sửa, tìm tài khoản và lọc lưu trữ. Tài khoản đã có giao dịch (kể cả tài khoản nhận chuyển khoản) không thể xóa; có thể lưu trữ và khôi phục. Sửa số dư đầu kỳ sẽ thay đổi báo cáo/số dư. Khoản dự kiến có xác nhận trước khi xóa.
 - **Ngân sách → Điều chỉnh hạn mức**: chọn **Mặc định** để chỉnh hạn mức chung và chi phí cố định; chọn tháng để chỉnh riêng tháng đó. **Bỏ hạn mức riêng, dùng mặc định** trả tháng đó về cấu hình chung, không thay đổi giao dịch. Tên ngân sách theo tên danh mục.
 
