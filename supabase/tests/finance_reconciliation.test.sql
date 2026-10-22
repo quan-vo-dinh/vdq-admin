@@ -32,6 +32,8 @@ select throws_ok($$insert into public.finance_scope_events(id,account_id,occurre
 insert into public.finance_checkpoints(id,account_id,observed_at,amount,evidence) values('82000000-0000-4000-8000-000000000021','82000000-0000-4000-8000-000000000001','2026-10-05T12:00:00+07:00',818,'QA observation');
 select is((select amount from public.finance_checkpoints_dto where id='82000000-0000-4000-8000-000000000021'),'818','checkpoint DTO preserves exact decimal text');
 select is((select opening from public.finance_accounts_dto where id='82000000-0000-4000-8000-000000000001'),'1000','checkpoint never alters baseline');
+select lives_ok($$update public.finance_accounts set opening=818,opening_on='2026-10-06',opening_excluded=0 where id='82000000-0000-4000-8000-000000000001'$$,'new dated baseline preserves earlier scope events without applying them twice');
+select is((select opening from public.finance_accounts_dto where id='82000000-0000-4000-8000-000000000001'),'818','new baseline keeps its verified amount');
 select is((select count(*)::integer from jsonb_array_elements(public.finance_snapshot()->'checkpoints') c where c->>'id'='82000000-0000-4000-8000-000000000021'),1,'single snapshot includes owner checkpoints');
 delete from public.finance_transactions where id='82000000-0000-4000-8000-000000000004';
 select throws_ok($$select public.finance_import('82000000-0000-4000-8000-000000000010',(select rows from import_row))$$,'P0001','conflict','receipt after deletion cannot falsely report restored rows');

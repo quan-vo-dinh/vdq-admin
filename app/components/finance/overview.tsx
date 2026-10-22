@@ -70,7 +70,7 @@ export function OverviewPage() {
                 icon: Wallet,
                 tone: "balance",
                 detail: text("Tổng số dư trên {0} tài khoản", [
-                  data.accounts.length,
+                  totals.accountCount,
                 ]),
               },
               {
