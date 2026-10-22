@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { requireOwner } from "@/lib/auth/owner";
 import { AccessError } from "@/lib/auth/policy";
 import DashboardShell from "./dashboard-shell";
+import DashboardSessionLoading from "@/app/components/shared/dashboard-session-loading";
 
 async function OwnerBoundary({ children }: { children: React.ReactNode }) {
   // Keep request-time auth out of prerender error handling (Cache Components).
@@ -16,5 +17,5 @@ async function OwnerBoundary({ children }: { children: React.ReactNode }) {
   return <DashboardShell>{children}</DashboardShell>;
 }
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<div role="status" className="p-6">Checking session…</div>}><OwnerBoundary>{children}</OwnerBoundary></Suspense>;
+  return <Suspense fallback={<DashboardSessionLoading />}><OwnerBoundary>{children}</OwnerBoundary></Suspense>;
 }

@@ -2,6 +2,8 @@
 import { apiFetch } from "@/lib/api/transport";
 
 import useSWR from "swr";
+import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { LucideIcon } from "lucide-react";
 import Image from "@/lib/platform/image";
 import {
@@ -61,6 +63,19 @@ export const goalVisuals: Record<GoalVisual, GoalVisualOption> = {
   },
 };
 
+function GoalCoverImage({ source, alt, custom }: { source?: string; alt: string; custom: boolean }) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  return <>
+    {!loaded && !failed && <Skeleton className="absolute inset-0 h-full w-full" aria-label="Đang tải ảnh mục tiêu" />}
+    {source && <Image src={source} alt={alt} fill sizes="(max-width: 640px) 90vw, 40vw"
+      className={custom ? "finance-goal-cover-image-custom" : "finance-goal-cover-image-default"}
+      style={{ visibility: loaded && !failed ? "visible" : "hidden" }}
+      unoptimized={custom} onLoad={() => { setLoaded(true); setFailed(false); }} onError={() => setFailed(true)} />}
+    {failed && <span role="alert">Không tải được ảnh mục tiêu.</span>}
+  </>;
+}
+
 export function GoalCover({
   visual,
   alt,
@@ -76,11 +91,14 @@ export function GoalCover({
   const {data,error}=useSWR<{url:string|null}>(privateImage?image:null,async url=>{const r=await apiFetch(url);if(!r.ok)throw new Error('Không tải được ảnh riêng.');return r.json();},{refreshInterval:90000,dedupingInterval:1000});
   const source=privateImage?data?.url: image;
   const option = goalVisuals[visual ?? "study"];
+  // A saved private image must never flash the stock visual while resolving its URL.
+  const displaySource = privateImage ? source ?? undefined : source || option.image;
+  const unavailable = privateImage && !source && (Boolean(error) || Boolean(data));
   const Icon = option.icon;
   return (
     <div className="finance-goal-cover">
-      <Image src={source || option.image} alt={alt} fill sizes="(max-width: 640px) 90vw, 40vw" className={source ? "finance-goal-cover-image-custom" : "finance-goal-cover-image-default"} unoptimized={Boolean(source)} />
-      {error && <span role="alert">Không tải được ảnh riêng.</span>}
+      {unavailable ? <span role="alert">Không tải được ảnh riêng.</span> :
+        <GoalCoverImage key={image || visual || "study"} source={displaySource} alt={alt} custom={Boolean(image && (privateImage ? data?.url : image))} />}
       {showIcon && <span className="finance-goal-cover-icon" aria-hidden="true"><Icon /></span>}
     </div>
   );

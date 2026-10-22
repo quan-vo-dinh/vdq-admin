@@ -1,2 +1,2 @@
-import { FinanceLoading } from "@/app/components/finance/shell";
+import { FinanceLoading } from "@/app/components/finance/loading";
 export default FinanceLoading;

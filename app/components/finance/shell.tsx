@@ -5,7 +5,7 @@ import { usePathname } from "@/lib/platform/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
+import { FinanceLoading } from "./loading";
 import { useFinance } from "@/app/context/finance-context";
 import { ApiError } from "@/app/api/global-fetcher";
 import { FinancePageHeader } from "./page-header";
@@ -27,19 +27,7 @@ function FinanceDocumentTitle() {
   }, [path, text]);
   return null;
 }
-export function FinanceLoading() {
-  return (
-    <div className="flex flex-col gap-4">
-      <Skeleton className="h-12 w-2/3" />
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-28" />
-        ))}
-      </div>
-      <Skeleton className="h-80 w-full" />
-    </div>
-  );
-}
+export { FinanceLoading } from "./loading";
 export function FinanceShell({ children, className }: { children: ReactNode; className?: string }) {
   const { text, formatMessage } = useFinanceLocale();
   const { data, error, reload, notice, notify } = useFinance();
@@ -73,7 +61,7 @@ export function FinanceShell({ children, className }: { children: ReactNode; cla
           </AlertDescription>
         </Alert>
       ) : !data ? (
-        <FinanceLoading />
+        <FinanceLoading header={false} />
       ) : (
         children
       )}
