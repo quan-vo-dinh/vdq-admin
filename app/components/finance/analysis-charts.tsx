@@ -214,7 +214,7 @@ export function BudgetComparison({
     .sort((a, b) => b.spent - a.spent);
   const current = rows.find((r) => r.id === selected) ?? rows[0];
   const series = [
-    { key: "cap", label: text("Hạn mức"), color: "var(--border)" },
+    { key: "cap", label: text("Hạn mức"), color: "var(--muted-foreground)" },
     { key: "spent", label: text("Đã chi ròng"), color: "var(--chart-2)" },
   ];
   return (
@@ -251,7 +251,8 @@ export function BudgetComparison({
           />
           <YAxis
             type="number"
-            tickFormatter={compactMoney}
+            tickFormatter={(value) => value < 1_000_000 ? money(value) : compactMoney(value)}
+            width={88}
             axisLine={false}
             tickLine={false}
             tick={{ fontSize: 12 }}
