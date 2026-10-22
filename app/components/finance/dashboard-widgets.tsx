@@ -8,7 +8,7 @@ import {
   overview,
   sum,
   monthlyTotals,
-  accountBalance,
+  accountPosition,
   budgetLimit,
   categorySpent,
 } from "@/lib/finance/model";
@@ -75,7 +75,7 @@ export function AccountSummary() {
     <Section
       title={text("Nơi giữ tiền")}
       icon={Landmark}
-      description={text("Số dư hiện tại · tất cả tài khoản")}
+      description="Số dư tính từ sổ; cần mốc đầu kỳ cho từng tài khoản"
     >
       <div className="finance-breakdown-list">
         {data.accounts.map((a) => (
@@ -86,10 +86,10 @@ export function AccountSummary() {
               className="text-sm tabular-nums"
               data-finance-value
               data-finance-tone={
-                accountBalance(a, data.transactions) < 0 ? "danger" : "balance"
+                accountPosition(data,a).tracked < 0 ? "danger" : "balance"
               }
             >
-              {money(accountBalance(a, data.transactions))}
+              {a.openingOn?money(accountPosition(data,a).tracked):"Chưa có mốc đầu kỳ"}
             </strong>
           </div>
         ))}
@@ -98,7 +98,7 @@ export function AccountSummary() {
       <div className="flex justify-between pt-3 text-sm text-muted-foreground">
         <span>{text("Tổng số dư")}</span>
         <strong className="text-foreground">
-          {money(overview(data).balance)}
+          {overview(data).balanceKnown?money(overview(data).balance):"Chưa đủ dữ liệu"}
         </strong>
       </div>
     </Section>

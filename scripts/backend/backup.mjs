@@ -6,7 +6,7 @@ import {generateKeyPairSync,createHash} from 'node:crypto';
 import {parseArgs} from 'node:util';
 import {seal,open} from '../data/snapshot.mjs';
 import {atomicOutput} from './atomic-output.mjs';
-export const tables=['notes','calendar_events','calendar_settings','finance_settings','finance_accounts','finance_categories','finance_import_batches','finance_transactions','finance_budgets','finance_budget_months','finance_goals','finance_bills','learning_habits','learning_checkins','profiles','user_preferences'];
+export const tables=['notes','calendar_events','calendar_settings','finance_settings','finance_accounts','finance_categories','finance_import_batches','finance_transactions','finance_budgets','finance_budget_months','finance_goals','finance_bills','finance_checkpoints','finance_scope_events','learning_habits','learning_checkins','profiles','user_preferences'];
 const container='supabase_db_dashboard-personal-local';
 export const digest=b=>createHash('sha256').update(b).digest('hex');
 export function sql(query,target=container){return execFileSync('docker',['exec','-i',target,'psql','-XAtq','-U','postgres','-v','ON_ERROR_STOP=1'],{input:query,stdio:['pipe','pipe','pipe'],maxBuffer:128*1024*1024}).toString().trim();}
@@ -45,6 +45,7 @@ export async function capture(){
 }
 export function validate(p){
  if(p.format!=='dashboard-business-v1'||!p.owner?.enabled||!/^\d+$/.test(p.owner.github_user_id)||!Array.isArray(p.media)||!Array.isArray(p.versions)||!Array.isArray(p.migrations))throw new Error('Invalid business bundle');
+ for(const table of ['finance_checkpoints','finance_scope_events'])if(!(table in p.data)&&!p.versions.includes('20261022000100'))p.data[table]=[];
  if(Object.keys(p.data).sort().join()!==[...tables].sort().join())throw new Error('Unexpected tables');
  for(const t of tables)if(!Array.isArray(p.data[t])||p.data[t].some(r=>r.owner_id!==p.owner.user_id)||new Set(p.data[t].map(r=>r.id)).size!==p.data[t].length)throw new Error('Invalid rows');
  const referenced=new Set(p.data.finance_goals.map(g=>g.image_path).filter(Boolean));
@@ -70,18 +71,20 @@ export async function restore(file,key,workdir){
  if(owner.github_user_id!==p.owner.github_user_id)throw new Error('Verified GitHub owner mismatch');
  const versions=JSON.parse(sql("select coalesce(json_agg(version order by version),'[]') from supabase_migrations.schema_migrations",target));if(JSON.stringify(versions)!==JSON.stringify(p.versions))throw new Error('Migrations differ');
  for(const migration of p.migrations)if(await readFile(join(workdir,'supabase/migrations',migration.name),'utf8')!==migration.sql)throw new Error('Migration source differs');
- if(tables.some(t=>sql(`select count(*) from public.${t}`,target)!=='0'))throw new Error('Target must have empty business tables');
+ const restoreTables=tables.filter(t=>sql(`select to_regclass('public.${t}') is not null`,target)==='t');
+ if(tables.some(t=>!restoreTables.includes(t)&&p.data[t].length))throw new Error('Backup tables missing from target');
+ if(restoreTables.some(t=>sql(`select count(*) from public.${t}`,target)!=='0'))throw new Error('Target must have empty business tables');
  const remap=path=>path?.replace(p.owner.user_id+'/',owner.user_id+'/')??null;
  const uploaded=[];
  try{
   for(const m of p.media){const path=remap(m.path);const r=await fetch(s.API_URL+'/storage/v1/object/personal-media/'+path,{method:'POST',headers:{apikey:s.SERVICE_ROLE_KEY,Authorization:'Bearer '+s.SERVICE_ROLE_KEY,'Content-Type':m.mime,'x-upsert':'false'},body:Buffer.from(m.bytes,'base64')});if(!r.ok)throw new Error('Target image restore failed');uploaded.push(path);}
   let query='begin; set constraints all deferred;\n';
-  for(const t of tables){const rows=p.data[t].map(row=>({...row,owner_id:owner.user_id,...(['profiles','user_preferences','calendar_settings','finance_settings'].includes(t)?{id:owner.user_id}:{}),...(t==='finance_goals'?{image_path:remap(row.image_path)}:{})}));
+  for(const t of restoreTables){const rows=p.data[t].map(row=>({...row,owner_id:owner.user_id,...(['profiles','user_preferences','calendar_settings','finance_settings'].includes(t)?{id:owner.user_id}:{}),...(t==='finance_goals'?{image_path:remap(row.image_path)}:{})}));
    query+=`insert into public.${t} select * from jsonb_populate_recordset(null::public.${t},${literal(JSON.stringify(rows))}::jsonb);\n`;
   }
   query+='commit;';sql(query,target);
  }catch(e){if(uploaded.length)await fetch(s.API_URL+'/storage/v1/object/personal-media',{method:'DELETE',headers:{apikey:s.SERVICE_ROLE_KEY,Authorization:'Bearer '+s.SERVICE_ROLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({prefixes:uploaded})});throw e;}
- for(const t of tables)if(Number(sql(`select count(*) from public.${t}`,target))!==p.data[t].length)throw new Error('Restored row count mismatch');
+ for(const t of restoreTables)if(Number(sql(`select count(*) from public.${t}`,target))!==p.data[t].length)throw new Error('Restored row count mismatch');
  for(const m of p.media){const r=await fetch(s.API_URL+'/storage/v1/object/authenticated/personal-media/'+remap(m.path),{headers:{apikey:s.SERVICE_ROLE_KEY,Authorization:'Bearer '+s.SERVICE_ROLE_KEY}});if(!r.ok||digest(Buffer.from(await r.arrayBuffer()))!==m.sha256)throw new Error('Restored image mismatch');}
  return {restored:true,target:'local:dashboard-p09-drill',ownerRemapped:owner.user_id!==p.owner.user_id,counts:Object.fromEntries(tables.map(t=>[t,p.data[t].length])),images:p.media.length};
 }

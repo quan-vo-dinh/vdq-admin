@@ -1,0 +1,61 @@
+{
+  "checkedAt": "2026-10-22T03:43:49.444329+00:00",
+  "stage": "local implementation; production read-only",
+  "migration": "20261022000100_finance_reconciliation.sql",
+  "validation": {
+    "financeUnit": {
+      "passed": 28,
+      "failed": 0
+    },
+    "postgresReconciliation": {
+      "passed": 21,
+      "failed": 0,
+      "target": "existing local Supabase; test transaction rolled back"
+    },
+    "backendUnit": {
+      "passed": 27,
+      "failed": 0
+    },
+    "localApi": "pass: metadata/CAS/duplicate retry and rollback/ATM funding/RLS; disposable fixtures removed",
+    "scopedEslint": "passed",
+    "typeCheck": "passed",
+    "nextBuild": "passed; existing metadataBase warnings",
+    "mobileTypeCheck": "passed",
+    "fullRepoLint": {
+      "errors": 17,
+      "warnings": 43,
+      "scope": "existing unrelated files; not clean"
+    },
+    "backupCapture": "local validated, new tables included",
+    "gitDiffCheck": "passed"
+  },
+  "browser": {
+    "target": "localhost:3000",
+    "data": "local QA data, not personal production data",
+    "overview": "observed missing baseline warning, unavailable balance cards, three expense groups; no console errors in final read",
+    "checkpointDialog": "opened and labels verified; CRUD covered by API tests",
+    "csvDownload": {
+      "rows": 46,
+      "amountVnd": 4600,
+      "allRowsAreFixtures": true,
+      "tablePages": 6,
+      "downloadEvent": "browser helper timed out; file independently inspected on disk after download"
+    },
+    "screenshots": [
+      "test-results/finance-reconciliation/export-46.png",
+      "test-results/finance-reconciliation/overview-final.png"
+    ],
+    "score": 4,
+    "remaining": "No mobile/device QA, final native APK, production browser or historical original-statement verification"
+  },
+  "preservation": {
+    "existingLocalFinanceTablesVerified": 9,
+    "productionFinanceTablesUnchangedBetweenReadOnlySnapshots": 9,
+    "productionBusinessWrites": false,
+    "productionMigrationApplied": false,
+    "committed": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "privateEvidence": "Raw snapshots, corrected-source comparison and row-level correction review are outside Git; no personal financial rows included here."
+}

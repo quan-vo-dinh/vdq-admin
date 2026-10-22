@@ -21,7 +21,7 @@ try {
       "--skipLibCheck",
       "--outDir",
       temporary,
-      ...["model", "demo", "csv", "i18n", "messages", "wire"].map(
+      ...["model", "demo", "csv", "i18n", "messages", "wire", "reconciliation"].map(
         (name) => `lib/finance/${name}.ts`,
       ),
     ],
@@ -35,7 +35,10 @@ try {
     categorySpent,
     forecast,
     budgetLimit,
+    accountPosition,
   } = require(join(temporary, "finance/model.js"));
+  const {reconcileAccount,expenseGroups,transactionGroups,spendingBasis}=require(join(temporary,"finance/reconciliation.js"));
+  const {importDuplicates}=require(join(temporary,"finance/csv.js"));
   const {financeWire,financeNumbers}=require(join(temporary,"finance/wire.js"));
   const { financeDemo } = require(join(temporary, "finance/demo.js"));
   const {
@@ -299,6 +302,63 @@ try {
     assert.equal(wire.accounts[0].opening,"-1000000");assert.equal(wire.budgets[0].monthlyLimits["2026-10"],"200");
     assert.deepEqual(financeNumbers(wire),sample);
     assert.throws(()=>financeNumbers({amount:"999999999999999999"}));assert.throws(()=>financeNumbers({amount:"1.1"}));
+  });
+
+  const fixture=(transactions=[],accounts=[{id:"bank",name:"Bank",opening:0,note:"",openingOn:"2026-09-21"}])=>({asOf:"2026-10-21",startsOn:"2026-10-21",transactions,accounts,budgets:[],goals:[],bills:[]});
+  const tx=(values)=>({id:crypto.randomUUID(),date:"2026-10-01",description:"Fixture",amount:100,kind:"expense",category:"other",account:"bank",source:"manual",...values});
+  test("bank baseline and exact checkpoint expose unexplained difference without a plug",()=>{
+    const f=fixture([tx({amount:6086000,kind:"income",occurredAt:"2026-10-01T12:00:00+07:00"}),tx({date:"2026-10-21",amount:8358612,occurredAt:"2026-10-21T19:58:28+07:00"})],[{id:"bank",name:"Bank",opening:3110889,openingOn:"2026-09-21",note:""}]);
+    const before=JSON.stringify(f),r=reconcileAccount(f,f.accounts[0],"2026-10-21T19:58:28+07:00",818564);
+    assert.equal(r.calculated,838277);assert.equal(r.difference,-19713);assert.equal(JSON.stringify(f),before);
+    f.transactions[1].occurredAt=undefined;assert.equal(reconcileAccount(f,f.accounts[0],"2026-10-21T19:58:28+07:00",818564).difference,null);
+    f.accounts[0].openingOn=null;assert.equal(overview(f).balanceKnown,false);
+  });
+  test("scope payout reduces bank and excluded funds once, preserving tracked money",()=>{
+    const f=fixture([],[{id:"bank",name:"Bank",opening:3000000,openingExcluded:2150000,openingOn:"2026-09-21",note:""}]);
+    assert.equal(overview(f).tracked,850000);
+    f.scopeEvents=[{id:"scope",revision:1,account:"bank",occurredAt:"2026-10-01T16:35:00+07:00",amount:2150000,kind:"external_outflow",evidence:"Fixture"}];
+    assert.equal(overview(f).balance,850000);assert.equal(overview(f).excluded,0);assert.equal(overview(f).tracked,850000);assert.equal(monthlyTotals(f.transactions,"2026-10").expenses,0);
+  });
+  test("ATM budget charge keeps received cash as an asset; linked spend never charges twice",()=>{
+    const atm=tx({id:"atm",amount:403300,reportingRole:"cash_withdrawal",cashReceived:400000,cashAccount:"cash",category:"transport"});
+    const f=fixture([atm],[{id:"bank",name:"Bank",opening:1000000,openingOn:"2026-09-21",note:""},{id:"cash",name:"Cash",opening:0,openingOn:"2026-09-21",note:""}]);
+    assert.deepEqual(spendingBasis(f.transactions,"2026-10"),{budget:403300,assetExpense:3300,difference:400000});
+    assert.equal(overview(f).balance,996700);assert.equal(monthlyTotals(f.transactions,"2026-10").expenses,403300);
+    f.transactions.push(tx({amount:15000,account:"cash",reportingRole:"prepaid_cash",fundingTransaction:"atm",category:"transport"}));
+    assert.deepEqual(spendingBasis(f.transactions,"2026-10"),{budget:403300,assetExpense:18300,difference:385000});
+    assert.equal(overview(f).balance,981700);assert.equal(accountPosition(f,f.accounts[1]).balance,385000);assert.equal(monthlyTotals(f.transactions,"2026-10").expenses,403300);
+  });
+  test("salary stays gross and gift is deducted once; its group exposes budget remainder",()=>{
+    const f=fixture([tx({amount:4544800,kind:"income",category:"salary",reportGroup:"salary"}),tx({amount:1000000,reportGroup:"salary"})]);
+    assert.deepEqual(monthlyTotals(f.transactions,"2026-10"),{income:4544800,expenses:1000000,refunds:0,net:3544800});
+    assert.equal(transactionGroups(f.transactions,"2026-10")[0].net,3544800);
+  });
+  test("support return offsets income, gross trip costs remain and cash stays off the bank",()=>{
+    const rows=[tx({amount:500000,kind:"income"}),tx({amount:500000,kind:"income"}),tx({amount:500000,reportingRole:"support_return"}),tx({amount:235000,category:"transport"}),tx({amount:250000,category:"transport"}),tx({amount:15000,category:"transport",account:"cash"})].map(t=>({...t,reportGroup:"trip"}));
+    assert.deepEqual(monthlyTotals(rows,"2026-10"),{income:500000,expenses:500000,refunds:0,net:0});
+    assert.equal(accountBalance({id:"bank",opening:0},rows),15000);assert.equal(accountBalance({id:"cash",opening:15000},rows),0);
+  });
+  test("date baselines prevent backfill double counting and Vietnam scope cutoff handles UTC",()=>{
+    const f=fixture([tx({date:"2026-09-20",kind:"income",amount:900}),tx({date:"2026-10-22",amount:999})],[{id:"bank",name:"Bank",opening:1000,openingOn:"2026-09-21",note:""}]);
+    f.scopeEvents=[{id:"e",revision:1,account:"bank",occurredAt:"2026-10-21T18:00:00Z",kind:"exclude",amount:100,evidence:"Next day in Vietnam"}];
+    assert.equal(overview(f).balance,1000);assert.equal(overview(f).excluded,0);
+    assert.equal(monthlyTotals(f.transactions,"2026-09").income,900);
+  });
+  test("all expense details map to exactly three reporting groups",()=>{
+    const groups=expenseGroups([tx({category:"food"}),tx({category:"transport"}),tx({category:"telecom"}),tx({category:"shopping"}),tx({category:"other",kind:"refund",amount:10}),tx({reportingRole:"support_return",amount:500})],"2026-10");
+    assert.deepEqual(groups,[{code:"food",amount:100},{code:"transport",amount:100},{code:"other",amount:190}]);
+  });
+  test("reference dedup survives description edits, across and inside files; distinct references allowed",()=>{
+    const base=tx({reference:"BANK-1"});
+    assert.deepEqual(importDuplicates([tx({...base,description:"Edited"}),tx({...base,reference:"BANK-2"})],[base]),[true,false]);
+    assert.deepEqual(importDuplicates([base,base],[]),[false,true]);
+    assert.deepEqual(importDuplicates([tx({...base,reference:undefined})],[base]),[true]);
+  });
+  test("full CSV round trip preserves reference, exact time, ATM policies and formula-like text",()=>{
+    const source=[tx({description:"=SUM(1,2)",reference:"REF",occurredAt:"2026-10-01T08:00:00+07:00",reportGroup:"trip"})];
+    const parsed=parseFinanceCsv(exportTransactions(source),fixture());assert.equal(parsed[0].error,"");
+    for(const k of ["id","description","reference","occurredAt","reportGroup"])assert.equal(parsed[0].row[k],source[0][k]);
+    for(const value of ["'=literal","''literal","+formula","-formula","@formula"])assert.equal(parseFinanceCsv(exportTransactions([tx({description:value})]),fixture())[0].row.description,value);
   });
 } finally {
   rmSync(temporary, { recursive: true, force: true });

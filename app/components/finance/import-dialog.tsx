@@ -22,7 +22,7 @@ import {
   financeCategories,
   downloadCsv,
   parseFinanceCsv,
-  transactionKey,
+  importDuplicates,
 } from "@/lib/finance/csv";
 import { FeatureDataTable } from "@/app/components/tables/feature-data-table";
 import { NoResults } from "./shared";
@@ -40,15 +40,10 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
   const [filename, setFilename] = useState("");
   const [reading, setReading] = useState(false);
   const rows = useMemo(() => {
-    const keys = new Set(data!.transactions.map(transactionKey));
-    return parsed.map((p) => {
-      const key = transactionKey(p.row),
-        duplicate = keys.has(key);
-      if (!p.error) keys.add(key);
-      return { ...p, duplicate };
-    });
+    const duplicates = importDuplicates(parsed.map(p=>p.row),data!.transactions);
+    return parsed.map((p,i)=>({...p,duplicate:!p.error&&duplicates[i]}));
   }, [parsed, data]);
-  const valid = rows.filter((r) => !r.error);
+  const valid = rows.filter((r) => !r.error && !r.duplicate);
   const newCategories = [...new Set(valid.filter(r => r.newCategory).map(r => r.row.category))];
   const columns: ColumnDef<Parsed>[] = [
     { accessorKey: "line", header: text("Dòng") },
@@ -64,6 +59,8 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
       cell: ({ row }) => money(row.original.row.amount || 0),
     },
     { id: "category", header: text("Danh mục"), accessorFn: r => r.row.category },
+    { id: "account", header: "Tài khoản nguồn → nhận", accessorFn: r => [r.row.account,r.row.destination,r.row.cashAccount].filter(Boolean).map(id=>data!.accounts.find(a=>a.id===id)?.name??id).join(" → ") },
+    { id: "reference", header: "Mã tham chiếu", accessorFn: r=>r.row.reference??"Chưa có" },
     {
       id: "status",
       header: text("Kiểm tra"),
@@ -147,10 +144,11 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
         </FieldGroup>
         <p className="text-sm text-muted-foreground">
           {text(
-            `Ngày YYYY-MM-DD không sau ${data!.asOf}; VND nguyên dương, tối đa 1 tỷ. Mã tài khoản: ${data!.accounts.map(a=>a.id).join(', ')}. Danh mục: ${financeCategories(data!).filter(c=>!c.archived_at).map(c=>c.code).join(', ')}.`,
+            `Ngày YYYY-MM-DD không sau ${data!.asOf}; VND nguyên dương, tối đa 1 tỷ. Tài khoản: ${data!.accounts.map(a=>`${a.name} = ${a.id}`).join('; ')}. Danh mục: ${financeCategories(data!).filter(c=>!c.archived_at).map(c=>c.code).join(', ')}.`,
           )}
         </p>
         <p className="text-sm text-muted-foreground">{text("Mã category chưa tồn tại sẽ được tạo khi xác nhận nhập, tên ban đầu giống mã. Một mã dùng được cho cả thu nhập, chi tiêu và hoàn tiền; loại thu/chi được xác định bởi kind của từng giao dịch. Mã cần 1–40 ký tự chữ thường, số, _ hoặc -, bắt đầu bằng chữ; không dùng transfer.")}</p>
+        <p className="text-sm text-muted-foreground">Mỗi lần chuyển nội bộ chỉ nhập một dòng có tài khoản nguồn và nhận. Khi đối chiếu sao kê cả hai phía, ghép hai chứng từ vào cùng lần chuyển; mã tham chiếu khác nhau không tự chứng minh đó là hai giao dịch khác nhau.</p>
         {!!newCategories.length && <Alert><AlertDescription>{text("Danh mục sẽ tạo mới")}: {newCategories.join(", ")}</AlertDescription></Alert>}
         {error && (
           <Alert variant="destructive">
@@ -176,7 +174,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             />
             <p className="text-sm text-muted-foreground">
               {text(
-                "Một dòng lỗi sẽ chặn toàn bộ lượt nhập. Dòng giống nhau chỉ là cảnh báo; cả hai vẫn được nhập.",
+                "Một dòng lỗi hoặc trùng sẽ chặn toàn bộ lượt nhập. Giao dịch giống nhau nhưng thực sự khác nhau cần mã tham chiếu riêng. Kiểm tra tên tài khoản ở từng dòng trước khi nhập.",
               )}
             </p>
           </>
@@ -186,15 +184,10 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
             {text("Hủy")}
           </Button>
           <Button
-            disabled={!valid.length || reading || busy || rows.some(r=>r.error)}
+            disabled={!valid.length || reading || busy || rows.some(r=>r.error||r.duplicate)}
             onClick={async () => {
-              try { await action('import', 'POST', {id: batchId, csv}); }
+              try { const result=await action('import', 'POST', {id: batchId, csv}); notify(message("Đã nhập {0} giao dịch CSV.", [result.count])); }
               catch(e) {setError(e instanceof Error ? e.message : 'Không nhập được.'); return;}
-              notify(
-                message("Đã nhập {0} giao dịch CSV.", [
-                  valid.length,
-                ]),
-              );
               onClose();
             }}
           >

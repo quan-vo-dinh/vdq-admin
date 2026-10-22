@@ -1,4 +1,5 @@
 "use client";
+import {expenseGroups} from "@/lib/finance/reconciliation";
 
 import { useState } from "react";
 import {
@@ -141,14 +142,7 @@ export function SpendingExplorer() {
   const [selected, setSelected] = useState<string | null>(null);
   // Activity preserves this state even when tab registration effects are cleaned up.
   const [view, setView] = useState<"chart" | "details">("chart");
-  const rows = data.budgets
-    .map((b, i) => ({
-      id: b.id,
-      name: text(b.name),
-      net: categorySpent(data.transactions, b.id, period),
-      fill: palette[i % palette.length],
-    }))
-    .sort((a, b) => b.net - a.net);
+  const rows = expenseGroups(data.transactions,period).map((g,i)=>({id:g.code,name:text(({food:"Ăn uống",transport:"Di chuyển",other:"Chi phí phát sinh"})[g.code]),net:g.amount,fill:palette[i%palette.length]})).sort((a,b)=>b.net-a.net);
   const positive = rows.filter((r) => r.net > 0);
   const total = sum(positive, (r) => r.net);
   const current = rows.find((r) => r.id === selected);

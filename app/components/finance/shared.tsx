@@ -421,9 +421,6 @@ export function MonthPicker() {
   const { text, date: formatDate } = useFinanceLocale();
   const { month, setMonth, period, periodMode, setPeriodMode } = useFinance();
   const modes=[{value:"calendar",label:text("Tháng lịch")},{value:"recent-month",label:text("1 tháng gần đây")}];
-  const { text, date: formatDate } = useFinanceLocale();
-  const { month, setMonth, period, periodMode, setPeriodMode } = useFinance();
-  const modes=[{value:"calendar",label:text("Tháng lịch")},{value:"recent-month",label:text("1 tháng gần đây")}];
   const shift = (amount: number) => {
     const date = new Date(`${month}-01T12:00:00Z`);
     date.setUTCMonth(date.getUTCMonth() + amount);

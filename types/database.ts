@@ -35,14 +35,14 @@ export type Database = {
                   ]
                 },"finance_accounts": {
                   Row: {
-                    "archived_at": string | null,"created_at": string,"id": string,"name": string,"note": string,"opening": number,"owner_id": string,"revision": number,"updated_at": string
+                    "archived_at": string | null,"created_at": string,"id": string,"name": string,"note": string,"opening": number,"opening_excluded": number,"opening_on": string | null,"owner_id": string,"revision": number,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "archived_at"?: string | null,"created_at"?: string,"id": string,"name": string,"note"?: string,"opening"?: number,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                    "archived_at"?: string | null,"created_at"?: string,"id": string,"name": string,"note"?: string,"opening"?: number,"opening_excluded"?: number,"opening_on"?: string | null,"owner_id"?: string,"revision"?: number,"updated_at"?: string
                   }
                   Update: {
-                    "archived_at"?: string | null,"created_at"?: string,"id"?: string,"name"?: string,"note"?: string,"opening"?: number,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                    "archived_at"?: string | null,"created_at"?: string,"id"?: string,"name"?: string,"note"?: string,"opening"?: number,"opening_excluded"?: number,"opening_on"?: string | null,"owner_id"?: string,"revision"?: number,"updated_at"?: string
                   }
                   Relationships: [
 
@@ -121,6 +121,32 @@ isOneToOne: true
                   Relationships: [
 
                   ]
+                },"finance_checkpoints": {
+                  Row: {
+                    "account_id": string,"amount": number,"created_at": string,"evidence": string,"id": string,"observed_at": string,"owner_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_id": string,"amount": number,"created_at"?: string,"evidence": string,"id": string,"observed_at": string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "account_id"?: string,"amount"?: number,"created_at"?: string,"evidence"?: string,"id"?: string,"observed_at"?: string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "finance_checkpoints_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_checkpoints_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
                 },"finance_goals": {
                   Row: {
                     "allocated": number,"created_at": string,"deadline": string,"id": string,"image_path": string | null,"monthly": number,"name": string,"owner_id": string,"priority": string,"revision": number,"target": number,"updated_at": string,"visual": string
@@ -149,6 +175,32 @@ isOneToOne: true
                   Relationships: [
 
                   ]
+                },"finance_scope_events": {
+                  Row: {
+                    "account_id": string,"amount": number,"created_at": string,"evidence": string,"id": string,"kind": string,"occurred_at": string,"owner_id": string,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "account_id": string,"amount": number,"created_at"?: string,"evidence": string,"id": string,"kind": string,"occurred_at": string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "account_id"?: string,"amount"?: number,"created_at"?: string,"evidence"?: string,"id"?: string,"kind"?: string,"occurred_at"?: string,"owner_id"?: string,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "finance_scope_events_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_scope_events_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
                 },"finance_settings": {
                   Row: {
                     "created_at": string,"id": string,"owner_id": string,"revision": number,"starts_on": string,"updated_at": string
@@ -165,14 +217,14 @@ isOneToOne: true
                   ]
                 },"finance_transactions": {
                   Row: {
-                    "account_id": string,"amount": number,"batch_id": string | null,"category_id": string | null,"created_at": string,"date": string,"description": string,"destination_account_id": string | null,"id": string,"kind": string,"owner_id": string,"revision": number,"row_index": number | null,"source": string,"updated_at": string
+                    "account_id": string,"amount": number,"batch_id": string | null,"cash_account_id": string | null,"cash_received": number,"category_id": string | null,"created_at": string,"date": string,"description": string,"destination_account_id": string | null,"funding_transaction_id": string | null,"id": string,"kind": string,"occurred_at": string | null,"owner_id": string,"reference": string | null,"report_group": string | null,"reporting_role": string,"revision": number,"row_index": number | null,"source": string,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "account_id": string,"amount": number,"batch_id"?: string | null,"category_id"?: string | null,"created_at"?: string,"date": string,"description": string,"destination_account_id"?: string | null,"id": string,"kind": string,"owner_id"?: string,"revision"?: number,"row_index"?: number | null,"source": string,"updated_at"?: string
+                    "account_id": string,"amount": number,"batch_id"?: string | null,"cash_account_id"?: string | null,"cash_received"?: number,"category_id"?: string | null,"created_at"?: string,"date": string,"description": string,"destination_account_id"?: string | null,"funding_transaction_id"?: string | null,"id": string,"kind": string,"occurred_at"?: string | null,"owner_id"?: string,"reference"?: string | null,"report_group"?: string | null,"reporting_role"?: string,"revision"?: number,"row_index"?: number | null,"source": string,"updated_at"?: string
                   }
                   Update: {
-                    "account_id"?: string,"amount"?: number,"batch_id"?: string | null,"category_id"?: string | null,"created_at"?: string,"date"?: string,"description"?: string,"destination_account_id"?: string | null,"id"?: string,"kind"?: string,"owner_id"?: string,"revision"?: number,"row_index"?: number | null,"source"?: string,"updated_at"?: string
+                    "account_id"?: string,"amount"?: number,"batch_id"?: string | null,"cash_account_id"?: string | null,"cash_received"?: number,"category_id"?: string | null,"created_at"?: string,"date"?: string,"description"?: string,"destination_account_id"?: string | null,"funding_transaction_id"?: string | null,"id"?: string,"kind"?: string,"occurred_at"?: string | null,"owner_id"?: string,"reference"?: string | null,"report_group"?: string | null,"reporting_role"?: string,"revision"?: number,"row_index"?: number | null,"source"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -194,6 +246,18 @@ isOneToOne: false
       referencedRelation: "finance_import_batches"
       referencedColumns: ["owner_id","id"]
     },{
+      foreignKeyName: "finance_transactions_owner_id_cash_account_id_fkey"
+      columns: ["owner_id","cash_account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_cash_account_id_fkey"
+      columns: ["owner_id","cash_account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    },{
       foreignKeyName: "finance_transactions_owner_id_category_id_fkey"
       columns: ["owner_id","category_id"]
 isOneToOne: false
@@ -210,6 +274,18 @@ isOneToOne: false
       columns: ["owner_id","destination_account_id"]
 isOneToOne: false
       referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_funding_transaction_id_fkey"
+      columns: ["owner_id","funding_transaction_id"]
+isOneToOne: false
+      referencedRelation: "finance_transactions"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_funding_transaction_id_fkey"
+      columns: ["owner_id","funding_transaction_id"]
+isOneToOne: false
+      referencedRelation: "finance_transactions_dto"
       referencedColumns: ["owner_id","id"]
     }
                   ]
@@ -308,14 +384,14 @@ isOneToOne: false
           Views: {
             "finance_accounts_dto": {
                   Row: {
-                    "archived_at": string | null,"created_at": string | null,"id": string | null,"name": string | null,"note": string | null,"opening": string | null,"owner_id": string | null,"revision": number | null,"updated_at": string | null
+                    "archived_at": string | null,"created_at": string | null,"id": string | null,"name": string | null,"note": string | null,"opening": string | null,"opening_excluded": string | null,"opening_on": string | null,"owner_id": string | null,"revision": number | null,"updated_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                           "archived_at"?: string | null,"created_at"?: string | null,"id"?: string | null,"name"?: string | null,"note"?: string | null,"opening"?: never,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                           "archived_at"?: string | null,"created_at"?: string | null,"id"?: string | null,"name"?: string | null,"note"?: string | null,"opening"?: never,"opening_excluded"?: never,"opening_on"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
                          }
                         Update: {
-                           "archived_at"?: string | null,"created_at"?: string | null,"id"?: string | null,"name"?: string | null,"note"?: string | null,"opening"?: never,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
+                           "archived_at"?: string | null,"created_at"?: string | null,"id"?: string | null,"name"?: string | null,"note"?: string | null,"opening"?: never,"opening_excluded"?: never,"opening_on"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"updated_at"?: string | null
                          }
                         Relationships: [
 
@@ -380,6 +456,32 @@ isOneToOne: true
       referencedColumns: ["owner_id","id"]
     }
                   ]
+                },"finance_checkpoints_dto": {
+                  Row: {
+                    "account_id": string | null,"amount": string | null,"evidence": string | null,"id": string | null,"observed_at": string | null,"owner_id": string | null,"revision": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "account_id"?: string | null,"amount"?: never,"evidence"?: string | null,"id"?: string | null,"observed_at"?: string | null,"owner_id"?: string | null,"revision"?: number | null
+                         }
+                        Update: {
+                           "account_id"?: string | null,"amount"?: never,"evidence"?: string | null,"id"?: string | null,"observed_at"?: string | null,"owner_id"?: string | null,"revision"?: number | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "finance_checkpoints_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_checkpoints_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
                 },"finance_goals_dto": {
                   Row: {
                     "allocated": string | null,"created_at": string | null,"deadline": string | null,"id": string | null,"image_path": string | null,"monthly": string | null,"name": string | null,"owner_id": string | null,"priority": string | null,"revision": number | null,"target": string | null,"updated_at": string | null,"visual": string | null
@@ -394,16 +496,42 @@ isOneToOne: true
                         Relationships: [
 
                   ]
-                },"finance_transactions_dto": {
+                },"finance_scope_events_dto": {
                   Row: {
-                    "account_id": string | null,"amount": string | null,"batch_id": string | null,"category_id": string | null,"created_at": string | null,"date": string | null,"description": string | null,"destination_account_id": string | null,"id": string | null,"kind": string | null,"owner_id": string | null,"revision": number | null,"row_index": number | null,"source": string | null,"updated_at": string | null
+                    "account_id": string | null,"amount": string | null,"evidence": string | null,"id": string | null,"kind": string | null,"occurred_at": string | null,"owner_id": string | null,"revision": number | null
                   }
                   ComputedFields: never
                   Insert: {
-                           "account_id"?: string | null,"amount"?: never,"batch_id"?: string | null,"category_id"?: string | null,"created_at"?: string | null,"date"?: string | null,"description"?: string | null,"destination_account_id"?: string | null,"id"?: string | null,"kind"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"row_index"?: number | null,"source"?: string | null,"updated_at"?: string | null
+                           "account_id"?: string | null,"amount"?: never,"evidence"?: string | null,"id"?: string | null,"kind"?: string | null,"occurred_at"?: string | null,"owner_id"?: string | null,"revision"?: number | null
                          }
                         Update: {
-                           "account_id"?: string | null,"amount"?: never,"batch_id"?: string | null,"category_id"?: string | null,"created_at"?: string | null,"date"?: string | null,"description"?: string | null,"destination_account_id"?: string | null,"id"?: string | null,"kind"?: string | null,"owner_id"?: string | null,"revision"?: number | null,"row_index"?: number | null,"source"?: string | null,"updated_at"?: string | null
+                           "account_id"?: string | null,"amount"?: never,"evidence"?: string | null,"id"?: string | null,"kind"?: string | null,"occurred_at"?: string | null,"owner_id"?: string | null,"revision"?: number | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "finance_scope_events_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_scope_events_owner_id_account_id_fkey"
+      columns: ["owner_id","account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                },"finance_transactions_dto": {
+                  Row: {
+                    "account_id": string | null,"amount": string | null,"batch_id": string | null,"cash_account_id": string | null,"cash_received": string | null,"category_id": string | null,"created_at": string | null,"date": string | null,"description": string | null,"destination_account_id": string | null,"funding_transaction_id": string | null,"id": string | null,"kind": string | null,"occurred_at": string | null,"owner_id": string | null,"reference": string | null,"report_group": string | null,"reporting_role": string | null,"revision": number | null,"row_index": number | null,"source": string | null,"updated_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "account_id"?: string | null,"amount"?: never,"batch_id"?: string | null,"cash_account_id"?: string | null,"cash_received"?: never,"category_id"?: string | null,"created_at"?: string | null,"date"?: string | null,"description"?: string | null,"destination_account_id"?: string | null,"funding_transaction_id"?: string | null,"id"?: string | null,"kind"?: string | null,"occurred_at"?: string | null,"owner_id"?: string | null,"reference"?: string | null,"report_group"?: string | null,"reporting_role"?: string | null,"revision"?: number | null,"row_index"?: number | null,"source"?: string | null,"updated_at"?: string | null
+                         }
+                        Update: {
+                           "account_id"?: string | null,"amount"?: never,"batch_id"?: string | null,"cash_account_id"?: string | null,"cash_received"?: never,"category_id"?: string | null,"created_at"?: string | null,"date"?: string | null,"description"?: string | null,"destination_account_id"?: string | null,"funding_transaction_id"?: string | null,"id"?: string | null,"kind"?: string | null,"occurred_at"?: string | null,"owner_id"?: string | null,"reference"?: string | null,"report_group"?: string | null,"reporting_role"?: string | null,"revision"?: number | null,"row_index"?: number | null,"source"?: string | null,"updated_at"?: string | null
                          }
                         Relationships: [
                     {
@@ -425,6 +553,18 @@ isOneToOne: false
       referencedRelation: "finance_import_batches"
       referencedColumns: ["owner_id","id"]
     },{
+      foreignKeyName: "finance_transactions_owner_id_cash_account_id_fkey"
+      columns: ["owner_id","cash_account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_cash_account_id_fkey"
+      columns: ["owner_id","cash_account_id"]
+isOneToOne: false
+      referencedRelation: "finance_accounts_dto"
+      referencedColumns: ["owner_id","id"]
+    },{
       foreignKeyName: "finance_transactions_owner_id_category_id_fkey"
       columns: ["owner_id","category_id"]
 isOneToOne: false
@@ -442,6 +582,18 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "finance_accounts_dto"
       referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_funding_transaction_id_fkey"
+      columns: ["owner_id","funding_transaction_id"]
+isOneToOne: false
+      referencedRelation: "finance_transactions"
+      referencedColumns: ["owner_id","id"]
+    },{
+      foreignKeyName: "finance_transactions_owner_id_funding_transaction_id_fkey"
+      columns: ["owner_id","funding_transaction_id"]
+isOneToOne: false
+      referencedRelation: "finance_transactions_dto"
+      referencedColumns: ["owner_id","id"]
     }
                   ]
                 }
@@ -451,6 +603,9 @@ isOneToOne: false
 { Args: Record<PropertyKey, never>; Returns: {
               "github_user_id": string,"user_id": string
             }[]
+                           },
+"consume_mobile_login_attempt":
+{ Args: Record<PropertyKey, never>; Returns: boolean
                            },
 "create_today":
 { Args: { "p_category": string,"p_date": string,"p_id": string,"p_title": string }; Returns: {
@@ -473,6 +628,9 @@ isOneToOne: false
       } },
 "finance_import":
 { Args: { "p_id": string,"p_rows": Json }; Returns: number
+                           },
+"finance_snapshot":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "learning_checkin":
 { Args: { "p_date": string,"p_habit": string,"p_id": string,"p_minutes": number,"p_note": string,"p_revision": number,"p_undo": boolean }; Returns: undefined

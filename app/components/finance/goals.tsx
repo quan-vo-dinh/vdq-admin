@@ -83,10 +83,7 @@ function GoalEditor({
   const [error, setError] = useState("");
   const max = Math.max(
     0,
-    totals.balance -
-      totals.committed -
-      totals.allocated +
-      (initial?.allocated ?? 0),
+    totals.balanceKnown ? totals.available + (initial?.allocated ?? 0) : (initial?.allocated ?? 0),
   );
   return (
     <Dialog
@@ -286,7 +283,7 @@ export function GoalsPage() {
           />
           <Metric
             label={text("Tiền còn chưa phân bổ")}
-            value={money(totals.available)}
+            value={totals.balanceKnown?money(totals.available):"Chưa đủ dữ liệu"}
             detail={text("Sau mục tiêu và khoản chi đã khai báo")}
             icon={Wallet}
             negative={totals.available < 0}
@@ -388,7 +385,7 @@ export function GoalsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={left === 0 || totals.available <= 0}
+                    disabled={left === 0 || !totals.balanceKnown || totals.available <= 0}
                     onClick={() => {
                       setFunding(g);
                       setAmount(

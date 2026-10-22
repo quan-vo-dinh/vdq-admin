@@ -8,5 +8,7 @@ export function categoryHasHistory(data: FinanceData, code: string) {
   return data.transactions.some(t => t.category === code) || data.budgets.some(b => b.id === code && !!b.resourceId);
 }
 export function accountHasHistory(data: FinanceData, id: string) {
-  return data.transactions.some(t => t.account === id || t.destination === id);
+  return data.transactions.some(t => t.account === id || t.destination === id || t.cashAccount === id)
+    || (data.checkpoints ?? []).some(c => c.account === id)
+    || (data.scopeEvents ?? []).some(e => e.account === id);
 }

@@ -59,7 +59,7 @@ export function CashFlowPage() {
   const [view, setView] = useState<"chart" | "calendar">("chart");
   const chart = forecast(
     data.asOf,
-    totals.balance,
+    totals.tracked,
     Number(days),
     { income, expenses, salaryDay, reserve, shock: 0 },
     data.bills,
@@ -88,8 +88,8 @@ export function CashFlowPage() {
         <div className="finance-metrics finance-metrics-three">
           <Metric
             label="Số dư bắt đầu"
-            value={money(totals.balance)}
-            detail="Gồm cả tiền dành cho mục tiêu"
+            value={totals.balanceKnown?money(totals.tracked):"Chưa đủ dữ liệu"}
+            detail={totals.balanceKnown?"Số dư theo sổ, gồm tiền dành cho mục tiêu":"Số khởi đầu tạm tính; thiếu mốc đầu kỳ"}
             icon={Wallet}
           />
           <Metric

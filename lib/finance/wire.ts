@@ -1,5 +1,5 @@
 // Money crosses the API boundary as decimal text. UI numbers are range checked.
-const moneyKeys = new Set(['opening','amount','limit','target','allocated','monthly']);
+const moneyKeys = new Set(['opening','openingExcluded','cashReceived','amount','limit','target','allocated','monthly']);
 export function financeWire(value: unknown): unknown {
  if(Array.isArray(value))return value.map(financeWire);
  if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([key,item])=>[key,key==='monthlyLimits'&&item?Object.fromEntries(Object.entries(item).map(([month,n])=>[month,String(n)])):moneyKeys.has(key)?String(item):financeWire(item)]));
