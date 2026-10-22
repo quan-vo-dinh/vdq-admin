@@ -1,6 +1,6 @@
 {
   "checkedAt": "2026-10-22T03:43:49.444329+00:00",
-  "stage": "local implementation; production read-only",
+  "stage": "production data corrected; GitHub release in progress",
   "migration": "20261022000100_finance_reconciliation.sql",
   "validation": {
     "financeUnit": {
@@ -51,11 +51,21 @@
   "preservation": {
     "existingLocalFinanceTablesVerified": 9,
     "productionFinanceTablesUnchangedBetweenReadOnlySnapshots": 9,
-    "productionBusinessWrites": false,
-    "productionMigrationApplied": false,
-    "committed": false,
-    "pushed": false,
+    "productionBusinessWrites": true,
+    "productionMigrationApplied": true,
+    "committed": true,
+    "pushed": true,
     "deployed": false
   },
-  "privateEvidence": "Raw snapshots, corrected-source comparison and row-level correction review are outside Git; no personal financial rows included here."
+  "privateEvidence": "Raw snapshots, corrected-source comparison and row-level correction review are outside Git; no personal financial rows included here.",
+  "productionCorrection": {
+    "authorized": true,
+    "encryptedBackupVerified": true,
+    "transactionalLocalReplay": "passed; exact production rows, then fixture rollback",
+    "atomicMigrationAndRepair": "committed",
+    "existingRowsPreserved": true,
+    "otherFinanceTablesVerifiedUnchanged": 7,
+    "unverifiedDifferences": "kept explicit; no fabricated adjustments",
+    "pullRequest": "https://github.com/quan-vo-dinh/vdq-admin/pull/6"
+  }
 }
