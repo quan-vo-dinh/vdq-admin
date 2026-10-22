@@ -10,9 +10,9 @@ import { financeWire } from './wire';
 import type { FinanceData } from './model';
 import type { Database } from '@/types/database';
 
-type Table = Extract<keyof Database['public']['Tables'], `finance_${string}`>;
 const resources = ['accounts','categories','transactions','budgets','budget_months','goals','bills','settings','checkpoints','scope_events'] as const;
 type Resource = typeof resources[number];
+type Table = Extract<keyof Database['public']['Tables'], `finance_${Resource}`>;
 const fields: Record<Resource,string[]> = {
  accounts:['name','opening','note','archived_at','opening_on','opening_excluded'], categories:['code','name','kind','archived_at'],
  transactions:['date','description','amount','kind','account_id','destination_account_id','category_id','source','reference','occurred_at','reporting_role','report_group','cash_account_id','cash_received','funding_transaction_id'],
@@ -32,8 +32,9 @@ export async function financeOverview(): Promise<FinanceData> {
  const {supabase:db,user}=await requireOwner();
  // Idempotent metadata only, no balances, goals or transactions are seeded.
  const existing=await db.from('finance_categories').select('code').eq('owner_id',user.id); dbError(existing.error);
+ const deletedDefaults=await db.from('finance_category_tombstones').select('code').eq('owner_id',user.id); dbError(deletedDefaults.error);
  const codes=[['food','Ăn uống'],['home','Nhà ở'],['transport','Di chuyển'],['shopping','Mua sắm'],['learning','Học tập'],['fun','Giải trí'],['other','Khác'],['salary','Lương thực nhận'],['freelance','Thu nhập khác']];
- for(const [code,name] of codes) if(!existing.data!.some(c=>c.code===code)) {
+ for(const [code,name] of codes) if(!existing.data!.some(c=>c.code===code)&&!deletedDefaults.data!.some(c=>c.code===code)) {
   const r=await db.from('finance_categories').insert({id:crypto.randomUUID(),code,name,kind:['salary','freelance'].includes(code)?'income':'expense'}); if(r.error?.code!=='23505') dbError(r.error);
  }
  const settings=await db.from('finance_settings').select().eq('owner_id',user.id).maybeSingle(); dbError(settings.error);
@@ -81,10 +82,12 @@ export async function financeRequest(request:Request,resource?:string) {
  const key=resource as Resource,table=`finance_${key}` as Table;
  if(request.method==='GET') {const r=await db.from(table).select('id,revision').eq('owner_id',user.id);dbError(r.error);return Response.json(r.data);}
  const body=await input(request),id=uuid(body.id);
- if(key==='budgets'&&request.method==='DELETE') {
-  const result=await db.rpc('finance_remove_budget',{p_budget_id:id,p_revision:revision(body.expectedRevision)});
+ if(key==='categories'&&request.method==='DELETE') {
+  const result=await db.rpc('finance_delete_category',{p_category_id:id,p_revision:revision(body.expectedRevision)});
   dbError(result.error);
-  if(!result.data) throw new AccessError(409,'conflict');
+  if(result.data==='has_transactions') throw new AccessError(409,'category_has_transactions');
+  if(result.data==='missing') throw new AccessError(404,'missing');
+  if(result.data!=='deleted') throw new AccessError(409,'conflict');
   return Response.json({id});
  }
  const values:Record<string,unknown>={};
@@ -151,7 +154,7 @@ export async function financeRequest(request:Request,resource?:string) {
  if(key==='categories') {
   if(request.method!=='POST') {
    const current=await db.from('finance_categories').select('code,kind').eq('id',id).eq('owner_id',user.id).maybeSingle();dbError(current.error);
-   if(current.data && isDefaultCategory(current.data.code) && (request.method==='DELETE'||(values.code!==undefined&&values.code!==current.data.code)||(values.kind!==undefined&&values.kind!==current.data.kind))) throw new AccessError(409,'default_category_protected');
+   if(current.data && isDefaultCategory(current.data.code) && ((values.code!==undefined&&values.code!==current.data.code)||(values.kind!==undefined&&values.kind!==current.data.kind))) throw new AccessError(409,'default_category_protected');
   }
   if(values.code!==undefined && (typeof values.code!=='string'||!categoryCodePattern.test(values.code)||values.code==='transfer')) throw new AccessError(400,'invalid_category_code');
   if(values.name!==undefined && (typeof values.name!=='string'||!values.name.trim()||values.name.trim().length>80)) throw new AccessError(400,'invalid_category_name');
