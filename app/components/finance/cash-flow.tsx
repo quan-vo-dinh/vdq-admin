@@ -50,6 +50,7 @@ import {
   payrollMonths,
   planAmount,
   projectedGoals,
+  projectionChartDate,
   projectionRows,
   savingsPlanFingerprint,
   validateSavingsPlan,
@@ -633,9 +634,10 @@ function SavingsPlanner({
                   Date.parse(safePlan.startDate + "T00:00:00Z"),
                   endTimestamp,
                 ]}
-                tickFormatter={(value) =>
-                  fullDate(new Date(Number(value)).toISOString().slice(0, 10))
-                }
+                tickFormatter={(value) => {
+                  const day = projectionChartDate(value);
+                  return day ? fullDate(day) : "—";
+                }}
                 minTickGap={36}
                 axisLine={false}
                 tickLine={false}
@@ -661,11 +663,12 @@ function SavingsPlanner({
                         color: "var(--chart-3)",
                       },
                     ]}
-                    labelFormatter={(value) =>
-                      fullDate(
-                        new Date(Number(value)).toISOString().slice(0, 10),
-                      )
-                    }
+                    labelFormatter={(_label, payload) => {
+                      // ChartTooltipContent resolves numeric labels to series names.
+                      const value: unknown = payload[0]?.payload?.date;
+                      const day = projectionChartDate(value);
+                      return day ? fullDate(day) : "—";
+                    }}
                   />
                 }
               />

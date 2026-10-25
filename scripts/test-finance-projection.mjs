@@ -10,7 +10,10 @@ assert.deepEqual(validateBackup(legacyBackup).data.finance_projection_plans,[]);
 const output=mkdtempSync(join(tmpdir(),'salary-projection-'));
 try{
   execFileSync('pnpm',['exec','tsc','--ignoreConfig','--target','es2022','--module','commonjs','--skipLibCheck','--outDir',output,'lib/finance/projection.ts']);
-  const {emptySavingsPlan,validateSavingsPlan,projectionRows,projectedGoals,lastDay,payrollMonths,savingsPlanFingerprint}=createRequire(import.meta.url)(join(output,'projection.js'));
+  const {emptySavingsPlan,validateSavingsPlan,projectionRows,projectedGoals,lastDay,payrollMonths,savingsPlanFingerprint,projectionChartDate}=createRequire(import.meta.url)(join(output,'projection.js'));
+  const paydayTimestamp=Date.parse('2026-10-31T00:00:00Z');
+  for(const value of [paydayTimestamp,String(paydayTimestamp),'2026-10-31'])assert.equal(projectionChartDate(value),'2026-10-31');
+  for(const value of [undefined,null,'',' ','Tiết kiệm tích lũy','2026-02-30',NaN,Infinity,1e20,{},[]])assert.equal(projectionChartDate(value),null,'Transient chart labels must not throw or become invented dates');
   const first='00000000-0000-4000-8000-000000000001',second='00000000-0000-4000-8000-000000000002';
   const plan={...emptySavingsPlan('2026-10-25'),endDate:'2026-12-31',goalIds:[first,second],cycles:{
     '2026-10':{income:'8000000',spending:'3000000',savingDate:'2026-10-31'},

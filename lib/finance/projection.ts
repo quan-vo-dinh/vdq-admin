@@ -31,6 +31,21 @@ export function validDate(value: string) {
     new Date(value + "T00:00:00Z").toISOString().slice(0, 10) === value
   );
 }
+/** Chart labels can be series names; only accept actual dates or timestamps. */
+export function projectionChartDate(value: unknown): string | null {
+  if (typeof value === "string" && validDate(value)) return value;
+  if (
+    (typeof value !== "number" && typeof value !== "string") ||
+    (typeof value === "string" && !value.trim())
+  )
+    return null;
+  const timestamp = Number(value);
+  if (!Number.isFinite(timestamp)) return null;
+  const parsed = new Date(timestamp);
+  if (!Number.isFinite(parsed.getTime())) return null;
+  const result = parsed.toISOString().slice(0, 10);
+  return validDate(result) ? result : null;
+}
 export function addMonths(month: string, offset: number) {
   const [year, number] = month.split("-").map(Number),
     index = year * 12 + number - 1 + offset;
