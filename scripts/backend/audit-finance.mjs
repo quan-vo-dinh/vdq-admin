@@ -6,7 +6,7 @@ import {parseArgs} from 'node:util';
 import {createHash} from 'node:crypto';
 const {values}=parseArgs({options:{target:{type:'string'},directory:{type:'string'}}});
 const project='wcgdvsiiemurehkprvqw';
-const names=['finance_settings','finance_accounts','finance_categories','finance_import_batches','finance_transactions','finance_budgets','finance_budget_months','finance_goals','finance_bills','finance_checkpoints','finance_scope_events'];
+const names=['finance_settings','finance_accounts','finance_categories','finance_import_batches','finance_transactions','finance_budgets','finance_budget_months','finance_goals','finance_bills','finance_checkpoints','finance_scope_events','finance_projection_plans'];
 function query(select){
  if(!select.startsWith('select '))throw Error('Only reviewed SELECT queries are permitted');
  if(values.target==='local')return JSON.parse(execFileSync('docker',['exec','-i','supabase_db_dashboard-personal-local','psql','-XAtq','-U','postgres','-v','ON_ERROR_STOP=1'],{input:select,stdio:['pipe','pipe','pipe'],maxBuffer:32*1024*1024}).toString());

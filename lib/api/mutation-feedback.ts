@@ -20,6 +20,7 @@ const resources: Record<string, [string, string]> = {
   "/api/preferences": ["tùy chọn", "preferences"],
   "/api/learning/habits": ["thói quen học tập", "learning habit"],
   "/api/learning/checkins": ["buổi học", "study session"],
+  "/api/finance/projection": ["kế hoạch dòng tiền", "cash-flow plan"],
   "/api/finance/accounts": ["tài khoản", "account"],
   "/api/finance/categories": ["danh mục", "category"],
   "/api/finance/transactions": ["giao dịch", "transaction"],

@@ -6,7 +6,7 @@ import {generateKeyPairSync,createHash} from 'node:crypto';
 import {parseArgs} from 'node:util';
 import {seal,open} from '../data/snapshot.mjs';
 import {atomicOutput} from './atomic-output.mjs';
-export const tables=['notes','calendar_events','calendar_settings','finance_settings','finance_accounts','finance_categories','finance_import_batches','finance_transactions','finance_budgets','finance_budget_months','finance_goals','finance_bills','finance_checkpoints','finance_scope_events','learning_habits','learning_checkins','profiles','user_preferences'];
+export const tables=['notes','calendar_events','calendar_settings','finance_settings','finance_accounts','finance_categories','finance_import_batches','finance_transactions','finance_budgets','finance_budget_months','finance_goals','finance_bills','finance_checkpoints','finance_scope_events','finance_projection_plans','learning_habits','learning_checkins','profiles','user_preferences'];
 const container='supabase_db_dashboard-personal-local';
 export const digest=b=>createHash('sha256').update(b).digest('hex');
 export function sql(query,target=container){return execFileSync('docker',['exec','-i',target,'psql','-XAtq','-U','postgres','-v','ON_ERROR_STOP=1'],{input:query,stdio:['pipe','pipe','pipe'],maxBuffer:128*1024*1024}).toString().trim();}
@@ -45,6 +45,7 @@ export async function capture(){
 }
 export function validate(p){
  if(p.format!=='dashboard-business-v1'||!p.owner?.enabled||!/^\d+$/.test(p.owner.github_user_id)||!Array.isArray(p.media)||!Array.isArray(p.versions)||!Array.isArray(p.migrations))throw new Error('Invalid business bundle');
+ if(!('finance_projection_plans' in p.data)&&!p.versions.includes('20261025000100'))p.data.finance_projection_plans=[];
  for(const table of ['finance_checkpoints','finance_scope_events'])if(!(table in p.data)&&!p.versions.includes('20261022000100'))p.data[table]=[];
  if(Object.keys(p.data).sort().join()!==[...tables].sort().join())throw new Error('Unexpected tables');
  for(const t of tables)if(!Array.isArray(p.data[t])||p.data[t].some(r=>r.owner_id!==p.owner.user_id)||new Set(p.data[t].map(r=>r.id)).size!==p.data[t].length)throw new Error('Invalid rows');

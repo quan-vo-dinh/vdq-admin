@@ -5,6 +5,13 @@ export type Database = {
 
   "public": {
           Tables: {
+            "finance_projection_plans": {
+              ComputedFields: never
+              Row: {id: string; owner_id: string; created_at: string; updated_at: string; revision: number; plan: Json}
+              Insert: {id: string; owner_id?: string; created_at?: string; updated_at?: string; revision?: number; plan: Json}
+              Update: {id?: string; owner_id?: string; created_at?: string; updated_at?: string; revision?: number; plan?: Json}
+              Relationships: []
+            },
             "calendar_events": {
                   Row: {
                     "attendees": string,"category": string,"color": string,"created_at": string,"description": string,"ends_at": string | null,"ends_on": string | null,"id": string,"kind": string,"location": string,"owner_id": string,"priority": string,"revision": number,"starts_at": string | null,"starts_on": string | null,"status": string,"title": string,"updated_at": string

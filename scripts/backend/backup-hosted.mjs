@@ -17,7 +17,7 @@ export async function captureHosted(){
  const existingTables=query("select table_name from information_schema.tables where table_schema='public'").map(r=>r.table_name);
  const numeric=query("select table_name,column_name from information_schema.columns where table_schema='public' and data_type='numeric'");
  const dataSql=tables.map(table=>{
-  if(!existingTables.includes(table)){if(!['finance_checkpoints','finance_scope_events'].includes(table))throw new Error('Required table missing');return `${literal(table)},'[]'::jsonb`;}
+  if(!existingTables.includes(table)){if(!['finance_checkpoints','finance_scope_events','finance_projection_plans'].includes(table))throw new Error('Required table missing');return `${literal(table)},'[]'::jsonb`;}
   const numbers=numeric.filter(c=>c.table_name===table).map(c=>{if(!/^[a-z_]+$/.test(c.column_name))throw new Error('Unexpected column');return ` || jsonb_build_object('${c.column_name}',t.${c.column_name}::text)`;}).join('');
   return `${literal(table)},(select coalesce(jsonb_agg(to_jsonb(t)${numbers} order by id),'[]') from public.${table} t where owner_id=${literal(owner[0].user_id)}::uuid)`;
  }).join(',');

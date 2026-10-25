@@ -5,7 +5,6 @@ import { usePathname } from "@/lib/platform/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { FinanceLoading } from "./loading";
 import { useFinance } from "@/app/context/finance-context";
 import { ApiError } from "@/app/api/global-fetcher";
 import { FinancePageHeader } from "./page-header";
@@ -51,20 +50,7 @@ export function FinanceShell({ children, className }: { children: ReactNode; cla
         </Alert>
       )}
       {error && <Alert variant="destructive"><AlertDescription>{error instanceof ApiError && error.code === 'money_outside_ui_range' ? 'Tổng tiền vượt phạm vi biểu đồ hỗ trợ (tổng trị tuyệt đối tối đa khoảng 2,25 triệu tỷ VND). Dữ liệu DB được giữ nguyên.' : 'Không tải được dữ liệu mới. Hãy thử tải lại.'} <Button variant="outline" size="sm" onClick={reload}>Tải lại</Button></AlertDescription></Alert>}
-      {error && !data ? (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {text("Chưa tải được dữ liệu.")}{" "}
-            <Button variant="outline" size="sm" onClick={reload}>
-              {text("Thử lại")}
-            </Button>
-          </AlertDescription>
-        </Alert>
-      ) : !data ? (
-        <FinanceLoading header={false} />
-      ) : (
-        children
-      )}
+      {children}
     </div>
   );
 }
