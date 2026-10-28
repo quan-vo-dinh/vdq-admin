@@ -205,6 +205,7 @@ export function AssetThumbnail({
       className={cn(
         "relative shrink-0 overflow-hidden rounded-lg border bg-muted/30",
         large || variant === "cover" ? "aspect-video w-full" : "size-12",
+        variant === "cover" && "rounded-b-none",
         variant === "portrait" && "aspect-square size-auto w-full max-w-80",
       )}
     >
