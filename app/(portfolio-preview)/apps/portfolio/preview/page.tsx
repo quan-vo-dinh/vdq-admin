@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { draftPortfolio } from "@/lib/portfolio/server";
 import { PortfolioRenderer } from "@/components/portfolio/renderer";
 export const metadata = {
@@ -7,6 +8,8 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 async function Preview() {
+  // Do not initialize owner Auth/session timers while prerendering a private preview.
+  await connection();
   const site = await draftPortfolio();
   const locale =
     (await cookies()).get("portfolio-locale")?.value === "en" ? "en" : "vi";
