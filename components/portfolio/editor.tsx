@@ -448,7 +448,7 @@ function Editor({ site }: { site: Site | null }) {
             {published ? `Live version ${published.slice(0,8)}` : "Not published"}
           </p>
         </div>
-        <Link href="/portfolio" target="_blank">
+        <Link href="/" target="_blank">
           View public portfolio
         </Link>
       </div>

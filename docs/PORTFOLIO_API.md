@@ -1,10 +1,10 @@
 # Portfolio content contract
 
-Public `/portfolio` renders the current validated snapshot. It defaults to Vietnamese; the `portfolio-locale` cookie chooses English. The portfolio owns a local theme surface (`portfolio-surface-theme`), preserving dashboard theme/language preferences. Original source components, spacing, animations, logos and copy are ported under `components/portfolio`; scoped Radix components do not replace dashboard Base UI primitives. Static source assets are versioned in `public/portfolio-assets`; newly uploaded rasters use private `portfolio-media` Storage.
+Public `/` renders the current validated snapshot. It defaults to Vietnamese; the `portfolio-locale` cookie chooses English. The portfolio owns a local theme surface (`portfolio-surface-theme`), preserving dashboard theme/language preferences. Original source components, spacing, animations, logos and copy are ported under `components/portfolio`; scoped Radix components do not replace dashboard Base UI primitives. Static source assets are versioned in `public/portfolio-assets`; newly uploaded rasters use private `portfolio-media` Storage.
 
 Owner `/apps/portfolio` uses a feature-local SWR context and structured fields for both locales, lists, order, visibility, navigation, images and SEO. Item IDs stay stable and translation ID sets match. Save writes a draft, preview renders that saved draft at `/apps/portfolio/preview`, and Publish is explicit. Restore republishes an immutable old version as a new publication and retains the current draft. Preview is authenticated, no-store and noindex.
 
-All owner routes use `withOwner`, verified owner identity/registry, origin checks and private/no-store responses. No service credential is used by runtime public rendering or CRUD. Public proxy exemptions are exact `/portfolio` and UUID-shaped public media GET paths. No owner API group exemption exists.
+All owner routes use `withOwner`, verified owner identity/registry, origin checks and private/no-store responses. No service credential is used by runtime public rendering or CRUD. Public proxy exemptions are exact `/` and UUID-shaped public media GET paths. No owner API group exemption exists.
 
 | Endpoint | Method | Input / output |
 |---|---|---|
@@ -24,7 +24,7 @@ All owner routes use `withOwner`, verified owner identity/registry, origin check
 
 `read_published_portfolio()` exposes only the enabled owner's current version; anon cannot select sites, historical versions or media metadata. The separate `read_published_portfolio_media(uuid)` and Storage SELECT policy expose only current references. Media are immutable to app clients and kept for every retained draft/version; a former publication's private media stops being publicly readable. Public bytes never use an owner cookie/service key. Public content cache has only published DTOs, a publication tag and a 60-second fallback refresh interval; failed invalidation is returned separately for retry, never reported as a failed committed publication.
 
-Initial import preserves source copy independently in each locale, including VI education end `09/2026` versus EN `Oct 2026`. Blog and Moments stay external to the old portfolio, and Studio now opens this CMS. Neither old content system is migrated. `/` continues to redirect to `/developer`.
+Initial import preserves source copy independently in each locale, including VI education end `09/2026` versus EN `Oct 2026`. The bottom navigation dock is removed from the public renderer. Its persisted navigation fields remain compatible with retained documents; no database content is deleted. Language and theme controls are adjacent in a normal-flow top-right row. `/portfolio` permanently redirects to `/` before authentication, while the private dashboard remains `/developer`. Login without an explicit safe destination defaults to `/developer`. Neither old Blog nor Moments systems are migrated.
 
 # Validation and operations
 
@@ -34,4 +34,6 @@ The explicit hosted rollout `node --env-file=.env.cloud-tooling.local scripts/ba
 
 Backup adapters include site/draft, retained versions and all registered portfolio objects. Prior bundles without the new migration receive empty portfolio arrays. Restore remaps singleton site ID/owner IDs and Storage paths; current pointer FKs are deferred and version IDs remain stable. The separate `/tmp/dashboard-portfolio-drill` target avoids overwriting an older P09 drill. Registered unused uploads remain backed up for recovery; reconciliation registers valid orphan objects after failed attachment. Static original assets restore with the code revision.
 
-Native navigation maps `/portfolio` and `/apps/portfolio` to a web bridge. The native app does not bundle the server owner gate or pass its bearer token to a browser; the owner signs into the website separately. CMS draft status identifies the saved draft and live version independently. Unsaved content triggers browser unload and link-navigation protection; preview intentionally reads the last saved draft.
+Native navigation maps `/portfolio` and `/apps/portfolio` to a web bridge whose public view opens the website root. The native app does not bundle the server owner gate or pass its bearer token to a browser; the owner signs into the website separately. CMS draft status identifies the saved draft and live version independently. Unsaved content triggers browser unload and link-navigation protection; preview intentionally reads the last saved draft.
+
+Run `node scripts/backend/test-portfolio-http.mjs [origin]` for read-only local/deployed root, locale/metadata, removed-dock markup, compatibility redirect and private-route checks. This HTTP evidence does not establish visual geometry or live control interactions.

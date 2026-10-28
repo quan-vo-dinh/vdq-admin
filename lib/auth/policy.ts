@@ -15,9 +15,9 @@ export function checkHostedFeature(pathname: string, method: string) {
 
 export function safeNext(value: string | null | undefined) {
   // Reject encoded path separators/control chars too; no second decode downstream.
-  if (!value || !value.startsWith('/') || value.startsWith('//') || /[\\\x00-\x20\x7f]|%/i.test(value)) return '/';
+  if (!value || !value.startsWith('/') || value.startsWith('//') || /[\\\x00-\x20\x7f]|%/i.test(value)) return '/developer';
   const parsed = new URL(value, 'https://internal.invalid');
-  if (parsed.origin !== 'https://internal.invalid' || parsed.pathname.startsWith('/auth') || parsed.pathname.startsWith('/api')) return '/';
+  if (parsed.origin !== 'https://internal.invalid' || parsed.pathname.startsWith('/auth') || parsed.pathname.startsWith('/api')) return '/developer';
   return parsed.pathname + parsed.search + parsed.hash;
 }
 

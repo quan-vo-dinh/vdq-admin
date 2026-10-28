@@ -5,7 +5,7 @@
 - Source: sibling `../vodinhquan.v1`; target: this repository, on `main` throughout.
 - Preserve the complete home portfolio UI and bilingual copy; Blog/Moments/Studio systems are out of scope. Keep Blog/Moments as external links to the old website; Studio points to the new owner editor.
 - Install missing UI dependencies required for fidelity, including scoped Radix primitives when needed. Do not rewrite the portfolio into the dashboard design language.
-- Public `/portfolio`; owner editor `/apps/portfolio`; owner-only preview `/apps/portfolio/preview`. Preserve `/` redirect to `/developer`.
+- Public `/` (supersedes the initial `/portfolio` route); `/portfolio` permanently redirects to `/`. Owner editor `/apps/portfolio`; owner-only preview `/apps/portfolio/preview`; private dashboard `/developer`.
 - Draft -> preview -> explicit publish. Supabase persistence and object storage; immutable published snapshots; public cache containing published data only.
 - User explicitly authorizes production migrations, commit and push directly to main. No branch/worktree/PR needed. Preserve unrelated work; no reset, force push, destructive production reset, or exposed secrets.
 
@@ -13,7 +13,7 @@
 
 Read root/nested instructions, current source and rollout tooling; verify git status, origin/main divergence, supported Node/pnpm and local backend availability. Inspect source UI, dependencies, dictionaries and assets. Read installed Next documentation before coding. Record baseline lint/build results without attributing pre-existing failures to this feature.
 
-Target composition: original compact portfolio, source sections, background, dock, motion, light/dark, Vietnamese/English. Use original components/dependencies adapted behind portfolio-local imports. Owner editor follows dashboard primitives, forms, context and SWR conventions. Keep public rendering server-side with small interaction components. Preserve keyboard access, reduced motion, image fallbacks and narrow-screen layout.
+Target composition: original compact portfolio, source sections, background, motion, light/dark, Vietnamese/English. Use original components/dependencies adapted behind portfolio-local imports. Owner editor follows dashboard primitives, forms, context and SWR conventions. Keep public rendering server-side with small interaction components. Preserve keyboard access, reduced motion, image fallbacks and narrow-screen layout.
 
 ## Phase 1 - contract, schema and security
 
@@ -31,7 +31,7 @@ Add portfolio storage separate from private goal images. Draft uploads are priva
 
 ## Phase 3 - public UI port
 
-Port Hero/About/Work/Education/Certifications/Skills/Projects/Contact and background, dock, motion, dark/light, language controls with source assets and missing dependencies. Scope public tokens/typography/styles so dashboard global text sizes and theme attributes do not change source appearance. Do not overwrite shared primitives or import a second global Tailwind reset. Handle portal styling intentionally. Avoid competing document-level theme/language providers; establish clear ownership per surface.
+Port Hero/About/Work/Education/Certifications/Skills/Projects/Contact and background, motion, dark/light, language controls with source assets and missing dependencies. Scope public tokens/typography/styles so dashboard global text sizes and theme attributes do not change source appearance. Do not overwrite shared primitives or import a second global Tailwind reset. Handle portal styling intentionally. Avoid competing document-level theme/language providers; establish clear ownership per surface.
 
 Reuse one renderer for public published content and owner draft preview. Ensure original layout widths, spacing, fonts, image treatments, hover/disclosure behavior, icon registry and responsive behavior. Metadata/canonical/OG use the deployed origin and public path, with private preview excluded from indexing. Cache published content by version/tag and locale only; after publish invalidate relevant cached output and make cache failure retryable without claiming the database publish failed.
 
@@ -61,3 +61,10 @@ Update backup/restore adapters and docs. Commit reviewed feature changes on main
 - Encrypted restore drill passed on separate `/tmp/dashboard-portfolio-drill` with three retained versions and one uploaded portfolio object; verified singleton/owner remapping, pointer FK, private/public boundary and SHA256 bytes. The existing older P09 drill data were preserved.
 - Root review inspected source and local desktop captures using native Chrome. Corrected avatar mapping from that inspection. This establishes structural desktop comparison, not pixel-perfect acceptance. Full mobile/both-theme/both-locale interactive visual QA remains unverified because the browser connector was unavailable and native Chrome was in active user use; no user work was disturbed for further checks.
 - Git commit/push and Git-triggered deployment observation are reported with exact commit/URL in the final handoff; database rollout above is separate from frontend deployment.
+
+
+## Follow-up scope (2026-10-28)
+
+The user moved the public portfolio to `/`, removed the entire bottom dock and placed the language control beside the theme control in a normal-flow top-right row. This supersedes the initial root-to-dashboard redirect and dock requirement above. The old `/portfolio` path returns 308 before authentication. Dashboard `/developer` and owner CMS/preview remain private; authentication defaults to `/developer` while preserving explicit safe destinations. Canonical/OG links, published-cache invalidation, dashboard/CMS public links, the native web bridge and HTTP smoke paths now target `/`. Published JSONB navigation fields and historical snapshots are retained; no migration or content mutation is needed.
+
+Follow-up verification: scoped lint zero errors (one existing editor image warning), auth-policy tests 4/4 and production build pass. Read-only HTTP smoke on localhost:3000 verifies anonymous root VI/EN rendering, root canonical/OG locale, controls before hero, absence of bottom dock markup, old path 308 preserving query, private dashboard/CMS/preview redirects and draft API 401. Browser inventory was retried: browser access host remains unavailable; active native Chrome was not touched. No schema migration or production content write is involved in this follow-up.

@@ -67,7 +67,7 @@ export async function portfolioRequest(
 function refresh() {
   try {
     revalidateTag("portfolio-published", { expire: 0 });
-    revalidatePath("/portfolio");
+    revalidatePath("/");
     return false;
   } catch {
     return true;

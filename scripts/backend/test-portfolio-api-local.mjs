@@ -21,7 +21,7 @@ try{
  r=await request('/apps/portfolio/preview');assert.equal(r.status,200);assert.ok((await r.text()).includes('Private draft'));
  r=await request('/api/portfolio/publish','POST',{expectedRevision:revision});assert.equal(r.status,200);const published=await r.json();revision=published.site.revision;
  r=await request(`/api/portfolio/public/media/${uploaded.id}`,'GET',undefined,false);assert.equal(r.status,200);assert.equal(r.headers.get('content-type'),'image/webp');assert.equal((await sharp(Buffer.from(await r.arrayBuffer())).metadata()).format,'webp');
- r=await request('/portfolio','GET',undefined,false);assert.equal(r.status,200);assert.ok((await r.text()).includes('Hi, tui là'));
+ r=await request('/','GET',undefined,false);assert.equal(r.status,200);assert.ok((await r.text()).includes('Hi, tui là'));
  console.log(JSON.stringify({checks:11,result:'PASS',scope:'local owner API, CSRF, CAS, draft preview, upload reencode, current-only public media, public route'}));
 }finally{
  // Restore original draft and publication through normal API; retained test version/media remains recoverable for backup drill.

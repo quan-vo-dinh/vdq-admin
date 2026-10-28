@@ -12,7 +12,8 @@ try {
   policy=createRequire(import.meta.url)(join(directory,'policy.js'));
 } finally { rmSync(directory,{recursive:true,force:true}); }
 test('callback redirects remain internal including encoded and backslash attacks',()=>{
-  for(const next of ['https://evil.test','//evil.test','/\\evil.test','/%2f%2fevil.test','/\nevil','/auth/callback','/api/notes',undefined]) assert.equal(policy.safeNext(next),'/');
+  for(const next of ['https://evil.test','//evil.test','/\\evil.test','/%2f%2fevil.test','/\nevil','/auth/callback','/api/notes',undefined]) assert.equal(policy.safeNext(next),'/developer');
+  assert.equal(policy.safeNext('/'),'/');
   assert.equal(policy.safeNext('/apps/notes?filter=all'),'/apps/notes?filter=all');
 });
 test('cookie mutations require exact configured Origin and reject cross-site',()=>{
