@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { publishedPortfolio } from "@/lib/portfolio/public";
+import { PortfolioLoading } from "@/components/portfolio/loading";
 import { PortfolioRenderer } from "@/components/portfolio/renderer";
 export async function generateMetadata() {
   const locale =
@@ -37,13 +38,7 @@ async function Published() {
 }
 export default function Page() {
   return (
-    <Suspense
-      fallback={
-        <main className="p-12" aria-busy>
-          Loading portfolio…
-        </main>
-      }
-    >
+    <Suspense fallback={<PortfolioLoading />}>
       <Published />
     </Suspense>
   );

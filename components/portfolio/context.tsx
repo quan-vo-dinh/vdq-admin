@@ -1,5 +1,7 @@
 "use client";
-import { createContext, useContext, useSyncExternalStore } from "react";
+import { createContext, useContext } from "react";
+import { PortfolioSurface } from "./surface";
+export { useTheme } from "./surface";
 import type { PortfolioDocument } from "@/lib/portfolio/model";
 import { iconRegistry } from "./icon-registry";
 const Context = createContext<{
@@ -7,27 +9,6 @@ const Context = createContext<{
   locale: "vi" | "en";
   preview: boolean;
 } | null>(null);
-const Theme = createContext<{
-  theme: string;
-  setTheme: (theme: string) => void;
-}>({ theme: "dark", setTheme: () => {} });
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback);
-  window.addEventListener("portfolio-surface-theme", callback);
-  return () => {
-    window.removeEventListener("storage", callback);
-    window.removeEventListener("portfolio-surface-theme", callback);
-  };
-}
-function readTheme() {
-  try {
-    return localStorage.getItem("portfolio-surface-theme") === "light"
-      ? "light"
-      : "dark";
-  } catch {
-    return "dark";
-  }
-}
 export function PortfolioProvider({
   document,
   locale,
@@ -39,24 +20,9 @@ export function PortfolioProvider({
   preview?: boolean;
   children: React.ReactNode;
 }) {
-  const theme = useSyncExternalStore(subscribe, readTheme, () => "dark");
-  const setTheme = (value: string) => {
-    try {
-      localStorage.setItem("portfolio-surface-theme", value);
-    } catch {}
-    window.dispatchEvent(new Event("portfolio-surface-theme"));
-  };
   return (
     <Context value={{ document, locale, preview }}>
-      <Theme value={{ theme, setTheme }}>
-        <div
-          className={`portfolio-surface ${theme === "dark" ? "dark" : "light"}`}
-          lang={locale}
-          style={{ colorScheme: theme }}
-        >
-          {children}
-        </div>
-      </Theme>
+      <PortfolioSurface lang={locale}>{children}</PortfolioSurface>
     </Context>
   );
 }
@@ -64,9 +30,6 @@ function usePortfolio() {
   const c = useContext(Context);
   if (!c) throw new Error("Missing portfolio context");
   return c;
-}
-export function useTheme() {
-  return useContext(Theme);
 }
 export function usePortfolioText() {
   const { document, locale, preview } = usePortfolio();

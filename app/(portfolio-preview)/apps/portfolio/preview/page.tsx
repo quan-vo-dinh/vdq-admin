@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
 import { draftPortfolio } from "@/lib/portfolio/server";
+import { PortfolioLoading } from "@/components/portfolio/loading";
 import { PortfolioRenderer } from "@/components/portfolio/renderer";
 export const metadata = {
   title: "Portfolio draft preview",
@@ -25,7 +26,7 @@ async function Preview() {
 }
 export default function Page() {
   return (
-    <Suspense fallback={<p>Loading private preview…</p>}>
+    <Suspense fallback={<PortfolioLoading />}>
       <Preview />
     </Suspense>
   );
