@@ -55,6 +55,7 @@ const SidebarContent: MenuItem[] = [
     heading: "Developer",
     items: [{ id: uniqueId(), name: "Developer Workspace", icon: Code2, items: [
       { id: uniqueId(), name: "Developer Overview", url: "/developer" },
+      { id: uniqueId(), name: "Portfolio CMS", url: "/apps/portfolio" },
       { id: uniqueId(), name: "AI Usage", url: "/developer/ai" },
       { id: uniqueId(), name: "Developer Feed", url: "/developer/feed" },
       { id: uniqueId(), name: "Connections", url: "/developer/connections" },

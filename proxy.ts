@@ -6,6 +6,7 @@ import { readBackendEnvironment } from '@/lib/supabase/env';
 import type { Database } from '@/types/database';
 
 export async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname === '/portfolio' || /^\/api\/portfolio\/public\/media\/[0-9a-f-]{36}$/.test(request.nextUrl.pathname)) return NextResponse.next();
   if (request.nextUrl.pathname === '/.well-known/assetlinks.json') return NextResponse.next();
   let response = NextResponse.next({ request });
   const finish = (result: NextResponse) => {

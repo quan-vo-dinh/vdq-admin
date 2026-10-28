@@ -126,7 +126,7 @@ export default function ProfileSheet() {
                 variant="secondary"
                 className="text-primary"
               >
-                <Link href={currentUser.website} target="_blank" rel="noopener noreferrer">{t("View portfolio")}</Link>
+                <Link href="/portfolio" target="_blank" rel="noopener noreferrer">{t("View portfolio")}</Link>
               </Button>
             </div>
           </div>

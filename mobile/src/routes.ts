@@ -1,5 +1,7 @@
 import { lazy } from 'react';
 export const routes = [
+  { path: "/apps/portfolio", Component: lazy(() => import("./portfolio")) },
+  { path: "/portfolio", Component: lazy(() => import("./portfolio")) },
   { path: "/apps/blog/create", Component: lazy(() => import("@/app/(dashboard-layout)/apps/blog/create/page")) },
   { path: "/apps/blog/detail/:slug", Component: lazy(() => import("@/app/(dashboard-layout)/apps/blog/detail/[slug]/page")) },
   { path: "/apps/blog/edit", Component: lazy(() => import("@/app/(dashboard-layout)/apps/blog/edit/page")) },

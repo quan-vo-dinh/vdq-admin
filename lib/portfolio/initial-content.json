@@ -1,0 +1,775 @@
+{
+  "schemaVersion": 1,
+  "sections": [
+    {
+      "id": "hero",
+      "visible": true
+    },
+    {
+      "id": "about",
+      "visible": true
+    },
+    {
+      "id": "work",
+      "visible": true
+    },
+    {
+      "id": "education",
+      "visible": true
+    },
+    {
+      "id": "certifications",
+      "visible": true
+    },
+    {
+      "id": "skills",
+      "visible": true
+    },
+    {
+      "id": "projects",
+      "visible": true
+    },
+    {
+      "id": "contact",
+      "visible": true
+    }
+  ],
+  "locales": {
+    "vi": {
+      "name": "Vo Dinh Quan",
+      "nickname": "bin",
+      "initials": "VDQ",
+      "url": "https://vodinhquan.dev",
+      "location": "TP. Hồ Chí Minh, Việt Nam",
+      "locationLink": "https://www.google.com/maps/place/Ho+Chi+Minh+City,+Vietnam",
+      "description": "Cựu dev Frontend, hiện tại đang là một thợ đụng - đụng đâu làm đó! 🛠️",
+      "summary": "Khởi điểm từ Frontend, tui dần lấn sân sang Backend và phát triển theo hướng Full-stack Engineer trong hệ sinh thái Node.JS nói chung và Next.js/Nest.js nói riêng. Từ chuyện làm cho giao diện chạy đúng, tui bắt đầu tò mò về cả hệ thống phía sau: các dịch vụ phối hợp ra sao, dữ liệu đi đâu, và khi bài toán lớn lên thì kiến trúc cần thay đổi thế nào.\n\nTui thích đào sâu công nghệ mới, khám phá các hướng kiến trúc và cách giải quyết bài toán trong hệ thống phân tán: từ microservices, giao tiếp đồng bộ và bất đồng bộ, đến kiến trúc hướng sự kiện và các mẫu thiết kế như Saga. Mục tiêu là rèn tư duy thiết kế hệ thống, hiểu những đánh đổi của từng lựa chọn và biết áp dụng giải pháp phù hợp vào các bài toán phức tạp trong thực tế.\n\nRồi môi trường tư bản gọi tên. Tui bước ra khỏi vùng an toàn, tạm rời “tiếng mẹ đẻ” JavaScript/TypeScript để dấn thân vào hệ sinh thái C#/ASP.NET Core với vai trò Full-stack Engineer (.NET/React). Thêm một hệ sinh thái để khám phá, thêm những bài toán thực tế để học cách thiết kế hệ thống cho ra hồn.",
+      "avatarUrl": "/me.jpg",
+      "skills": [
+        {
+          "name": "TypeScript",
+          "icon": "Typescript",
+          "id": "skill-0"
+        },
+        {
+          "name": "React.js",
+          "icon": "ReactLight",
+          "id": "skill-1"
+        },
+        {
+          "name": "Next.js",
+          "icon": "NextjsIconDark",
+          "id": "skill-2"
+        },
+        {
+          "name": "Tailwind CSS",
+          "icon": "Icons.tailwindcss",
+          "id": "skill-3"
+        },
+        {
+          "name": "Docker",
+          "icon": "Docker",
+          "id": "skill-4"
+        },
+        {
+          "name": "Ant Design",
+          "icon": "antdesign",
+          "id": "skill-5"
+        },
+        {
+          "name": "TanStack Query",
+          "icon": "reactquery",
+          "id": "skill-6"
+        },
+        {
+          "name": "Nest.js",
+          "icon": "nestjs",
+          "id": "skill-7"
+        },
+        {
+          "name": "WebSocket",
+          "icon": "socketdotio",
+          "id": "skill-8"
+        },
+        {
+          "name": "Redis",
+          "icon": "redis",
+          "id": "skill-9"
+        },
+        {
+          "name": "Apache Kafka",
+          "icon": "apachekafka",
+          "id": "skill-10"
+        },
+        {
+          "name": "Keycloak",
+          "icon": "keycloak",
+          "id": "skill-11"
+        },
+        {
+          "name": "MongoDB",
+          "icon": "mongodb",
+          "id": "skill-12"
+        },
+        {
+          "name": "PostgreSQL",
+          "icon": "Postgresql",
+          "id": "skill-13"
+        }
+      ],
+      "navbar": [
+        {
+          "href": "/portfolio",
+          "icon": "HomeIcon",
+          "label": "Home",
+          "id": "navbar-0"
+        },
+        {
+          "href": "https://vodinhquan.dev/moments",
+          "icon": "CameraIcon",
+          "label": "Moments",
+          "id": "navbar-1"
+        },
+        {
+          "href": "/apps/portfolio",
+          "icon": "FolderKanbanIcon",
+          "label": "Studio",
+          "id": "navbar-2"
+        },
+        {
+          "href": "https://vodinhquan.dev/blog",
+          "icon": "BookOpenIcon",
+          "label": "Blog",
+          "id": "navbar-3"
+        }
+      ],
+      "contact": {
+        "email": "vodinhquan2707.it@gmail.com",
+        "tel": "033 277 0502",
+        "social": [
+          {
+            "name": "GitHub",
+            "url": "https://github.com/quan-vo-dinh",
+            "icon": "Icons.github",
+            "navbar": false,
+            "id": "GitHub"
+          },
+          {
+            "name": "LinkedIn",
+            "url": "https://www.linkedin.com/in/vodinhquan27/",
+            "icon": "Icons.linkedin",
+            "navbar": false,
+            "id": "LinkedIn"
+          },
+          {
+            "name": "Facebook",
+            "url": "https://www.facebook.com/vdquan.27",
+            "icon": "Icons.facebook",
+            "navbar": false,
+            "id": "Facebook"
+          },
+          {
+            "name": "Instagram",
+            "url": "https://www.instagram.com/vdq.27/",
+            "icon": "Icons.instagram",
+            "navbar": false,
+            "id": "Instagram"
+          },
+          {
+            "name": "X",
+            "url": "#",
+            "icon": "Icons.x",
+            "navbar": false,
+            "id": "X"
+          },
+          {
+            "name": "Youtube",
+            "url": "#",
+            "icon": "Icons.youtube",
+            "navbar": false,
+            "id": "Youtube"
+          },
+          {
+            "name": "Send Email",
+            "url": "mailto:vodinhquan2707.it@gmail.com",
+            "icon": "Icons.email",
+            "navbar": false,
+            "id": "email"
+          }
+        ]
+      },
+      "work": [
+        {
+          "company": "i-Soft",
+          "companyContext": "Một công ty thuộc VULETECH",
+          "href": "https://i-soft.com.vn/",
+          "badges": ["Toàn thời gian"],
+          "location": "TP. Hồ Chí Minh, Việt Nam",
+          "title": "Thợ đụng - Fullstack Engineer",
+          "logoUrl": "/iSOFT_LOGO-nobackground.png",
+          "logoClassName": "bg-[#0B67B2] p-0.5",
+          "start": "09/2026",
+          "description": "• Xây dựng và duy trì ứng dụng web full-stack cho bài toán số hóa vận hành nhà máy; phát triển dịch vụ ASP.NET Core/.NET 8 cùng giao diện vận hành bằng React.js.\n• Làm việc với Entity Framework Core, PostgreSQL/MySQL, Redis và REST API để triển khai các năng lực backend và luồng nghiệp vụ dễ bảo trì.\n• Phát triển tính năng frontend/backend trên nhiều ứng dụng, trong đó phần lớn theo kiến trúc microservices; sử dụng Socket.IO khi phù hợp để hỗ trợ cập nhật vận hành theo thời gian thực và luồng dữ liệu tại xưởng, giúp minh bạch dữ liệu sản xuất và hỗ trợ quyết định hằng ngày.",
+          "id": "work-0",
+          "end": ""
+        },
+        {
+          "company": "WM Media",
+          "href": "#",
+          "badges": ["Freelance"],
+          "location": "Từ xa",
+          "title": "Lập trình viên Full-stack tự do",
+          "logoUrl": "/wm.png",
+          "start": "11/2025",
+          "end": "01/2026",
+          "description": "• Tham gia code module tính lương riêng cho doanh nghiệp trong hệ thống ERP nội bộ, xử lý đống logic lương bổng, phụ cấp, khấu trừ và kỳ lương.\n• Xây dựng và tích hợp các tính năng full-stack bằng React.js, Express.js, TypeScript, Prisma và PostgreSQL.\n• Phối hợp cùng tổ đội freelance 4 người để thiết lập quy tắc tính lương, chỉnh sửa giao diện/API và test luồng thanh toán.",
+          "id": "work-1",
+          "companyContext": "",
+          "logoClassName": ""
+        },
+        {
+          "company": "GEEK Up",
+          "href": "https://geekup.vn",
+          "badges": ["Thực tập"],
+          "location": "TP. Hồ Chí Minh, Việt Nam",
+          "title": "Thực tập sinh Frontend",
+          "logoUrl": "/geekup.jpg",
+          "start": "06/2025",
+          "end": "09/2025",
+          "description": "• Phát triển Commitment Module cho OGeek 2.0 trên cả trang User và Admin, bắt tay cùng đội Backend và Design System.\n• Xây dựng các app responsive với React.js, TypeScript, TanStack Query, Ant Design và Tailwind CSS.\n• Viết tài liệu API và hướng dẫn phát triển để tối ưu hóa việc ghép nối Frontend/Backend.\n• Làm việc chuẩn Agile Scrum, tham gia họp hành daily stand-up và quản lý code xịn xò qua GitLab/Git Flow.",
+          "id": "work-2",
+          "companyContext": "",
+          "logoClassName": ""
+        }
+      ],
+      "education": [
+        {
+          "school": "VNUHCM - University of Information Technology",
+          "href": "https://www.uit.edu.vn",
+          "degree": "Hệ thống Thông tin",
+          "logoUrl": "/uit.png",
+          "start": "09/2022",
+          "end": "09/2026",
+          "id": "education-0"
+        }
+      ],
+      "projects": [
+        {
+          "title": "QRTable – Microservices-Based SaaS POS",
+          "href": "https://github.com/quan-vo-dinh/saas-pos-microservices-qrtable",
+          "dates": "01/2026 - 06/2026",
+          "active": true,
+          "description": "Nền tảng POS SaaS kiêm gọi món bằng mã QR 'xịn xò' dành cho các mô hình kinh doanh F&B.",
+          "technologies": [
+            "Nx Monorepo",
+            "NestJS",
+            "React.js",
+            "Next.js",
+            "PostgreSQL",
+            "MongoDB",
+            "Redis",
+            "Kafka",
+            "Socket.IO",
+            "Keycloak",
+            "Docker"
+          ],
+          "links": [],
+          "image": "/qrtable.webp",
+          "video": "",
+          "id": "projects-0"
+        },
+        {
+          "title": "Multi Vendor API",
+          "href": "https://github.com/quan-vo-dinh/multi-vendor-api",
+          "dates": "2025",
+          "active": true,
+          "description": "Hệ thống Backend cho sàn thương mại điện tử đa nhà bán hàng siêu mượt.",
+          "technologies": [
+            "NestJS",
+            "PostgreSQL",
+            "Prisma",
+            "Socket.io",
+            "JWT",
+            "Resend",
+            "AWS S3",
+            "Redis",
+            "BullMQ",
+            "SePay"
+          ],
+          "links": [],
+          "image": "/multi-vendor.webp",
+          "video": "",
+          "id": "projects-1"
+        },
+        {
+          "title": "Kicks Shoes",
+          "href": "https://github.com/quan-vo-dinh/kicks-shoes",
+          "dates": "2024",
+          "active": true,
+          "description": "👟 Website bán giày hiện đại làm bằng React và Laravel, thiết kế sang xịn mịn giúp trưng bày và mua sắm siêu mượt.",
+          "technologies": ["JavaScript", "React.js", "Laravel", "MySQL"],
+          "links": [],
+          "image": "/kick.webp",
+          "video": "",
+          "id": "projects-2"
+        },
+        {
+          "title": "Car Garage Management",
+          "href": "https://github.com/quan-vo-dinh/car-garage-management",
+          "dates": "2023",
+          "active": true,
+          "description": "Ứng dụng máy tính viết bằng Java Swing giúp gara quản lý vận hành, thông tin khách hàng và kho phụ tùng gọn lẹ.",
+          "technologies": ["Java", "Java Swing", "MySQL"],
+          "links": [],
+          "image": "/car-garage.webp",
+          "video": "",
+          "id": "projects-3"
+        }
+      ],
+      "certifications": [
+        {
+          "name": "React Basics - Front-End Developer Professional Certificate",
+          "issuer": "Meta / Coursera",
+          "href": "https://coursera.org/share/c20d639cc9c1220c6173e3714dcdd085",
+          "logoUrl": "/meta.png",
+          "id": "certifications-0"
+        },
+        {
+          "name": "Advanced React - Front-End Developer Professional Certificate",
+          "issuer": "Meta / Coursera",
+          "href": "https://coursera.org/share/48edccd70ccd16f2a8894fa648facc6d",
+          "logoUrl": "/meta.png",
+          "id": "certifications-1"
+        },
+        {
+          "name": "Developing Back-End Apps with Node.js and Express",
+          "issuer": "IBM / Coursera",
+          "href": "https://coursera.org/share/ff6ddc611178fd52a39c508282f20b45",
+          "logoUrl": "/ibm.png",
+          "id": "certifications-2"
+        }
+      ],
+      "copy": {
+        "common": {
+          "home": "Trang chủ",
+          "blog": "Bài viết",
+          "moments": "Khoảnh khắc",
+          "studio": "Studio",
+          "linkedin": "LinkedIn",
+          "switchToEnglish": "Chuyển sang tiếng Anh",
+          "switchToVietnamese": "Chuyển sang tiếng Việt",
+          "switchToLight": "Chuyển sang giao diện sáng",
+          "switchToDark": "Chuyển sang giao diện tối",
+          "loading": "Đang tải...",
+          "cancel": "Hủy",
+          "delete": "Xóa",
+          "edit": "Chỉnh sửa",
+          "save": "Lưu",
+          "previous": "Trước",
+          "next": "Sau",
+          "present": "Hiện tại",
+          "photo": "ảnh",
+          "photos": "ảnh",
+          "public": "công khai",
+          "published": "đã đăng",
+          "draft": "bản nháp",
+          "archived": "đã lưu trữ",
+          "private": "riêng tư"
+        },
+        "home": {
+          "greeting": "Hi, tui là",
+          "about": "Về tui",
+          "aboutShowMore": "Xem thêm",
+          "aboutShowLess": "Thu gọn",
+          "work": "Kinh nghiệm",
+          "education": "Học vấn",
+          "certifications": "Chứng chỉ",
+          "skills": "Tuyệt kỹ",
+          "projectsEyebrow": "Dự án của tui",
+          "projectsTitle": "Mấy món tui tự tay xây dựng",
+          "projectsDescription": "Từ mấy trang web cỏ đến hệ thống chạy microservices phức tạp.",
+          "openProject": "Mở dự án",
+          "hackathons": "Hackathon",
+          "hackathonsTitle": "Thích code thâu đêm suốt sáng",
+          "hackathonsDescription": "Hồi học đại học, tui hay đi quẩy mấy giải Hackathon cùng anh em đồng bọn, chung tay code thâu đêm để tạo ra sản phẩm thực tế và học hỏi được siêu nhiều thứ.",
+          "contactEyebrow": "Liên hệ",
+          "contactTitle": "Ping tui phát để trò chuyện nha",
+          "contactBeforeLink": "Có kèo gì hay ho? Cứ nhắn cho tui",
+          "contactLink": "qua LinkedIn",
+          "contactAfterLink": "nha! Có câu hỏi cụ thể càng tốt, tui sẽ rep ngay khi online."
+        },
+        "metadata": {
+          "description": "Trang cá nhân của Võ Đình Quân, nơi tui chia sẻ hành trình làm phần mềm, các dự án và những khoảnh khắc đời thường."
+        }
+      }
+    },
+    "en": {
+      "name": "Vo Dinh Quan",
+      "nickname": "bin",
+      "initials": "VDQ",
+      "url": "https://vodinhquan.dev",
+      "location": "Ho Chi Minh City, VN",
+      "locationLink": "https://www.google.com/maps/place/Ho+Chi+Minh+City,+Vietnam",
+      "description": "Full-stack Engineer working with ASP.NET Core and React, with a foundation in Node.js, Next.js, and NestJS.",
+      "summary": "I began in frontend development and gradually expanded into backend engineering, building a full-stack foundation in the Node.js ecosystem, particularly Next.js and NestJS. That progression sparked an interest in how systems work beyond the interface: how services interact, how data flows, and how architecture evolves as requirements and complexity grow.\n\nI am focused on developing my system design skills and exploring approaches to distributed systems, including microservices, synchronous and asynchronous communication, event-driven architecture, and patterns such as Saga. I aim to understand the trade-offs behind architectural decisions and apply suitable technologies and patterns to complex, practical problems.\n\nAt i-Soft, I now work as a Full-stack Engineer with C#/ASP.NET Core and React, building applications for factory operations. Moving beyond my JavaScript and TypeScript background has broadened my technical perspective and given me new opportunities to strengthen my engineering judgment through real-world challenges.",
+      "avatarUrl": "/me.jpg",
+      "skills": [
+        {
+          "name": "TypeScript",
+          "icon": "Typescript",
+          "id": "skill-0"
+        },
+        {
+          "name": "React.js",
+          "icon": "ReactLight",
+          "id": "skill-1"
+        },
+        {
+          "name": "Next.js",
+          "icon": "NextjsIconDark",
+          "id": "skill-2"
+        },
+        {
+          "name": "Tailwind CSS",
+          "icon": "Icons.tailwindcss",
+          "id": "skill-3"
+        },
+        {
+          "name": "Docker",
+          "icon": "Docker",
+          "id": "skill-4"
+        },
+        {
+          "name": "Ant Design",
+          "icon": "antdesign",
+          "id": "skill-5"
+        },
+        {
+          "name": "TanStack Query",
+          "icon": "reactquery",
+          "id": "skill-6"
+        },
+        {
+          "name": "Nest.js",
+          "icon": "nestjs",
+          "id": "skill-7"
+        },
+        {
+          "name": "WebSocket",
+          "icon": "socketdotio",
+          "id": "skill-8"
+        },
+        {
+          "name": "Redis",
+          "icon": "redis",
+          "id": "skill-9"
+        },
+        {
+          "name": "Apache Kafka",
+          "icon": "apachekafka",
+          "id": "skill-10"
+        },
+        {
+          "name": "Keycloak",
+          "icon": "keycloak",
+          "id": "skill-11"
+        },
+        {
+          "name": "MongoDB",
+          "icon": "mongodb",
+          "id": "skill-12"
+        },
+        {
+          "name": "PostgreSQL",
+          "icon": "Postgresql",
+          "id": "skill-13"
+        }
+      ],
+      "navbar": [
+        {
+          "href": "/portfolio",
+          "icon": "HomeIcon",
+          "label": "Home",
+          "id": "navbar-0"
+        },
+        {
+          "href": "https://vodinhquan.dev/moments",
+          "icon": "CameraIcon",
+          "label": "Moments",
+          "id": "navbar-1"
+        },
+        {
+          "href": "/apps/portfolio",
+          "icon": "FolderKanbanIcon",
+          "label": "Studio",
+          "id": "navbar-2"
+        },
+        {
+          "href": "https://vodinhquan.dev/blog",
+          "icon": "BookOpenIcon",
+          "label": "Blog",
+          "id": "navbar-3"
+        }
+      ],
+      "contact": {
+        "email": "vodinhquan2707.it@gmail.com",
+        "tel": "033 277 0502",
+        "social": [
+          {
+            "name": "GitHub",
+            "url": "https://github.com/quan-vo-dinh",
+            "icon": "Icons.github",
+            "navbar": false,
+            "id": "GitHub"
+          },
+          {
+            "name": "LinkedIn",
+            "url": "https://www.linkedin.com/in/vodinhquan27/",
+            "icon": "Icons.linkedin",
+            "navbar": false,
+            "id": "LinkedIn"
+          },
+          {
+            "name": "Facebook",
+            "url": "https://www.facebook.com/vdquan.27",
+            "icon": "Icons.facebook",
+            "navbar": false,
+            "id": "Facebook"
+          },
+          {
+            "name": "Instagram",
+            "url": "https://www.instagram.com/vdq.27/",
+            "icon": "Icons.instagram",
+            "navbar": false,
+            "id": "Instagram"
+          },
+          {
+            "name": "X",
+            "url": "#",
+            "icon": "Icons.x",
+            "navbar": false,
+            "id": "X"
+          },
+          {
+            "name": "Youtube",
+            "url": "#",
+            "icon": "Icons.youtube",
+            "navbar": false,
+            "id": "Youtube"
+          },
+          {
+            "name": "Send Email",
+            "url": "mailto:vodinhquan2707.it@gmail.com",
+            "icon": "Icons.email",
+            "navbar": false,
+            "id": "email"
+          }
+        ]
+      },
+      "work": [
+        {
+          "company": "i-Soft",
+          "companyContext": "A VULETECH company",
+          "href": "https://i-soft.com.vn/",
+          "badges": ["Full-time"],
+          "location": "Ho Chi Minh City, VN",
+          "title": "Fullstack Engineer",
+          "logoUrl": "/iSOFT_LOGO-nobackground.png",
+          "logoClassName": "bg-[#0B67B2] p-0.5",
+          "start": "Sep 2026",
+          "description": "• Build and maintain full-stack applications for factory digitization, developing ASP.NET Core/.NET 8 services and React.js operational interfaces.\n• Work with Entity Framework Core, PostgreSQL/MySQL, Redis, and REST APIs to implement maintainable backend capabilities and business workflows.\n• Contribute to frontend and backend features across applications, most of which follow a microservices architecture; use Socket.IO where appropriate to support real-time operational updates and shop-floor data flows that improve production-data visibility and daily decisions.",
+          "id": "work-0",
+          "end": ""
+        },
+        {
+          "company": "WM Media",
+          "href": "#",
+          "badges": ["Freelance"],
+          "location": "Remote",
+          "title": "Freelance Full-stack",
+          "logoUrl": "/wm.png",
+          "start": "Nov 2025",
+          "end": "Jan 2026",
+          "description": "• Contributed to a company-specific payroll module in an internal custom ERP system, focusing on salary records, allowances, deductions, and payroll periods.\n• Built and integrated basic full-stack features using React.js, Express.js, TypeScript, Prisma, and PostgreSQL.\n• Collaborated in a 4-member freelance team on payroll rules, UI/API changes, bug fixes, and payroll flow testing.",
+          "id": "work-1",
+          "companyContext": "",
+          "logoClassName": ""
+        },
+        {
+          "company": "GEEK Up",
+          "href": "https://geekup.vn",
+          "badges": ["Internship"],
+          "location": "Ho Chi Minh City, VN",
+          "title": "Frontend Intern",
+          "logoUrl": "/geekup.jpg",
+          "start": "Jun 2025",
+          "end": "Sep 2025",
+          "description": "• Engineered the Commitment Module for OGeek 2.0 across User/Admin sites in collaboration with BE and DS teams.\n• Developed responsive web applications using React.js, TypeScript, TanStack Query, Ant Design, and Tailwind CSS.\n• Wrote API specs and development guidelines to streamline frontend/backend integration.\n• Delivered features consistently in an Agile Scrum environment, including sprint planning and daily stand-ups.\n• Maintained high code quality via GitLab workflows, including Git Flow, merge requests, and issue tracking.",
+          "id": "work-2",
+          "companyContext": "",
+          "logoClassName": ""
+        }
+      ],
+      "education": [
+        {
+          "school": "VNUHCM - University of Information Technology",
+          "href": "https://www.uit.edu.vn",
+          "degree": "Information Systems",
+          "logoUrl": "/uit.png",
+          "start": "Sep 2022",
+          "end": "Oct 2026",
+          "id": "education-0"
+        }
+      ],
+      "projects": [
+        {
+          "title": "QRTable – Microservices-Based SaaS POS",
+          "href": "https://github.com/quan-vo-dinh/saas-pos-microservices-qrtable",
+          "dates": "Jan 2026 - Jun 2026",
+          "active": true,
+          "description": "SaaS POS & QR Ordering platform for F&B businesses.",
+          "technologies": [
+            "Nx Monorepo",
+            "NestJS",
+            "React.js",
+            "Next.js",
+            "PostgreSQL",
+            "MongoDB",
+            "Redis",
+            "Kafka",
+            "Socket.IO",
+            "Keycloak",
+            "Docker"
+          ],
+          "links": [],
+          "image": "/qrtable.webp",
+          "video": "",
+          "id": "projects-0"
+        },
+        {
+          "title": "Multi Vendor API",
+          "href": "https://github.com/quan-vo-dinh/multi-vendor-api",
+          "dates": "2025",
+          "active": true,
+          "description": "Backend for a multi-vendor e-commerce system.",
+          "technologies": [
+            "NestJS",
+            "PostgreSQL",
+            "Prisma",
+            "Socket.io",
+            "JWT",
+            "Resend",
+            "AWS S3",
+            "Redis",
+            "BullMQ",
+            "SePay"
+          ],
+          "links": [],
+          "image": "/multi-vendor.webp",
+          "video": "",
+          "id": "projects-1"
+        },
+        {
+          "title": "Kicks Shoes",
+          "href": "https://github.com/quan-vo-dinh/kicks-shoes",
+          "dates": "2024",
+          "active": true,
+          "description": "👟 Sleek and modern e-commerce shoe store website built with React and Laravel, designed for showcasing and selling shoes.",
+          "technologies": ["JavaScript", "React.js", "Laravel", "MySQL"],
+          "links": [],
+          "image": "/kick.webp",
+          "video": "",
+          "id": "projects-2"
+        },
+        {
+          "title": "Car Garage Management",
+          "href": "https://github.com/quan-vo-dinh/car-garage-management",
+          "dates": "2023",
+          "active": true,
+          "description": "A desktop application built entirely in Java and Java Swing for managing car garage operations, customer records, and inventory.",
+          "technologies": ["Java", "Java Swing", "MySQL"],
+          "links": [],
+          "image": "/car-garage.webp",
+          "video": "",
+          "id": "projects-3"
+        }
+      ],
+      "certifications": [
+        {
+          "name": "React Basics - Front-End Developer Professional Certificate",
+          "issuer": "Meta / Coursera",
+          "href": "https://coursera.org/share/c20d639cc9c1220c6173e3714dcdd085",
+          "logoUrl": "/meta.png",
+          "id": "certifications-0"
+        },
+        {
+          "name": "Advanced React - Front-End Developer Professional Certificate",
+          "issuer": "Meta / Coursera",
+          "href": "https://coursera.org/share/48edccd70ccd16f2a8894fa648facc6d",
+          "logoUrl": "/meta.png",
+          "id": "certifications-1"
+        },
+        {
+          "name": "Developing Back-End Apps with Node.js and Express",
+          "issuer": "IBM / Coursera",
+          "href": "https://coursera.org/share/ff6ddc611178fd52a39c508282f20b45",
+          "logoUrl": "/ibm.png",
+          "id": "certifications-2"
+        }
+      ],
+      "copy": {
+        "common": {
+          "home": "Home",
+          "blog": "Blog",
+          "moments": "Moments",
+          "studio": "Studio",
+          "linkedin": "LinkedIn",
+          "switchToEnglish": "Switch to English",
+          "switchToVietnamese": "Switch to Vietnamese",
+          "switchToLight": "Switch to light theme",
+          "switchToDark": "Switch to dark theme",
+          "loading": "Loading...",
+          "cancel": "Cancel",
+          "delete": "Delete",
+          "edit": "Edit",
+          "save": "Save",
+          "previous": "Previous",
+          "next": "Next",
+          "present": "Present",
+          "photo": "photo",
+          "photos": "photos",
+          "public": "public",
+          "published": "published",
+          "draft": "draft",
+          "archived": "archived",
+          "private": "private"
+        },
+        "home": {
+          "greeting": "Hi, I'm",
+          "about": "About",
+          "aboutShowMore": "Read more",
+          "aboutShowLess": "Show less",
+          "work": "Work Experience",
+          "education": "Education",
+          "certifications": "Certifications",
+          "skills": "Skills",
+          "projectsEyebrow": "My Projects",
+          "projectsTitle": "Check out my latest work",
+          "projectsDescription": "I've worked on projects ranging from small websites to complex web systems. Here are a few favorites.",
+          "openProject": "Open project",
+          "hackathons": "Hackathons",
+          "hackathonsTitle": "I like building things",
+          "hackathonsDescription": "During university, I joined hackathons where motivated teams built useful products in just a few days. They were a great way to learn by making.",
+          "contactEyebrow": "Contact",
+          "contactTitle": "Let's get in touch",
+          "contactBeforeLink": "Want to chat? Send me",
+          "contactLink": "a message on LinkedIn",
+          "contactAfterLink": "with a direct question and I'll respond whenever I can."
+        },
+        "metadata": {
+          "description": "Vo Dinh Quan's personal website for software engineering work, projects, writing, and everyday moments."
+        }
+      }
+    }
+  }
+}

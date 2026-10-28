@@ -12,7 +12,7 @@
 @source not "../.next";
 @source not "../test-results";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.dark *):not(:where(.portfolio-surface:not(.dark) *)));
 
 @custom-variant style-lyra (&:where(.style-lyra *));
 

@@ -5,13 +5,6 @@ export type Database = {
 
   "public": {
           Tables: {
-            "finance_projection_plans": {
-              ComputedFields: never
-              Row: {id: string; owner_id: string; created_at: string; updated_at: string; revision: number; plan: Json}
-              Insert: {id: string; owner_id?: string; created_at?: string; updated_at?: string; revision?: number; plan: Json}
-              Update: {id?: string; owner_id?: string; created_at?: string; updated_at?: string; revision?: number; plan?: Json}
-              Relationships: []
-            },
             "calendar_events": {
                   Row: {
                     "attendees": string,"category": string,"color": string,"created_at": string,"description": string,"ends_at": string | null,"ends_on": string | null,"id": string,"kind": string,"location": string,"owner_id": string,"priority": string,"revision": number,"starts_at": string | null,"starts_on": string | null,"status": string,"title": string,"updated_at": string
@@ -134,7 +127,7 @@ isOneToOne: true
                   }
                   ComputedFields: never
                   Insert: {
-                    "code": string,"deleted_at"?: string,"owner_id"?: string
+                    "code": string,"deleted_at"?: string,"owner_id": string
                   }
                   Update: {
                     "code"?: string,"deleted_at"?: string,"owner_id"?: string
@@ -192,6 +185,20 @@ isOneToOne: false
                   }
                   Update: {
                     "created_at"?: string,"id"?: string,"owner_id"?: string,"payload_hash"?: string,"result"?: number,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"finance_projection_plans": {
+                  Row: {
+                    "created_at": string,"id": string,"owner_id": string,"plan": NonNullable<Json>,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id": string,"owner_id"?: string,"plan": NonNullable<Json>,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"owner_id"?: string,"plan"?: NonNullable<Json>,"revision"?: number,"updated_at"?: string
                   }
                   Relationships: [
 
@@ -354,6 +361,54 @@ isOneToOne: false
                   }
                   Update: {
                     "color"?: string,"content"?: NonNullable<Json>,"created_at"?: string,"id"?: string,"note_at"?: string,"owner_id"?: string,"revision"?: number,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"portfolio_media": {
+                  Row: {
+                    "bytes": number,"created_at": string,"id": string,"mime": string,"owner_id": string,"path": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "bytes": number,"created_at"?: string,"id": string,"mime": string,"owner_id"?: string,"path": string
+                  }
+                  Update: {
+                    "bytes"?: number,"created_at"?: string,"id"?: string,"mime"?: string,"owner_id"?: string,"path"?: string
+                  }
+                  Relationships: [
+
+                  ]
+                },"portfolio_sites": {
+                  Row: {
+                    "created_at": string,"draft": NonNullable<Json>,"id": string,"owner_id": string,"published_id": string | null,"revision": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"draft": NonNullable<Json>,"id"?: string,"owner_id"?: string,"published_id"?: string | null,"revision"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"draft"?: NonNullable<Json>,"id"?: string,"owner_id"?: string,"published_id"?: string | null,"revision"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "portfolio_current_version"
+      columns: ["owner_id","published_id"]
+isOneToOne: false
+      referencedRelation: "portfolio_versions"
+      referencedColumns: ["owner_id","id"]
+    }
+                  ]
+                },"portfolio_versions": {
+                  Row: {
+                    "created_at": string,"document": NonNullable<Json>,"draft_revision": number,"id": string,"owner_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"document": NonNullable<Json>,"draft_revision": number,"id"?: string,"owner_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"document"?: NonNullable<Json>,"draft_revision"?: number,"id"?: string,"owner_id"?: string
                   }
                   Relationships: [
 
@@ -647,11 +702,11 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
-"finance_import":
-{ Args: { "p_id": string,"p_rows": Json }; Returns: number
-                           },
 "finance_delete_category":
 { Args: { "p_category_id": string,"p_revision": number }; Returns: string
+                           },
+"finance_import":
+{ Args: { "p_id": string,"p_rows": Json }; Returns: number
                            },
 "finance_snapshot":
 { Args: Record<PropertyKey, never>; Returns: Json
@@ -675,6 +730,46 @@ isOneToOne: false
                           SetofOptions: {
         from: "*"
         to: "today_items"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"publish_portfolio":
+{ Args: { "expected_revision": number,"restore_id"?: string }; Returns: {
+              "created_at": string,
+"document": NonNullable<Json>,
+"draft_revision": number,
+"id": string,
+"owner_id": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "portfolio_versions"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"read_published_portfolio":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "created_at": string,"document": Json,"id": string
+            }[]
+                           },
+"read_published_portfolio_media":
+{ Args: { "media_id": string }; Returns: {
+              "path": string
+            }[]
+                           },
+"save_portfolio":
+{ Args: { "doc": Json,"expected_revision": number }; Returns: {
+              "created_at": string,
+"draft": NonNullable<Json>,
+"id": string,
+"owner_id": string,
+"published_id": string | null,
+"revision": number,
+"updated_at": string
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "portfolio_sites"
         isOneToOne: true
         isSetofReturn: false
       } }
