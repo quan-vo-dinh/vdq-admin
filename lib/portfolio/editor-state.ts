@@ -32,6 +32,23 @@ export function mirrorResume(
   target.skills = mirror(source.skills, target.skills);
   target.navbar = mirror(source.navbar, target.navbar);
   target.contact.social = mirror(source.contact.social, target.contact.social);
+  // Confirmed item deletion also removes its localized notes, keeping them reachable
+  // and preventing orphaned notes from consuming the per-language limit.
+  for (const key of ["work", "projects"] as const) {
+    const remaining = new Set(source[key].map((item) => item.id));
+    const removed = new Set(
+      document.locales[locale][key]
+        .filter((item) => !remaining.has(item.id))
+        .map((item) => item.id),
+    );
+    for (const localized of [source, target]) {
+      if (localized.annotations && removed.size)
+        localized.annotations = localized.annotations.filter(
+          (note) =>
+            note.field !== `${key}.description` || !removed.has(note.itemId),
+        );
+    }
+  }
   return next;
 }
 

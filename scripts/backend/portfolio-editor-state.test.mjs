@@ -50,3 +50,20 @@ test('restored publication is compared by document even when its recorded draft 
  assert.equal(hasUnpublishedChanges(draft,'live',undefined),true,'unknown live content cannot be labelled up to date');
  assert.equal(hasUnpublishedChanges(null,null,null),false,'loading has no editable draft');
 });
+
+test('confirmed work/project deletion removes only associated notes in both locales',()=>{
+ const doc=fixture();
+ for (const locale of ['vi','en']) doc.locales[locale].annotations=[
+  {id:locale+'-work',field:'work.description',itemId:doc.locales[locale].work[0].id},
+  {id:locale+'-project',field:'projects.description',itemId:doc.locales[locale].projects[0].id},
+  {id:locale+'-keep-work',field:'work.description',itemId:doc.locales[locale].work[1].id},
+  {id:locale+'-summary',field:'summary',itemId:''},
+ ];
+ const resume=structuredClone(doc.locales.vi);
+ resume.work=resume.work.slice(1); resume.projects=resume.projects.slice(1);
+ const next=mirrorResume(doc,'vi',resume);
+ for(const locale of ['vi','en']) assert.deepEqual(next.locales[locale].annotations.map(x=>x.id),[locale+'-keep-work',locale+'-summary']);
+ assert.equal(doc.locales.vi.annotations.length,4,'source is unchanged');
+ const edited=structuredClone(next.locales.vi);edited.summary='Changed prose';
+ assert.deepEqual(mirrorResume(next,'vi',edited).locales.vi.annotations,edited.annotations,'ordinary prose changes retain notes');
+});

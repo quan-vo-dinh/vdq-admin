@@ -14,7 +14,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { usePortfolioEditor } from "@/app/context/portfolio-context";
-import type { Resume } from "@/lib/portfolio/model";
+import type { PortfolioAnnotation, Resume } from "@/lib/portfolio/model";
 import { resumeSchema } from "@/lib/portfolio/model";
 import { iconRegistry } from "@/components/portfolio/icon-registry";
 import { cn } from "@/lib/utils";
@@ -58,6 +58,8 @@ import {
   TextField,
   useEditorCopy,
 } from "./editor-fields";
+
+import { RichTextField } from "./rich-text-field";
 
 export type CollectionKey =
   "work" | "education" | "certifications" | "skills" | "projects";
@@ -299,9 +301,15 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
     [formErrors, setFormErrors] = useState<Record<string, string>>({}),
     [cancelConfirm, setCancelConfirm] = useState(false),
     [original, setOriginal] = useState("");
+  const [editingAnnotations, setEditingAnnotations] = useState<
+    PortfolioAnnotation[]
+  >([]);
   const resume = store.doc!.locales[store.locale],
     entries = resume[section] as Entry[];
-  const dialogDirty = !!editing && JSON.stringify(editing) !== original;
+  const dialogDirty =
+    !!editing &&
+    JSON.stringify({ entry: editing, annotations: editingAnnotations }) !==
+      original;
   useEffect(() => {
     if (!dialogDirty) return;
     const guard = (event: BeforeUnloadEvent) => {
@@ -318,11 +326,13 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
     );
   function edit(entry: Entry) {
     setEditing(structuredClone(entry));
-    setOriginal(JSON.stringify(entry));
+    const notes = structuredClone(resume.annotations ?? []);
+    setEditingAnnotations(notes);
+    setOriginal(JSON.stringify({ entry, annotations: notes }));
     setFormErrors({});
   }
   function close() {
-    if (editing && JSON.stringify(editing) !== original) setCancelConfirm(true);
+    if (dialogDirty) setCancelConfirm(true);
     else setEditing(null);
   }
   function save() {
@@ -334,13 +344,25 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
     const next = entries.some((item) => item.id === editing.id)
       ? entries.map((item) => (item.id === editing.id ? editing : item))
       : [...entries, editing];
-    const parsed = resumeSchema.safeParse({ ...resume, [section]: next });
+    const nextAnnotations = editingAnnotations;
+    const parsed = resumeSchema.safeParse({
+      ...resume,
+      [section]: next,
+      ...(resume.annotations || nextAnnotations.length
+        ? { annotations: nextAnnotations }
+        : {}),
+    });
     if (!parsed.success)
       for (const issue of parsed.error.issues)
         if (issue.path[0] === section)
           errors[String(issue.path[2])] = t(
             "Giá trị không hợp lệ. Kiểm tra độ dài hoặc định dạng liên kết https://.",
             "Invalid value. Check the length or use an https:// URL.",
+          );
+        else
+          errors.annotations = t(
+            "Kiểm tra chú thích: tối đa 100 thẻ cho mỗi ngôn ngữ và nội dung phải hợp lệ.",
+            "Review tooltips: up to 100 cards per language with valid content.",
           );
     setFormErrors(errors);
     if (Object.keys(errors).length) {
@@ -351,7 +373,16 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
       );
       return;
     }
-    commit(next);
+    store.updateResume(
+      (current) =>
+        ({
+          ...current,
+          [section]: next,
+          ...(current.annotations || nextAnnotations.length
+            ? { annotations: nextAnnotations }
+            : {}),
+        }) as Resume,
+    );
     setEditing(null);
   }
   function move(index: number, by: number) {
@@ -386,7 +417,8 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
               "flex flex-col divide-y",
               (section === "skills" || section === "projects") &&
                 "grid grid-cols-1 gap-4 divide-y-0 @xl/collection:grid-cols-2",
-              section === "skills" && "@3xl/collection:grid-cols-3 @4xl/collection:grid-cols-4",
+              section === "skills" &&
+                "@3xl/collection:grid-cols-3 @4xl/collection:grid-cols-4",
             )}
           >
             {entries.length ? (
@@ -617,33 +649,45 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
                       "grid items-start gap-5 sm:grid-cols-2",
               )}
             >
-              {spec.fields.map((field) => (
-                <TextField
-                  key={field.key}
-                  className={cn(
+              {spec.fields.map((field) => {
+                const props = {
+                  className: cn(
                     (field.multiline || field.lines) &&
                       section !== "projects" &&
                       "sm:col-span-2",
-                  )}
-                  label={t(field.vi, field.en)}
-                  error={formErrors[field.key]}
-                  value={
-                    field.lines
-                      ? ((values[field.key] as string[]) ?? []).join("\n")
-                      : String(values[field.key] ?? "")
-                  }
-                  onChange={(value) =>
+                  ),
+                  label: t(field.vi, field.en),
+                  error: formErrors[field.key],
+                  value: field.lines
+                    ? ((values[field.key] as string[]) ?? []).join("\n")
+                    : String(values[field.key] ?? ""),
+                  onChange: (value: string) =>
                     set(
                       field.key,
                       field.lines ? value.split("\n").filter(Boolean) : value,
-                    )
-                  }
-                  multiline={field.multiline || field.lines}
-                  description={field.hint && t(...field.hint)}
-                  placeholder={field.placeholder}
-                  rows={field.multiline ? 4 : 3}
-                />
-              ))}
+                    ),
+                  multiline: field.multiline || field.lines,
+                  description: field.hint && t(...field.hint),
+                  placeholder: field.placeholder,
+                  rows: field.multiline ? 4 : 3,
+                };
+                return field.key === "description" &&
+                  (section === "work" || section === "projects") &&
+                  editing ? (
+                  <RichTextField
+                    key={field.key}
+                    {...props}
+                    target={{
+                      field: `${section}.description`,
+                      itemId: editing.id,
+                    }}
+                    annotations={editingAnnotations}
+                    onAnnotationsChange={setEditingAnnotations}
+                  />
+                ) : (
+                  <TextField key={field.key} {...props} />
+                );
+              })}
             </FieldGroup>
             {section === "skills" && (
               <IconField
@@ -848,26 +892,31 @@ function CollectionHeadings({ section }: { section: CollectionKey }) {
       </CardHeader>
       <CardContent>
         <FieldGroup className="grid gap-5 sm:grid-cols-2">
-          {fields.map(([key, label]) => (
-            <TextField
-              key={key}
-              className={
-                key === "projectsDescription" ? "sm:col-span-2" : undefined
-              }
-              label={label}
-              value={resume.copy.home[key] ?? ""}
-              onChange={(value) =>
+          {fields.map(([key, label]) => {
+            const props = {
+              label,
+              className:
+                key === "projectsDescription" ? "sm:col-span-2" : undefined,
+              value: resume.copy.home[key] ?? "",
+              onChange: (value: string) =>
                 store.updateResume((current) => ({
                   ...current,
                   copy: {
                     ...current.copy,
                     home: { ...current.copy.home, [key]: value },
                   },
-                }))
-              }
-              multiline={key === "projectsDescription"}
-            />
-          ))}
+                })),
+            };
+            return key === "projectsDescription" ? (
+              <RichTextField
+                key={key}
+                {...props}
+                target={{ field: "copy.home.projectsDescription" }}
+              />
+            ) : (
+              <TextField key={key} {...props} />
+            );
+          })}
         </FieldGroup>
       </CardContent>
     </Card>

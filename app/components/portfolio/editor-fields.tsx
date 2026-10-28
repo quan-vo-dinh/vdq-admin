@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode, type Ref } from "react";
 import Image from "next/image";
 import { Check, ImagePlus, Upload } from "lucide-react";
 import { usePortfolioEditor } from "@/app/context/portfolio-context";
@@ -54,6 +54,10 @@ export function TextField({
   rows = 4,
   error: explicitError,
   className,
+  toolbar,
+  footer,
+  textareaRef,
+  onTextSelection,
 }: {
   label: string;
   value: string;
@@ -65,6 +69,10 @@ export function TextField({
   rows?: number;
   error?: string;
   className?: string;
+  toolbar?: ReactNode;
+  footer?: ReactNode;
+  textareaRef?: Ref<HTMLTextAreaElement>;
+  onTextSelection?: (start: number, end: number) => void;
 }) {
   const id = useId();
   const { fieldErrors, busy } = usePortfolioEditor();
@@ -83,13 +91,29 @@ export function TextField({
   return (
     <Field data-invalid={!!error} className={className}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      {multiline ? <Textarea {...props} rows={rows} /> : <Input {...props} />}
+      {toolbar}
+      {multiline ? (
+        <Textarea
+          {...props}
+          ref={textareaRef}
+          rows={rows}
+          onSelect={(event) =>
+            onTextSelection?.(
+              event.currentTarget.selectionStart,
+              event.currentTarget.selectionEnd,
+            )
+          }
+        />
+      ) : (
+        <Input {...props} />
+      )}
       {description && (
         <FieldDescription id={!error ? `${id}-help` : undefined}>
           {description}
         </FieldDescription>
       )}
       {error && <FieldError id={`${id}-help`}>{error}</FieldError>}
+      {footer}
     </Field>
   );
 }

@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import type { Resume } from "@/lib/portfolio/model";
 import { TextField, ImageField, useEditorCopy } from "./editor-fields";
+import { RichTextField } from "./rich-text-field";
 function FormCard({
   title,
   description,
@@ -56,38 +57,50 @@ export function ResumeEditor({
     label: string,
     description?: string,
     multiline = false,
-  ) => (
-    <TextField
-      key={key}
-      label={label}
-      value={String(resume[key] ?? "")}
-      onChange={(value) =>
-        store.updateResume((current) => ({ ...current, [key]: value }))
-      }
-      path={`locales.${store.locale}.${key}`}
-      description={description}
-      multiline={multiline}
-      rows={key === "summary" ? 12 : 4}
-    />
-  );
-  function copy(key: string, label: string, multiline = false) {
-    return (
-      <TextField
-        key={key}
-        label={label}
-        value={resume.copy.home[key] ?? ""}
-        onChange={(value) =>
-          store.updateResume((current) => ({
-            ...current,
-            copy: {
-              ...current.copy,
-              home: { ...current.copy.home, [key]: value },
-            },
-          }))
-        }
-        multiline={multiline}
-      />
+  ) => {
+    const props = {
+      label,
+      value: String(resume[key] ?? ""),
+      onChange: (value: string) =>
+        store.updateResume((current) => ({ ...current, [key]: value })),
+      path: `locales.${store.locale}.${key}`,
+      description,
+      multiline,
+      rows: key === "summary" ? 8 : 4,
+    };
+    return key === "description" || key === "summary" ? (
+      <RichTextField key={key} {...props} target={{ field: key }} />
+    ) : (
+      <TextField key={key} {...props} />
     );
+  };
+  function copy(key: string, label: string, multiline = false) {
+    const props = {
+      label,
+      value: resume.copy.home[key] ?? "",
+      onChange: (value: string) =>
+        store.updateResume((current) => ({
+          ...current,
+          copy: {
+            ...current.copy,
+            home: { ...current.copy.home, [key]: value },
+          },
+        })),
+      multiline,
+    };
+    if (
+      key === "projectsDescription" ||
+      key === "contactBeforeLink" ||
+      key === "contactAfterLink"
+    )
+      return (
+        <RichTextField
+          key={key}
+          {...props}
+          target={{ field: `copy.home.${key}` }}
+        />
+      );
+    return <TextField key={key} {...props} />;
   }
   if (section === "identity")
     return (

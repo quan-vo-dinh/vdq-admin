@@ -68,6 +68,10 @@ function usePortfolio() {
 export function useTheme() {
   return useContext(Theme);
 }
+export function usePortfolioText() {
+  const { document, locale, preview } = usePortfolio();
+  return { resume: document.locales[locale], preview };
+}
 export function useI18n() {
   const { document, locale } = usePortfolio();
   return { locale, dictionary: document.locales[locale].copy };

@@ -5,7 +5,7 @@ import { cn } from "@/lib/portfolio/ui-utils";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import Markdown from "react-markdown";
+import { PortfolioText } from "./annotated-text";
 import { useI18n } from "@/components/portfolio/context";
 import Image from "next/image";
 import { normalizeImageSrc } from "@/lib/portfolio/ui-utils";
@@ -33,6 +33,7 @@ function ProjectImage({ src, alt }: { src: string; alt: string }) {
 }
 
 interface Props {
+  id: string;
   title: string;
   href?: string;
   description: string;
@@ -50,6 +51,7 @@ interface Props {
 }
 
 export function ProjectCard({
+  id,
   title,
   href,
   description,
@@ -130,7 +132,11 @@ export function ProjectCard({
           </Link>
         </div>
         <div className="text-xs flex-1 prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
-          <Markdown>{description}</Markdown>
+          <PortfolioText
+            field="projects.description"
+            itemId={id}
+            text={description}
+          />
         </div>
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-auto">

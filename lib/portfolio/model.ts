@@ -133,7 +133,44 @@ const project = z.strictObject({
   video: z.literal(""),
 });
 const copyMap = z.record(z.string().regex(/^[a-zA-Z]+$/), z.string().max(2000));
+export const annotationFields = [
+  "description",
+  "summary",
+  "work.description",
+  "projects.description",
+  "copy.home.projectsDescription",
+  "copy.home.contactBeforeLink",
+  "copy.home.contactAfterLink",
+] as const;
+export const annotationSchema = z
+  .strictObject({
+    id,
+    field: z.enum(annotationFields),
+    itemId: z.union([z.literal(""), id]),
+    quote: text.min(1).max(500).refine(value=>value.length<=500,"Quote is too long"),
+    occurrence: z.number().int().min(1).max(1000),
+    title: text.max(160).refine(value=>value.length<=160,"Title is too long"),
+    body: text.max(2000).refine(value=>value.length<=2000,"Body is too long"),
+    image,
+    href: url,
+    appearance: z.enum(["highlight", "underline"]),
+    enabled: z.boolean(),
+  })
+  .superRefine((annotation, context) => {
+    const itemField =
+      annotation.field === "work.description" ||
+      annotation.field === "projects.description";
+    if (itemField === (annotation.itemId === ""))
+      context.addIssue({
+        code: "custom",
+        path: ["itemId"],
+        message:
+          "Choose an item for work or project text; leave item empty for other fields",
+      });
+  });
+export type PortfolioAnnotation = z.infer<typeof annotationSchema>;
 export const resumeSchema = z.strictObject({
+  annotations: list(annotationSchema).optional(),
   name: text,
   nickname: text,
   initials: text,

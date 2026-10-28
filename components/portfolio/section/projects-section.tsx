@@ -3,6 +3,7 @@ import BlurFade from "@/components/portfolio/magicui/blur-fade";
 import { ProjectCard } from "@/components/portfolio/project-card";
 import { usePortfolioData } from "@/components/portfolio/context";
 import { useI18n } from "@/components/portfolio/context";
+import { PortfolioText } from "../annotated-text";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -27,9 +28,10 @@ export default function ProjectsSection() {
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
               {dictionary.home.projectsTitle}
             </h2>
-            <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed text-balance text-center">
-              {dictionary.home.projectsDescription}
-            </p>
+            <PortfolioText
+              field="copy.home.projectsDescription"
+              className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed text-balance text-center"
+            />
           </div>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto auto-rows-fr">
@@ -42,6 +44,7 @@ export default function ProjectsSection() {
                 className="h-full"
               >
                 <ProjectCard
+                  id={project.id}
                   href={project.href}
                   key={project.id}
                   title={project.title}

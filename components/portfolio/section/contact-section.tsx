@@ -6,6 +6,7 @@ import { useI18n } from "@/components/portfolio/context";
 import { Icons } from "@/components/portfolio/icons";
 import { buttonVariants } from "@/components/portfolio/ui/button";
 import { cn } from "@/lib/portfolio/ui-utils";
+import { PortfolioText } from "../annotated-text";
 
 export default function ContactSection() {
   const DATA = usePortfolioData();
@@ -34,7 +35,7 @@ export default function ContactSection() {
           {dictionary.home.contactTitle}
         </h2>
         <p className="mx-auto max-w-lg text-muted-foreground text-balance">
-          {dictionary.home.contactBeforeLink}{" "}
+          <PortfolioText field="copy.home.contactBeforeLink" inline />{" "}
           <Link
             href={DATA.contact.social.LinkedIn.url}
             target="_blank"
@@ -43,7 +44,7 @@ export default function ContactSection() {
           >
             {dictionary.home.contactLink}
           </Link>{" "}
-          {dictionary.home.contactAfterLink}
+          <PortfolioText field="copy.home.contactAfterLink" inline />
         </p>
         <div className="flex flex-wrap justify-center gap-3 mt-2">
           <Link

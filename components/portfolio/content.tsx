@@ -1,7 +1,6 @@
 "use client";
 import { Children, isValidElement } from "react";
 import BlurFade from "@/components/portfolio/magicui/blur-fade";
-import BlurFadeText from "@/components/portfolio/magicui/blur-fade-text";
 import { DiaTextReveal } from "@/components/portfolio/ui/dia-text-reveal";
 import {
   Avatar,
@@ -11,7 +10,7 @@ import {
 import { useSections, usePortfolioData } from "@/components/portfolio/context";
 import { useI18n } from "@/components/portfolio/context";
 import Link from "next/link";
-import Markdown from "react-markdown";
+import { PortfolioText } from "./annotated-text";
 import ContactSection from "@/components/portfolio/section/contact-section";
 import ProjectsSection from "@/components/portfolio/section/projects-section";
 import WorkSection from "@/components/portfolio/section/work-section";
@@ -25,7 +24,10 @@ const BLUR_FADE_DELAY = 0.04;
 export default function Content() {
   const { dictionary, locale } = useI18n();
   const data = usePortfolioData();
-  const [summaryPreview, ...summaryDetails] = data.summary.split(/\n\s*\n/);
+  const summaryBreak = /\n\s*\n/.exec(data.summary);
+  const summaryOffset = summaryBreak
+    ? summaryBreak.index + summaryBreak[0].length
+    : 0;
 
   const sections = useSections();
   const content = (
@@ -50,11 +52,12 @@ export default function Content() {
                   </span>
                 </BlurFade>
               </div>
-              <BlurFadeText
-                className="text-muted-foreground max-w-[600px] md:text-lg lg:text-xl"
-                delay={BLUR_FADE_DELAY}
-                text={data.description}
-              />
+              <BlurFade delay={BLUR_FADE_DELAY}>
+                <PortfolioText
+                  field="description"
+                  className="text-muted-foreground max-w-[600px] md:text-lg lg:text-xl"
+                />
+              </BlurFade>
             </div>
             <BlurFade delay={BLUR_FADE_DELAY} className="order-1 md:order-2">
               <Avatar className="size-24 md:size-32 border rounded-full shadow-lg ring-4 ring-muted">
@@ -75,17 +78,26 @@ export default function Content() {
           </BlurFade>
           <BlurFade delay={BLUR_FADE_DELAY * 4}>
             <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
-              {summaryDetails.length > 0 ? (
+              {summaryBreak ? (
                 <ExpandableContent
                   key={locale}
-                  preview={<Markdown>{summaryPreview}</Markdown>}
+                  preview={
+                    <PortfolioText
+                      field="summary"
+                      text={data.summary.slice(0, summaryBreak.index)}
+                    />
+                  }
                   showMoreLabel={dictionary.home.aboutShowMore}
                   showLessLabel={dictionary.home.aboutShowLess}
                 >
-                  <Markdown>{summaryDetails.join("\n\n")}</Markdown>
+                  <PortfolioText
+                    field="summary"
+                    text={data.summary.slice(summaryOffset)}
+                    sourceOffset={summaryOffset}
+                  />
                 </ExpandableContent>
               ) : (
-                <Markdown>{data.summary}</Markdown>
+                <PortfolioText field="summary" />
               )}
             </div>
           </BlurFade>

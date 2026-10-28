@@ -13,6 +13,7 @@ import { usePortfolioData } from "@/components/portfolio/context";
 import { useI18n } from "@/components/portfolio/context";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/portfolio/ui-utils";
+import { PortfolioText } from "../annotated-text";
 
 const logoFrameClassName =
   "size-8 md:size-10 p-1 border rounded-full shadow ring-2 ring-border overflow-hidden bg-background flex-none";
@@ -106,7 +107,7 @@ export default function WorkSection() {
             </div>
           </AccordionTrigger>
           <AccordionContent className="p-0 ml-13 text-xs sm:text-sm text-muted-foreground whitespace-pre-line">
-            {work.description}
+            <PortfolioText field="work.description" itemId={work.id} />
           </AccordionContent>
         </AccordionItem>
       ))}
