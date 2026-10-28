@@ -16,6 +16,8 @@ import {
 import { usePortfolioEditor } from "@/app/context/portfolio-context";
 import type { Resume } from "@/lib/portfolio/model";
 import { resumeSchema } from "@/lib/portfolio/model";
+import { iconRegistry } from "@/components/portfolio/icon-registry";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -378,8 +380,15 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
             </Button>
           </CardAction>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col divide-y">
+        <CardContent className="@container/collection">
+          <div
+            className={cn(
+              "flex flex-col divide-y",
+              (section === "skills" || section === "projects") &&
+                "grid grid-cols-1 gap-4 divide-y-0 @xl/collection:grid-cols-2",
+              section === "skills" && "@3xl/collection:grid-cols-3",
+            )}
+          >
             {entries.length ? (
               entries.map((entry, index) => {
                 const row = properties(entry),
@@ -396,22 +405,45 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
                 ]
                   .filter(Boolean)
                   .join(" · ");
+                const SkillIcon =
+                  section === "skills"
+                    ? iconRegistry[(entry as Resume["skills"][number]).icon]
+                    : Icon;
                 return (
                   <div
                     key={entry.id}
-                    className="flex flex-wrap items-center gap-3 py-4 first:pt-0 last:pb-0"
+                    className={cn(
+                      "flex flex-wrap items-center gap-3 py-4 first:pt-0 last:pb-0",
+                      section === "skills" &&
+                        "rounded-xl border p-4 first:pt-4 last:pb-4",
+                      section === "projects" &&
+                        "flex-col items-stretch gap-0 overflow-hidden rounded-xl border p-0 first:pt-0 last:pb-0",
+                    )}
                   >
                     {spec.imageKey ? (
                       <AssetThumbnail
                         value={String(row[spec.imageKey] || "")}
                         label={title}
+                        variant={section === "projects" ? "cover" : "thumbnail"}
                       />
                     ) : (
                       <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-muted">
-                        <Icon className="size-5 text-muted-foreground" />
+                        <SkillIcon
+                          className={cn(
+                            "size-5 text-muted-foreground",
+                            section === "skills" && "size-8 text-foreground",
+                          )}
+                          aria-hidden
+                        />
                       </div>
                     )}
-                    <div className="min-w-0 flex-1 basis-40">
+                    <div
+                      className={cn(
+                        "min-w-0 flex-1 basis-40",
+                        section === "skills" && "basis-0",
+                        section === "projects" && "basis-auto p-4",
+                      )}
+                    >
                       <p className="font-medium">{title}</p>
                       {section === "projects" && !row.active && (
                         <Badge variant="outline">
@@ -424,12 +456,20 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
                         </p>
                       )}
                       {section === "projects" && (
-                        <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
+                        <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
                           {String(row.description || "")}
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div
+                      className={cn(
+                        "flex items-center gap-1",
+                        section === "skills" &&
+                          "w-full justify-end border-t pt-3",
+                        section === "projects" &&
+                          "mt-auto justify-end px-4 pb-4",
+                      )}
+                    >
                       <Button
                         variant="ghost"
                         size="icon-sm"
@@ -503,7 +543,7 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
         }}
       >
         <DialogContent
-          size={section === "skills" ? "sm" : "md"}
+          size={section === "skills" ? "sm" : "lg"}
           closeLabel={t("Đóng", "Close")}
         >
           <DialogHeader>
@@ -536,36 +576,75 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
               </AlertDescription>
             </Alert>
           )}
-          <FieldGroup>
-            {spec.imageKey && (
-              <ImageField
-                label={t("Ảnh đại diện", "Image")}
-                value={String(values[spec.imageKey] || "")}
-                onChange={(value) => set(spec.imageKey!, value)}
-              />
+          <FieldGroup
+            className={cn(
+              "gap-6",
+              section === "projects" &&
+                "grid items-start md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]",
             )}
-            {spec.fields.map((field) => (
-              <TextField
-                key={field.key}
-                label={t(field.vi, field.en)}
-                error={formErrors[field.key]}
-                value={
-                  field.lines
-                    ? ((values[field.key] as string[]) ?? []).join("\n")
-                    : String(values[field.key] ?? "")
-                }
-                onChange={(value) =>
-                  set(
-                    field.key,
-                    field.lines ? value.split("\n").filter(Boolean) : value,
-                  )
-                }
-                multiline={field.multiline || field.lines}
-                description={field.hint && t(...field.hint)}
-                placeholder={field.placeholder}
-                rows={field.multiline ? 6 : 3}
-              />
-            ))}
+          >
+            {spec.imageKey && (
+              <FieldGroup
+                className={cn(
+                  section === "projects" && "md:col-start-2 md:row-start-1",
+                )}
+              >
+                <ImageField
+                  label={
+                    section === "projects"
+                      ? t("Ảnh bìa dự án", "Project cover")
+                      : t("Ảnh đại diện", "Image")
+                  }
+                  value={String(values[spec.imageKey] || "")}
+                  onChange={(value) => set(spec.imageKey!, value)}
+                  variant={section === "projects" ? "cover" : "thumbnail"}
+                />
+                {section === "projects" && (
+                  <FieldDescription>
+                    {t(
+                      "Ảnh xem trước trên thẻ dự án. Nên chọn ảnh ngang 16:9.",
+                      "Cover shown on the project card. A landscape 16:9 image works best.",
+                    )}
+                  </FieldDescription>
+                )}
+              </FieldGroup>
+            )}
+            <FieldGroup
+              className={cn(
+                section === "projects"
+                  ? "md:col-start-1 md:row-start-1"
+                  : section !== "skills" &&
+                      "grid items-start gap-5 sm:grid-cols-2",
+              )}
+            >
+              {spec.fields.map((field) => (
+                <TextField
+                  key={field.key}
+                  className={cn(
+                    (field.multiline || field.lines) &&
+                      section !== "projects" &&
+                      "sm:col-span-2",
+                  )}
+                  label={t(field.vi, field.en)}
+                  error={formErrors[field.key]}
+                  value={
+                    field.lines
+                      ? ((values[field.key] as string[]) ?? []).join("\n")
+                      : String(values[field.key] ?? "")
+                  }
+                  onChange={(value) =>
+                    set(
+                      field.key,
+                      field.lines ? value.split("\n").filter(Boolean) : value,
+                    )
+                  }
+                  multiline={field.multiline || field.lines}
+                  description={field.hint && t(...field.hint)}
+                  placeholder={field.placeholder}
+                  rows={field.multiline ? 4 : 3}
+                />
+              ))}
+            </FieldGroup>
             {section === "skills" && (
               <IconField
                 value={String(values.icon)}
@@ -573,7 +652,7 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
               />
             )}
             {section === "projects" && (
-              <Field orientation="horizontal">
+              <Field orientation="horizontal" className="md:col-span-2">
                 <FieldLabel htmlFor="project-visible">
                   {t("Hiển thị dự án", "Show project")}
                 </FieldLabel>
@@ -585,12 +664,14 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
               </Field>
             )}
             {section === "projects" && (
-              <ProjectLinks
-                links={
-                  (values.links ?? []) as Resume["projects"][number]["links"]
-                }
-                onChange={(links) => set("links", links)}
-              />
+              <FieldGroup className="md:col-span-2">
+                <ProjectLinks
+                  links={
+                    (values.links ?? []) as Resume["projects"][number]["links"]
+                  }
+                  onChange={(links) => set("links", links)}
+                />
+              </FieldGroup>
             )}
           </FieldGroup>
           <DialogFooter>
@@ -681,7 +762,10 @@ function ProjectLinks({
         )}
       </FieldDescription>
       {links.map((link) => (
-        <FieldGroup key={link.id} className="rounded-lg border p-4">
+        <FieldGroup
+          key={link.id}
+          className="grid items-start gap-5 rounded-lg border p-4 sm:grid-cols-2"
+        >
           <TextField
             label={t("Nhãn liên kết", "Link label")}
             value={link.type}
@@ -763,10 +847,13 @@ function CollectionHeadings({ section }: { section: CollectionKey }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <FieldGroup>
+        <FieldGroup className="grid gap-5 sm:grid-cols-2">
           {fields.map(([key, label]) => (
             <TextField
               key={key}
+              className={
+                key === "projectsDescription" ? "sm:col-span-2" : undefined
+              }
               label={label}
               value={resume.copy.home[key] ?? ""}
               onChange={(value) =>

@@ -35,6 +35,8 @@ import {
   EmptyDescription,
 } from "@/components/ui/empty";
 import { iconNames } from "@/lib/portfolio/model";
+import { iconRegistry } from "@/components/portfolio/icon-registry";
+import { cn } from "@/lib/utils";
 
 export function useEditorCopy() {
   const { language } = usePortfolioEditor();
@@ -51,6 +53,7 @@ export function TextField({
   placeholder,
   rows = 4,
   error: explicitError,
+  className,
 }: {
   label: string;
   value: string;
@@ -61,6 +64,7 @@ export function TextField({
   placeholder?: string;
   rows?: number;
   error?: string;
+  className?: string;
 }) {
   const id = useId();
   const { fieldErrors, busy } = usePortfolioEditor();
@@ -77,7 +81,7 @@ export function TextField({
     "aria-describedby": description || error ? `${id}-help` : undefined,
   };
   return (
-    <Field data-invalid={!!error}>
+    <Field data-invalid={!!error} className={className}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       {multiline ? <Textarea {...props} rows={rows} /> : <Input {...props} />}
       {description && (
@@ -104,6 +108,7 @@ const iconLabels: Record<string, string> = {
   keycloak: "Keycloak",
   mongodb: "MongoDB",
   Postgresql: "PostgreSQL",
+  Docker: "Docker",
   HomeIcon: "Website",
   CameraIcon: "Camera",
   FolderKanbanIcon: "Project",
@@ -125,6 +130,8 @@ export function IconField({
 }) {
   const id = useId(),
     t = useEditorCopy();
+  const { busy } = usePortfolioEditor();
+  const SelectedIcon = iconRegistry[value as (typeof iconNames)[number]];
   const items = iconNames.map((value) => ({
     value,
     label: iconLabels[value] ?? value,
@@ -135,18 +142,28 @@ export function IconField({
       <Select
         items={items}
         value={value}
+        disabled={busy}
         onValueChange={(value) => value && onChange(value)}
       >
         <SelectTrigger id={id} className="w-full">
-          <SelectValue />
+          <SelectValue>
+            <span className="flex items-center gap-2">
+              {SelectedIcon && <SelectedIcon aria-hidden />}
+              {iconLabels[value] ?? value}
+            </span>
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {items.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
+            {items.map((item) => {
+              const Icon = iconRegistry[item.value];
+              return (
+                <SelectItem key={item.value} value={item.value}>
+                  <Icon aria-hidden />
+                  {item.label}
+                </SelectItem>
+              );
+            })}
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -176,27 +193,39 @@ export function AssetThumbnail({
   value,
   label,
   large = false,
+  variant = "thumbnail",
 }: {
   value: string;
   label: string;
   large?: boolean;
+  variant?: "thumbnail" | "portrait" | "cover";
 }) {
   return (
     <div
-      className={
-        large
-          ? "relative aspect-video w-full overflow-hidden rounded-lg border bg-muted/30"
-          : "relative size-12 shrink-0 overflow-hidden rounded-lg border bg-muted/30"
-      }
+      className={cn(
+        "relative shrink-0 overflow-hidden rounded-lg border bg-muted/30",
+        large || variant === "cover" ? "aspect-video w-full" : "size-12",
+        variant === "portrait" && "aspect-square size-auto w-full max-w-80",
+      )}
     >
       {value ? (
         <Image
           src={assetUrl(value)}
           alt={label}
           fill
-          sizes={large ? "320px" : "48px"}
+          sizes={
+            variant === "portrait"
+              ? "320px"
+              : large || variant === "cover"
+                ? "(max-width: 640px) 100vw, 50vw"
+                : "48px"
+          }
           unoptimized
-          className="object-contain p-2"
+          className={cn(
+            "object-contain",
+            variant === "thumbnail" && "p-2",
+            variant !== "thumbnail" && "object-cover",
+          )}
         />
       ) : (
         <div className="flex h-full items-center justify-center">
@@ -211,18 +240,25 @@ export function ImageField({
   value,
   onChange,
   label,
+  variant = "thumbnail",
 }: {
   value: string;
   onChange: (value: string) => void;
   label: string;
+  variant?: "thumbnail" | "portrait" | "cover";
 }) {
   const [open, setOpen] = useState(false),
     t = useEditorCopy();
   return (
     <Field>
       <FieldLabel>{label}</FieldLabel>
-      <div className="flex items-center gap-4">
-        <AssetThumbnail value={value} label={label} />
+      <div
+        className={cn(
+          "flex gap-4",
+          variant === "thumbnail" ? "items-center" : "flex-col",
+        )}
+      >
+        <AssetThumbnail value={value} label={label} variant={variant} />
         <div className="flex flex-wrap gap-2">
           <Button
             type="button"

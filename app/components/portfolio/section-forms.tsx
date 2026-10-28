@@ -37,7 +37,7 @@ function FormCard({
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="@container/portfolio-form">
         <FieldGroup>{children}</FieldGroup>
       </CardContent>
     </Card>
@@ -98,39 +98,52 @@ export function ResumeEditor({
           "The first thing visitors see when opening your portfolio.",
         )}
       >
-        <ImageField
-          value={resume.avatarUrl}
-          onChange={(avatarUrl) =>
-            store.updateResume((current) => ({ ...current, avatarUrl }))
-          }
-          label={t("Ảnh chân dung", "Portrait")}
-        />
-        <FieldGroup className="grid gap-5 sm:grid-cols-2">
-          {field("name", t("Họ và tên", "Full name"))}
-          {field("nickname", t("Tên gọi", "Nickname"))}
+        <FieldGroup className="grid items-start gap-6 @2xl/portfolio-form:grid-cols-[minmax(0,1fr)_minmax(14rem,18rem)]">
+          <FieldGroup className="min-w-0">
+            <FieldGroup className="grid gap-5 sm:grid-cols-2">
+              {field("name", t("Họ và tên", "Full name"))}
+              {field("nickname", t("Tên gọi", "Nickname"))}
+              {copy("greeting", t("Lời chào", "Greeting"))}
+              {field(
+                "initials",
+                t("Chữ viết tắt", "Initials"),
+                t(
+                  "Hiển thị khi ảnh chưa tải được.",
+                  "Shown when your portrait cannot load.",
+                ),
+              )}
+            </FieldGroup>
+            {field(
+              "description",
+              t("Giới thiệu ngắn", "Short introduction"),
+              t(
+                "Một đến hai câu về vai trò và chuyên môn của bạn.",
+                "One or two sentences about your role and focus.",
+              ),
+              true,
+            )}
+            <FieldGroup className="grid gap-5 sm:grid-cols-2">
+              {field("location", t("Địa điểm", "Location"))}
+              {field("locationLink", t("Liên kết bản đồ", "Map link"))}
+            </FieldGroup>
+          </FieldGroup>
+          <FieldGroup className="min-w-0 rounded-xl border bg-muted/20 p-4">
+            <ImageField
+              value={resume.avatarUrl}
+              onChange={(avatarUrl) =>
+                store.updateResume((current) => ({ ...current, avatarUrl }))
+              }
+              label={t("Ảnh chân dung", "Portrait")}
+              variant="portrait"
+            />
+            <FieldDescription>
+              {t(
+                "Ảnh đại diện hiển thị ở phần đầu portfolio và khi chia sẻ trang.",
+                "Your portrait appears at the top of your portfolio and when sharing it.",
+              )}
+            </FieldDescription>
+          </FieldGroup>
         </FieldGroup>
-        {copy("greeting", t("Lời chào", "Greeting"))}
-        {field(
-          "description",
-          t("Giới thiệu ngắn", "Short introduction"),
-          t(
-            "Một đến hai câu về vai trò và chuyên môn của bạn.",
-            "One or two sentences about your role and focus.",
-          ),
-          true,
-        )}
-        <FieldGroup className="grid gap-5 sm:grid-cols-2">
-          {field("location", t("Địa điểm", "Location"))}
-          {field("locationLink", t("Liên kết bản đồ", "Map link"))}
-        </FieldGroup>
-        {field(
-          "initials",
-          t("Chữ viết tắt", "Initials"),
-          t(
-            "Hiển thị khi ảnh chân dung chưa tải được.",
-            "Shown when your portrait cannot load.",
-          ),
-        )}
       </FormCard>
     );
   if (section === "about")
@@ -207,88 +220,101 @@ export function ResumeEditor({
         "How visitors can get in touch and find you.",
       )}
     >
-      {copy("contactTitle", t("Lời mời liên hệ", "Contact heading"))}
-      <FieldGroup className="grid gap-5 sm:grid-cols-2">
-        <TextField
-          label="Email"
-          description={t(
-            "Lưu trong hồ sơ nội dung; bố cục hiện tại chỉ hiển thị liên kết mạng xã hội.",
-            "Stored in your content profile; the current layout shows social links only.",
-          )}
-          value={resume.contact.email}
-          onChange={(email) =>
-            store.updateResume((current) => ({
-              ...current,
-              contact: { ...current.contact, email },
-            }))
-          }
-        />
-        <TextField
-          label={t("Số điện thoại", "Phone")}
-          description={t(
-            "Không hiển thị trên trang công khai hiện tại.",
-            "Not displayed on the current public page.",
-          )}
-          value={resume.contact.tel}
-          onChange={(tel) =>
-            store.updateResume((current) => ({
-              ...current,
-              contact: { ...current.contact, tel },
-            }))
-          }
-        />
+      <FieldGroup className="grid items-start gap-6 @2xl/portfolio-form:grid-cols-2">
+        <FieldGroup className="min-w-0">
+          {copy("contactTitle", t("Lời mời liên hệ", "Contact heading"))}
+          <FieldSet>
+            <FieldLegend>
+              {t("Nội dung lời mời", "Contact message")}
+            </FieldLegend>
+            <FieldDescription>
+              {t(
+                "Câu liên hệ gồm phần mở đầu, liên kết LinkedIn và phần kết.",
+                "The contact sentence has an introduction, a LinkedIn link and a closing phrase.",
+              )}
+            </FieldDescription>
+            <FieldGroup>
+              {copy(
+                "contactBeforeLink",
+                t("Trước liên kết", "Before the link"),
+              )}
+              {copy(
+                "contactLink",
+                t("Nhãn liên kết LinkedIn", "LinkedIn link text"),
+              )}
+              {copy("contactAfterLink", t("Sau liên kết", "After the link"))}
+            </FieldGroup>
+          </FieldSet>
+        </FieldGroup>
+        <FieldGroup className="min-w-0">
+          <FieldSet>
+            <FieldLegend>{t("Mạng xã hội", "Social profiles")}</FieldLegend>
+            <FieldDescription>
+              {t(
+                "Bốn liên kết chính xuất hiện dưới mục Liên hệ.",
+                "The four main profiles appear in the Contact section.",
+              )}
+            </FieldDescription>
+            <FieldGroup className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              {resume.contact.social
+                .filter((s) =>
+                  ["GitHub", "LinkedIn", "Facebook", "Instagram"].includes(
+                    s.id,
+                  ),
+                )
+                .map((social) => (
+                  <TextField
+                    key={social.id}
+                    label={social.name}
+                    value={social.url}
+                    onChange={(url) =>
+                      store.updateResume((current) => ({
+                        ...current,
+                        contact: {
+                          ...current.contact,
+                          social: current.contact.social.map((item) =>
+                            item.id === social.id ? { ...item, url } : item,
+                          ),
+                        },
+                      }))
+                    }
+                    path={`locales.${store.locale}.contact.social.${resume.contact.social.indexOf(social)}.url`}
+                  />
+                ))}
+            </FieldGroup>
+          </FieldSet>
+          <FieldGroup className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            <TextField
+              label="Email"
+              description={t(
+                "Lưu trong hồ sơ; bố cục hiện tại chỉ hiển thị mạng xã hội.",
+                "Stored in your profile; the current layout displays social links only.",
+              )}
+              value={resume.contact.email}
+              onChange={(email) =>
+                store.updateResume((current) => ({
+                  ...current,
+                  contact: { ...current.contact, email },
+                }))
+              }
+            />
+            <TextField
+              label={t("Số điện thoại", "Phone")}
+              description={t(
+                "Không hiển thị trên trang công khai hiện tại.",
+                "Not displayed on the current public page.",
+              )}
+              value={resume.contact.tel}
+              onChange={(tel) =>
+                store.updateResume((current) => ({
+                  ...current,
+                  contact: { ...current.contact, tel },
+                }))
+              }
+            />
+          </FieldGroup>
+        </FieldGroup>
       </FieldGroup>
-      <FieldSet>
-        <FieldLegend>{t("Mạng xã hội", "Social profiles")}</FieldLegend>
-        <FieldDescription>
-          {t(
-            "Bốn liên kết chính xuất hiện dưới mục Liên hệ.",
-            "The four main profiles appear in the Contact section.",
-          )}
-        </FieldDescription>
-        <FieldGroup>
-          {resume.contact.social
-            .filter((s) =>
-              ["GitHub", "LinkedIn", "Facebook", "Instagram"].includes(s.id),
-            )
-            .map((social) => (
-              <TextField
-                key={social.id}
-                label={social.name}
-                value={social.url}
-                onChange={(url) =>
-                  store.updateResume((current) => ({
-                    ...current,
-                    contact: {
-                      ...current.contact,
-                      social: current.contact.social.map((item) =>
-                        item.id === social.id ? { ...item, url } : item,
-                      ),
-                    },
-                  }))
-                }
-                path={`locales.${store.locale}.contact.social.${resume.contact.social.indexOf(social)}.url`}
-              />
-            ))}
-        </FieldGroup>
-      </FieldSet>
-      <FieldSet>
-        <FieldLegend>{t("Nội dung lời mời", "Contact message")}</FieldLegend>
-        <FieldDescription>
-          {t(
-            "Câu liên hệ gồm phần mở đầu, liên kết LinkedIn và phần kết.",
-            "The contact sentence has an introduction, a LinkedIn link and a closing phrase.",
-          )}
-        </FieldDescription>
-        <FieldGroup>
-          {copy("contactBeforeLink", t("Trước liên kết", "Before the link"))}
-          {copy(
-            "contactLink",
-            t("Nhãn liên kết LinkedIn", "LinkedIn link text"),
-          )}
-          {copy("contactAfterLink", t("Sau liên kết", "After the link"))}
-        </FieldGroup>
-      </FieldSet>
     </FormCard>
   );
 }

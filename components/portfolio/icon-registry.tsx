@@ -12,15 +12,25 @@ import {
 import { Icons } from "./icons";
 import type { ComponentType, SVGProps } from "react";
 import type { iconNames } from "@/lib/portfolio/model";
+import {
+  siAntdesign,
+  siReactquery,
+  siNestjs,
+  siSocketdotio,
+  siRedis,
+  siApachekafka,
+  siKeycloak,
+  siMongodb,
+  type SimpleIcon,
+} from "simple-icons";
 type IconName = (typeof iconNames)[number];
-function simple(slug: string) {
-  return function SimpleIcon({ className }: { className?: string }) {
+// Ship the selected SVG paths with the app; never fetch brand logos at runtime.
+function simple(icon: SimpleIcon) {
+  return function BrandIcon(props: SVGProps<SVGSVGElement>) {
     return (
-      <img
-        src={`https://cdn.simpleicons.org/${slug}`}
-        alt=""
-        className={className}
-      />
+      <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+        <path d={icon.path} />
+      </svg>
     );
   };
 }
@@ -45,12 +55,12 @@ export const iconRegistry: Record<
   "Icons.x": Icons.x,
   "Icons.youtube": Icons.youtube,
   "Icons.email": Icons.email,
-  antdesign: simple("antdesign"),
-  reactquery: simple("reactquery"),
-  nestjs: simple("nestjs"),
-  socketdotio: simple("socketdotio"),
-  redis: simple("redis"),
-  apachekafka: simple("apachekafka"),
-  keycloak: simple("keycloak"),
-  mongodb: simple("mongodb"),
+  antdesign: simple(siAntdesign),
+  reactquery: simple(siReactquery),
+  nestjs: simple(siNestjs),
+  socketdotio: simple(siSocketdotio),
+  redis: simple(siRedis),
+  apachekafka: simple(siApachekafka),
+  keycloak: simple(siKeycloak),
+  mongodb: simple(siMongodb),
 };
