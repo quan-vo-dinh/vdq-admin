@@ -19,7 +19,7 @@ export const isoftRefresh = {
 - Develop backend services and business workflows using Entity Framework Core, PostgreSQL/MySQL, Redis, and RESTful APIs.
 
 - Integrate **microservices and real-time data** via Socket.IO for equipment monitoring, production visualization, and manufacturing operations.`,
-  vi: `- Phát triển và bảo trì các ứng dụng Full-stack trong lĩnh vực **Smart Factory và Chuyển đổi số công nghiệp**, sử dụng React.js và ASP.NET Core/.NET 8 & 10.
+  vi: `- Phát triển và bảo trì các ứng dụng Full-stack trong lĩnh vực **Smart Factory và Chuyển đổi số công nghiệp**, sử dụng React.js và ASP.NET Core/.NET 8.
 
 - Xây dựng và duy trì **kiến trúc Microfrontend có khả năng mở rộng** với Nx Monorepo và Module Federation, hỗ trợ *phát triển theo mô-đun và triển khai độc lập*.
 

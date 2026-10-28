@@ -106,8 +106,12 @@ export default function WorkSection() {
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="p-0 ml-13 text-xs sm:text-sm text-muted-foreground whitespace-pre-line">
-            <PortfolioText field="work.description" itemId={work.id} />
+          <AccordionContent className="p-0 ml-13 text-xs sm:text-sm text-muted-foreground">
+            <PortfolioText
+              field="work.description"
+              itemId={work.id}
+              className="whitespace-normal [&_p]:whitespace-pre-line [&_li+li]:mt-2"
+            />
           </AccordionContent>
         </AccordionItem>
       ))}
