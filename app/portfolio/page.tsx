@@ -9,6 +9,9 @@ export async function generateMetadata() {
   const origin = process.env.APP_ORIGIN;
   if (!origin) throw new Error("APP_ORIGIN required");
   const content = p?.document.locales[locale];
+  const avatar=content?.avatarUrl;
+  const image=avatar ? `${origin}${avatar.startsWith('media:') ? '/api/portfolio/public/media/'+avatar.slice(6) : '/portfolio-assets/'+avatar.replace(/^\//,'')}` : null;
+
   return {
     title: content?.name ?? "Portfolio",
     description: content?.copy.metadata.description,
@@ -18,7 +21,9 @@ export async function generateMetadata() {
       title: content?.name,
       description: content?.copy.metadata.description,
       locale: locale === "vi" ? "vi_VN" : "en_US",
+      images: image ? [{url:image,alt:content?.name}] : [],
     },
+    twitter:{card:'summary' as const,title:content?.name,description:content?.copy.metadata.description,images:image?[image]:[]},
     robots: { index: true, follow: true },
   };
 }
