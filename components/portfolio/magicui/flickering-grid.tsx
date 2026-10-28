@@ -81,7 +81,8 @@ export const FlickeringGrid = ({
   }, []);
 
   const resolveColor = useCallback((colorValue: string | undefined) => {
-    if (typeof document === "undefined") {
+    const container = containerRef.current;
+    if (typeof document === "undefined" || !container) {
       return "rgb(0, 0, 0)";
     }
 
@@ -95,9 +96,11 @@ export const FlickeringGrid = ({
     tempElement.style.color = colorToResolve;
     tempElement.style.position = "absolute";
     tempElement.style.visibility = "hidden";
-    document.body.appendChild(tempElement);
+    // Resolve CSS variables inside this grid's theme scope. The dashboard's
+    // document theme can differ from the independently themed portfolio.
+    container.appendChild(tempElement);
     const computedColor = window.getComputedStyle(tempElement).color;
-    document.body.removeChild(tempElement);
+    tempElement.remove();
 
     return computedColor || "rgb(0, 0, 0)";
   }, []);
@@ -107,10 +110,16 @@ export const FlickeringGrid = ({
     const observer = new MutationObserver(updateColor);
 
     updateColor();
-    observer.observe(document.documentElement, {
-      attributeFilter: ["class"],
-      attributes: true,
-    });
+    // Listen to the local surface as well as outer themes, without observing
+    // child mutations from the temporary color probe or the animated canvas.
+    let ancestor: HTMLElement | null = containerRef.current;
+    while (ancestor) {
+      observer.observe(ancestor, {
+        attributeFilter: ["class", "style"],
+        attributes: true,
+      });
+      ancestor = ancestor.parentElement;
+    }
 
     return () => observer.disconnect();
   }, [color, resolveColor]);
