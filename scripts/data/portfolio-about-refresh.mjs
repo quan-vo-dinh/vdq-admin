@@ -1,4 +1,5 @@
 // Owner-supplied copy. Only Markdown emphasis/list markers and accidental pasted whitespace are normalized.
+import { splitFrameworkTooltips } from './portfolio-framework-tooltips.mjs';
 export const aboutRefresh = {
   en: `I started in frontend development and gradually expanded into **full-stack engineering**, building a strong foundation in TypeScript, React, Next.js, and NestJS. My interests extend beyond application development to *system architecture, scalability, and how distributed services interact*.
 
@@ -44,7 +45,6 @@ export function refreshAboutDocument(document) {
     const notes=resume.annotations??[];
     resume.annotations=notes.filter(n=>!['editorial-v1-node',...(locale==='en'?['editorial-v1-saga']:[])].includes(n.id));
     function revise(id,changes){const note=resume.annotations.find(n=>n.id===id);if(!note)throw Error('Expected existing note '+id);Object.assign(note,changes);}
-    revise('editorial-v1-frameworks',{quote:locale==='vi'?'Next.js và NestJS':'Next.js, and NestJS'});
     revise('editorial-v1-microservices',{quote:locale==='vi'?'Microservices':'microservices',occurrence:locale==='vi'?1:2});
     revise('editorial-v1-dotnet',{quote:locale==='vi'?'C#/ASP.NET Core':'ASP.NET Core/.NET 8'});
     for(const concept of concepts){
@@ -63,5 +63,7 @@ export function refreshAboutDocument(document) {
     }
     report.push({locale,annotations:resume.annotations.length,summaryParagraphs:resume.summary.split('\n\n').length,workBullets:work.description.split('\n\n').length});
   }
-  return {document:next,report};
+  const separated=splitFrameworkTooltips(next);
+  for(const row of report)row.annotations=separated.locales[row.locale].annotations.length;
+  return {document:separated,report};
 }
