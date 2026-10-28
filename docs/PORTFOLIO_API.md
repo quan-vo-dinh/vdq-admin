@@ -2,13 +2,13 @@
 
 Public `/` renders the current validated snapshot. It defaults to Vietnamese; the `portfolio-locale` cookie chooses English. The portfolio owns a local theme surface (`portfolio-surface-theme`), preserving dashboard theme/language preferences. Original source components, spacing, animations, logos and copy are ported under `components/portfolio`; scoped Radix components do not replace dashboard Base UI primitives. Static source assets are versioned in `public/portfolio-assets`; newly uploaded rasters use private `portfolio-media` Storage.
 
-Owner `/apps/portfolio` uses a feature-local SWR context and structured fields for both locales, lists, order, visibility, navigation, images and SEO. Item IDs stay stable and translation ID sets match. Save writes a draft, preview renders that saved draft at `/apps/portfolio/preview`, and Publish is explicit. Restore republishes an immutable old version as a new publication and retains the current draft. Preview is authenticated, no-store and noindex.
+Owner `/apps/portfolio` uses `app/context/portfolio-context/index.tsx` for SWR data, CAS mutations, validation, publication comparison and unsaved-change protection. Structured section forms, collection edit dialogs, media selection and version history live under `app/components/portfolio/`; `components/portfolio/` retains the original public renderer. The CMS edits both locales, content lists, section order/visibility, images and search metadata. It does not edit the removed navigation dock. Pure immutable translation/list helpers and content comparison live in `lib/portfolio/editor-state.ts`. Item IDs stay stable and translation ID sets match. Save writes a draft, preview renders that saved draft at `/apps/portfolio/preview`, and Publish is explicit. Restore republishes an immutable old version as a new publication and retains the current draft. Preview is authenticated, no-store and noindex.
 
 All owner routes use `withOwner`, verified owner identity/registry, origin checks and private/no-store responses. No service credential is used by runtime public rendering or CRUD. Public proxy exemptions are exact `/` and UUID-shaped public media GET paths. No owner API group exemption exists.
 
 | Endpoint | Method | Input / output |
 |---|---|---|
-| `/api/portfolio/draft` | GET | `{site: null | {draft,revision,published_id,...}}` |
+| `/api/portfolio/draft` | GET | `{site: null | {draft,revision,published_id,publishedDocument,...}}` |
 | `/api/portfolio/draft` | PATCH | `{document,expectedRevision}` → `{site}`; revision 0 creates only if absent |
 | `/api/portfolio/publish` | POST | `{expectedRevision}` → `{version,site,cacheRefreshPending}` |
 | `/api/portfolio/history` | GET | `{versions:[{id,created_at,draft_revision}]}` |
@@ -20,6 +20,8 @@ All owner routes use `withOwner`, verified owner identity/registry, origin check
 | `/api/portfolio/media/:id` | GET | Owner-only WebP bytes, no-store |
 | `/api/portfolio/public/media/:id` | GET | Bytes only when referenced by current publication; must-revalidate |
 
+Owner draft GET adds `site.publishedDocument`: the current publication document or `null` when unpublished. It is read with the same verified owner client, filtered to the site owner and current publication ID; the history list stays metadata-only. The editor compares actual draft and published content, so restoring an earlier version still shows an unpublished draft even when revision metadata matches. A 409 keeps local content intact, and explicit reload requires caller confirmation before discarding unsaved changes. Cache refresh errors are separate from a successful database publication.
+
 400 denotes invalid content, 401 missing session, 403 owner/origin rejection, 404 missing record/media, 409 stale revision, 413 oversized upload, 500/503 unavailable persistence/storage. Owners must reload a conflict before saving again. Publish and restore increment the site revision; immutable version writes and pointer changes are atomic. Database JSON schema and additional URL/image/ID/parity/social/media checks also validate direct RPC writes. Arbitrary SVG/HTML/JSX is never stored as executable content. React Markdown keeps HTML disabled.
 
 `read_published_portfolio()` exposes only the enabled owner's current version; anon cannot select sites, historical versions or media metadata. The separate `read_published_portfolio_media(uuid)` and Storage SELECT policy expose only current references. Media are immutable to app clients and kept for every retained draft/version; a former publication's private media stops being publicly readable. Public bytes never use an owner cookie/service key. Public content cache has only published DTOs, a publication tag and a 60-second fallback refresh interval; failed invalidation is returned separately for retry, never reported as a failed committed publication.
@@ -28,7 +30,17 @@ Initial import preserves source copy independently in each locale, including VI 
 
 # Validation and operations
 
-`pnpm test:portfolio` checks model and rollback-only pgTAP integration. `node scripts/backend/test-portfolio-api-local.mjs` exercises real local owner authorization, media decoding/preview/publish and CAS; it restores original content and keeps test versions/media. `node scripts/backend/drill-portfolio-local.mjs` runs after preparing/starting `--portfolio` restore workdir, refuses populated targets, and validates remapped version pointer/media plus SHA256 object readback.
+## Owner editor redesign
+
+The editor uses the dashboard's installed Base UI primitives and existing tokens. Content, media and publication history are separate tabs. Content navigation opens one section at a time; experience, education, certifications, skills and projects use summary lists with focused edit dialogs rather than recursively exposing the JSON structure. Both interface languages have explicit labels; the content-language selector changes the translation being edited, independently of dashboard language.
+
+Image fields use a thumbnail library instead of filenames/UUIDs. Project visibility is editable. Save, preview and publish remain separate actions, with public-change and discard confirmations. Field validation associates messages with inputs; dialog edits and page drafts both warn on browser unload. New/deleted/reordered list IDs are mirrored across translations while existing translated values are retained. Hidden legacy navigation fields remain in stored documents for compatibility and are not shown in the editor.
+
+Owner draft GET includes only the current publication's document for accurate draft/live comparison, including after an old version is republished. It retains the existing owner authorization and private/no-store response policy; no migration or production content rewrite is needed.
+
+Validation for this redesign: production build, scoped ESLint, focused state/model tests (10), backend tests (37), mobile contracts (10), mobile typecheck and read-only local public/private HTTP checks pass. Full lint retains 17 existing errors; the removed generic editor also removes its raw-image warning. Browser connector remains unavailable, and native Chrome actions timed out even after user handoff. Visual and interaction acceptance is therefore still pending; code and HTTP checks do not establish that acceptance.
+
+`pnpm test:portfolio` checks model and rollback-only pgTAP integration. `node --test scripts/backend/portfolio-editor-state.test.mjs` verifies immutable bilingual add/delete/reorder behavior, stable content comparison and restored-publication status without database writes. `node scripts/backend/test-portfolio-api-local.mjs` exercises real local owner authorization, media decoding/preview/publish and CAS; it restores original content and keeps test versions/media. `node scripts/backend/drill-portfolio-local.mjs` runs after preparing/starting `--portfolio` restore workdir, refuses populated targets, and validates remapped version pointer/media plus SHA256 object readback.
 
 The explicit hosted rollout `node --env-file=.env.cloud-tooling.local scripts/backend/rollout-portfolio-hosted.mjs` pins the reviewed project, takes/decrypts an encrypted backup, checks a business-data fingerprint, applies only `20261028000100_portfolio.sql`, records its ledger entry and imports/publishes only when no site exists. Repeat runs never replace drafts or publications. Existing-domain data fingerprints must remain unchanged. No secrets belong in output or Git.
 

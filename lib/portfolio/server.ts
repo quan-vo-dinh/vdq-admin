@@ -8,9 +8,23 @@ export async function draftPortfolio() {
   const { supabase: db } = await requireOwner();
   const result = await db.from("portfolio_sites").select().maybeSingle();
   dbError(result.error);
-  return result.data
-    ? { ...result.data, draft: parseDocument(result.data.draft) }
-    : null;
+  if (!result.data) return null;
+  let publishedDocument: ReturnType<typeof parseDocument> | null = null;
+  if (result.data.published_id) {
+    const current = await db
+      .from("portfolio_versions")
+      .select("document")
+      .eq("id", result.data.published_id)
+      .eq("owner_id", result.data.owner_id)
+      .single();
+    dbError(current.error);
+    publishedDocument = parseDocument(current.data!.document);
+  }
+  return {
+    ...result.data,
+    draft: parseDocument(result.data.draft),
+    publishedDocument,
+  };
 }
 export async function portfolioRequest(
   request: Request,

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { requireOwner } from "@/lib/auth/owner";
 import { PortfolioEditor } from "@/components/portfolio/editor";
+import { PortfolioEditorLoading } from "@/app/components/portfolio/portfolio-editor";
 async function Editor() {
   await requireOwner();
   return <PortfolioEditor />;
@@ -11,7 +12,7 @@ export const metadata = {
 };
 export default function Page() {
   return (
-    <Suspense fallback={<p>Loading editor…</p>}>
+    <Suspense fallback={<PortfolioEditorLoading />}>
       <Editor />
     </Suspense>
   );
