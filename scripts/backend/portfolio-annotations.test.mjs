@@ -108,7 +108,7 @@ test("additive SQL JSON schema matches the current runtime model exactly", async
   const { z } = await import("zod");
   const { documentSchema } = await import("../../lib/portfolio/model.ts");
   const migration = readFileSync(
-    "supabase/migrations/20261030000100_portfolio_icon_catalog.sql",
+    "supabase/migrations/20261030000200_portfolio_more_icons.sql",
     "utf8",
   );
   const schema = migration.match(/ schema='(.*)'::json;/)?.[1];

@@ -6,6 +6,11 @@ import { Check, ChevronDown, Search, ImagePlus, Upload } from "lucide-react";
 import { usePortfolioEditor } from "@/app/context/portfolio-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Field,
@@ -158,16 +163,17 @@ export function IconField({
               {t("Tìm công nghệ rồi chọn biểu tượng phù hợp.", "Find a technology and select its icon.")}
             </DialogDescription>
           </DialogHeader>
-          <div className="relative">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-            <Input
+          <InputGroup>
+            <InputGroupAddon>
+              <Search className="size-4 shrink-0" aria-hidden />
+            </InputGroupAddon>
+            <InputGroupInput
               aria-label={t("Tìm biểu tượng", "Search icons")}
               placeholder={t("Tìm công nghệ…", "Search technologies…")}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              className="pl-9"
             />
-          </div>
+          </InputGroup>
           <p role="status" className="text-xs text-muted-foreground">{items.length} {t("biểu tượng", "icons")}</p>
           <div className="max-h-[50dvh] overflow-y-auto overscroll-y-contain p-1">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">

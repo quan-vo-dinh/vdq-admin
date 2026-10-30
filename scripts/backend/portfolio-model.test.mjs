@@ -10,7 +10,7 @@ test('media references collected across retained content without duplicates',()=
 
 test('expanded icon catalog is accepted in both locales and matches database validation', async () => {
   const { iconNames } = await import('../../lib/portfolio/model.ts');
-  const migration = readFileSync('supabase/migrations/20261030000100_portfolio_icon_catalog.sql', 'utf8');
+  const migration = readFileSync('supabase/migrations/20261030000200_portfolio_more_icons.sql', 'utf8');
   const schema = JSON.parse(migration.match(/ schema='(.*?)'::json;/s)[1]);
   let checked = 0;
   function visit(node) {
