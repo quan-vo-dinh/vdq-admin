@@ -3,7 +3,6 @@ import { requireOwner } from "@/lib/auth/owner";
 import { AccessError } from "@/lib/auth/policy";
 import { input, uuid, revision, dbError } from "@/lib/backend/mutations";
 import { validateSavingsPlan } from "./projection";
-import type { Json } from "@/types/database";
 export async function projectionRequest(request: Request) {
   const { supabase: db, user } = await requireOwner();
   if (request.method === "GET") {
@@ -17,7 +16,7 @@ export async function projectionRequest(request: Request) {
       try {
         result.data.plan = validateSavingsPlan(
           result.data.plan,
-        ) as unknown as Json;
+        );
       } catch {
         throw new AccessError(500, "invalid_saved_projection");
       }
@@ -47,11 +46,11 @@ export async function projectionRequest(request: Request) {
   const result =
     body.expectedRevision === 0
       ? await table
-          .insert({ id, plan: plan as unknown as Json })
+          .insert({ id, plan })
           .select("id,revision,plan")
           .single()
       : await table
-          .update({ plan: plan as unknown as Json })
+          .update({ plan })
           .eq("owner_id", user.id)
           .eq("id", id)
           .eq("revision", revision(body.expectedRevision))
