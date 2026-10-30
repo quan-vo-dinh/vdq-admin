@@ -2,7 +2,7 @@
 
 import { useId, useState, type ReactNode, type Ref } from "react";
 import Image from "next/image";
-import { Check, ImagePlus, Upload } from "lucide-react";
+import { Check, ChevronDown, Search, ImagePlus, Upload } from "lucide-react";
 import { usePortfolioEditor } from "@/app/context/portfolio-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,19 +15,12 @@ import {
 } from "@/components/ui/field";
 import {
   Dialog,
+  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-} from "@/components/ui/select";
 import {
   Empty,
   EmptyHeader,
@@ -35,7 +28,7 @@ import {
   EmptyDescription,
 } from "@/components/ui/empty";
 import { iconNames } from "@/lib/portfolio/model";
-import { iconRegistry } from "@/components/portfolio/icon-registry";
+import { iconRegistry, iconLabels } from "@/components/portfolio/icon-registry";
 import { cn } from "@/lib/utils";
 
 export function useEditorCopy() {
@@ -118,33 +111,6 @@ export function TextField({
   );
 }
 
-const iconLabels: Record<string, string> = {
-  Typescript: "TypeScript",
-  ReactLight: "React",
-  NextjsIconDark: "Next.js",
-  "Icons.tailwindcss": "Tailwind CSS",
-  antdesign: "Ant Design",
-  reactquery: "TanStack Query",
-  nestjs: "NestJS",
-  socketdotio: "WebSocket",
-  redis: "Redis",
-  apachekafka: "Apache Kafka",
-  keycloak: "Keycloak",
-  mongodb: "MongoDB",
-  Postgresql: "PostgreSQL",
-  Docker: "Docker",
-  HomeIcon: "Website",
-  CameraIcon: "Camera",
-  FolderKanbanIcon: "Project",
-  BookOpenIcon: "Article",
-  "Icons.github": "GitHub",
-  "Icons.linkedin": "LinkedIn",
-  "Icons.facebook": "Facebook",
-  "Icons.instagram": "Instagram",
-  "Icons.x": "X",
-  "Icons.youtube": "YouTube",
-  "Icons.email": "Email",
-};
 export function IconField({
   value,
   onChange,
@@ -155,42 +121,91 @@ export function IconField({
   const id = useId(),
     t = useEditorCopy();
   const { busy } = usePortfolioEditor();
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const SelectedIcon = iconRegistry[value as (typeof iconNames)[number]];
-  const items = iconNames.map((value) => ({
-    value,
-    label: iconLabels[value] ?? value,
-  }));
+  const selectedLabel = iconLabels[value as (typeof iconNames)[number]] ?? value;
+  const search = query.trim().toLocaleLowerCase();
+  const items = iconNames.filter((name) =>
+    `${iconLabels[name]} ${name}`.toLocaleLowerCase().includes(search),
+  );
   return (
     <Field>
       <FieldLabel htmlFor={id}>{t("Biểu tượng", "Icon")}</FieldLabel>
-      <Select
-        items={items}
-        value={value}
-        disabled={busy}
-        onValueChange={(value) => value && onChange(value)}
+      <Dialog
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+          if (!next) setQuery("");
+        }}
       >
-        <SelectTrigger id={id} className="w-full">
-          <SelectValue>
-            <span className="flex items-center gap-2">
-              {SelectedIcon && <SelectedIcon aria-hidden />}
-              {iconLabels[value] ?? value}
-            </span>
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {items.map((item) => {
-              const Icon = iconRegistry[item.value];
-              return (
-                <SelectItem key={item.value} value={item.value}>
-                  <Icon aria-hidden />
-                  {item.label}
-                </SelectItem>
-              );
-            })}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+        <DialogTrigger
+          render={
+            <Button id={id} variant="outline" disabled={busy}
+              className="h-auto min-h-10 w-full justify-between" />
+          }
+        >
+          <span className="flex min-w-0 items-center gap-2">
+            {SelectedIcon && <SelectedIcon className="size-6 shrink-0" aria-hidden />}
+            <span className="truncate">{selectedLabel}</span>
+          </span>
+          <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+        </DialogTrigger>
+        <DialogContent size="md" closeLabel={t("Đóng", "Close")}>
+          <DialogHeader className="pr-8">
+            <DialogTitle>{t("Chọn biểu tượng", "Choose an icon")}</DialogTitle>
+            <DialogDescription>
+              {t("Tìm công nghệ rồi chọn biểu tượng phù hợp.", "Find a technology and select its icon.")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="relative">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <Input
+              aria-label={t("Tìm biểu tượng", "Search icons")}
+              placeholder={t("Tìm công nghệ…", "Search technologies…")}
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <p role="status" className="text-xs text-muted-foreground">{items.length} {t("biểu tượng", "icons")}</p>
+          <div className="max-h-[50dvh] overflow-y-auto overscroll-y-contain p-1">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {items.map((name) => {
+                const Icon = iconRegistry[name];
+                const selected = name === value;
+                return (
+                  <Button
+                    key={name}
+                    type="button"
+                    variant="outline"
+                    disabled={busy}
+                    aria-pressed={selected}
+                    className={cn(
+                      "relative h-auto min-h-24 min-w-0 flex-col gap-2 px-2 py-3 whitespace-normal text-center",
+                      selected && "border-primary bg-primary/5 ring-1 ring-primary",
+                    )}
+                    onClick={() => {
+                      onChange(name);
+                      setOpen(false);
+                      setQuery("");
+                    }}
+                  >
+                    <Icon className="size-8 shrink-0" aria-hidden />
+                    <span className="text-xs leading-snug">{iconLabels[name]}</span>
+                    {selected && <Check className="absolute top-1.5 right-1.5 size-3.5 text-primary" aria-hidden />}
+                  </Button>
+                );
+              })}
+            </div>
+            {!items.length && (
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                {t("Không tìm thấy biểu tượng. Thử tên công nghệ khác.", "No icons found. Try another technology name.")}
+              </p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </Field>
   );
 }

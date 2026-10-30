@@ -418,7 +418,7 @@ export function CollectionEditor({ section }: { section: CollectionKey }) {
               (section === "skills" || section === "projects") &&
                 "grid grid-cols-1 gap-4 divide-y-0 @xl/collection:grid-cols-2",
               section === "skills" &&
-                "@3xl/collection:grid-cols-3 @4xl/collection:grid-cols-4",
+                "@3xl/collection:grid-cols-4",
             )}
           >
             {entries.length ? (
