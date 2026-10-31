@@ -29,6 +29,36 @@ try {
   );
   const require = createRequire(import.meta.url);
   const { dailySpendingComparison } = require(join(temporary, "finance/model.js"));
+  test("planned salary and spending stay in the ledger without changing current balances or actual reports", () => {
+    const { splitTransactions, ledgerTransactions, unusualExpenses } = require(join(temporary, "finance/model.js"));
+    const rows = [
+      { id: "today", date: "2026-10-31", amount: 100, kind: "expense", account: "bank", category: "food" },
+      { id: "salary", date: "2026-11-01", amount: 10000, kind: "income", account: "bank", category: "salary" },
+      { id: "planned-spend", date: "2026-11-02", amount: 200, kind: "expense", account: "bank", category: "food" },
+    ];
+    const split = splitTransactions(rows, "2026-10-31");
+    assert.equal(split.transactions.length, 1);
+    assert.equal(split.scheduledTransactions.length, 2);
+    const data = { asOf: "2026-10-31", startsOn: "2026-10-01", accounts: [{ id: "bank", name: "Bank", opening: 1000, openingOn: "2026-10-01" }], budgets: [], goals: [], bills: [], ...split };
+    assert.equal(ledgerTransactions(data).length, 3);
+    assert.equal(accountPosition(data, data.accounts[0]).balance, 900);
+    assert.equal(monthlyTotals(data.transactions, "2026-11").income, 0);
+    assert.equal(unusualExpenses(data, "2026-11").length, 0);
+    const nextDay = { ...data, asOf: "2026-11-01", ...splitTransactions(rows, "2026-11-01") };
+    assert.equal(accountPosition(nextDay, nextDay.accounts[0]).balance, 10900);
+    assert.equal(monthlyTotals(nextDay.transactions, "2026-11").income, 10000);
+    assert.equal(nextDay.scheduledTransactions.length, 1);
+    const { financeNumbers, financeWire } = require(join(temporary, "finance/wire.js"));
+    assert.deepEqual(financeNumbers(financeWire(data)), data);
+  });
+  test("unusual expenses need sufficient prior category history and ignore planned entries and transfers", () => {
+    const { unusualExpenses } = require(join(temporary, "finance/model.js"));
+    const history = [1, 2, 3, 4, 5].map(day => ({ id: String(day), date: `2026-10-0${day}`, amount: 100, kind: "expense", category: "food" }));
+    const high = { id: "high", date: "2026-10-06", amount: 201, kind: "expense", category: "food" };
+    const data = { asOf: "2026-10-06", transactions: [...history, high, { ...high, id: "transfer", kind: "transfer" }, { ...high, id: "future", date: "2026-10-07" }] };
+    assert.deepEqual(unusualExpenses(data, "2026-10").map(row => row.id), ["high"]);
+    assert.equal(unusualExpenses({ ...data, transactions: [...history.slice(1), high] }, "2026-10").length, 0);
+  });
   test("daily spending compares calendar days to their monthly budget without future actuals", () => {
     const data = {
       asOf: "2024-02-02",
@@ -251,7 +281,6 @@ try {
     const header = csvTemplate.split("\n")[0];
     for (const line of [
       "2026-09-31,bad,100,expense,food,bank,",
-      "2026-10-30,future,100,expense,food,bank,",
       "2026-10-14,same account,100,transfer,transfer,bank,bank",
       "2026-10-14,fraction,100.5,expense,food,bank,",
       "2026-10-14,too large,1000000001,expense,food,bank,",

@@ -17,8 +17,8 @@ import {
   Search,
   Pencil,
   Trash2,
-  Scale,
-  CircleDollarSign,
+  Wallet,
+  TriangleAlert,
   ReceiptText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,11 @@ import {
 import { FeatureDataTable } from "@/app/components/tables/feature-data-table";
 import { useFinance } from "@/app/context/finance-context";
 import {
-  monthlyTotals,
+  accountPosition,
+  ledgerTransactions,
+  unusualExpenses,
+  budgetLimit,
+  categorySpent,
   kindLabels,
   type Transaction,
 } from "@/lib/finance/model";
@@ -79,7 +83,12 @@ export function TransactionsPage() {
 
   const accounts = data.accounts;
   const categories = data.categories?.map(c => ({id: c.code, name: c.name})) ?? data.budgets;
-  const inScope = data.transactions
+  const allTransactions = ledgerTransactions(data);
+  const unusual = useMemo(() => unusualExpenses(data, period), [data, period]);
+  const unusualIds = useMemo(() => new Set(unusual.map(t => t.id)), [unusual]);
+  const budgeted = data.budgets.filter(b => budgetLimit(b, period) > 0);
+  const overBudget = budgeted.reduce((total, b) => total + Math.max(0, categorySpent(data.transactions, b.id, period) - budgetLimit(b, period)), 0);
+  const inScope = allTransactions
     .filter(
       (t) =>
         inFinancePeriod(t.date, period) &&
@@ -93,7 +102,6 @@ export function TransactionsPage() {
     )
     .sort((a, b) => b.date.localeCompare(a.date));
   const filtered = inScope.filter((t) => kind === "all" || t.kind === kind);
-  const stats = monthlyTotals(filtered, period);
   const columns = useMemo<ColumnDef<Transaction>[]>(
     () => [
       {
@@ -122,6 +130,8 @@ export function TransactionsPage() {
                   {t.destination &&
                     ` → ${text(accounts.find((a) => a.id === t.destination)?.name ?? "")}`}
                 </span>
+                {t.date > data.asOf && <Badge variant="outline">{text("Dự kiến")}</Badge>}
+                {unusualIds.has(t.id) && <Badge variant="destructive">{text("Chi cao bất thường")}</Badge>}
                 {t.reference && <span className="text-xs text-muted-foreground">{t.reference}</span>}
                 {t.reportGroup && <span className="text-xs text-muted-foreground">Nhóm: {t.reportGroup}</span>}
                 {t.reportingRole === "support_return" && <span className="text-xs text-muted-foreground">Trả hỗ trợ · giảm thu nhập giữ lại</span>}
@@ -190,7 +200,7 @@ export function TransactionsPage() {
         ),
       },
     ],
-    [accounts, categories, date, money, text, transactionDescription],
+    [accounts, categories, date, money, text, transactionDescription, data.asOf, unusualIds],
   );
   return (
     <div className="finance-page finance-transactions">
@@ -217,29 +227,27 @@ export function TransactionsPage() {
         </div>
       </FinancePageHeader>
       <FinanceBoard>
-        <div className="finance-metrics finance-metrics-three">
-          <Metric
-            tone="income"
-            label={text("Thu nhập đã nhận")}
-            value={money(stats.income)}
-            detail={text("Không tính chuyển khoản, hoàn tiền")}
-            icon={CircleDollarSign}
-          />
-          <Metric
-            tone="expense"
-            label={text("Chi tiêu ròng")}
-            value={money(stats.expenses)}
-            detail={text("Đã trừ {0} hoàn tiền", [money(stats.refunds)])}
-            icon={ReceiptText}
-          />
-          <Metric
-            label={text("Chênh lệch thu − chi")}
-            value={money(stats.net)}
-            detail={text("Không phải số dư tài khoản")}
-            icon={Scale}
-            negative={stats.net < 0}
-          />
+        <div className="col-span-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {data.accounts.filter(a => !a.archivedAt).map(a => {
+            const position = accountPosition(data, a);
+            return <Metric key={a.id} tone="balance" icon={Wallet}
+              label={text("Số dư · {0}", [a.name])}
+              value={position.known ? money(position.balance) : text("Chưa đủ dữ liệu")}
+              negative={position.known && position.balance < 0}
+              detail={text(position.known ? "Tính từ mốc đầu kỳ đến hôm nay; chưa gồm giao dịch dự kiến" : "Cần khai báo mốc số dư đầu kỳ trong quản lý tài khoản")} />;
+          })}
+          <Metric icon={TriangleAlert} tone={overBudget > 0 ? "danger" : "balance"}
+            label={text("Chi vượt hạn mức")}
+            value={budgeted.length ? money(overBudget) : text("Chưa đặt hạn mức")}
+            detail={text("Tổng phần vượt của các danh mục trong kỳ đang chọn")} />
+          <Metric icon={ReceiptText} tone={unusual.length ? "warning" : "balance"}
+            label={text("Giao dịch cần xem lại")}
+            value={String(unusual.length)}
+            detail={text("Chi hơn 2 lần trung vị danh mục trong 30 ngày trước; cần ít nhất 5 giao dịch")} />
         </div>
+        <p className="col-span-12 text-sm text-muted-foreground">
+          {text("Số dư là số tính từ sổ, chưa đối chiếu trực tiếp với ngân hàng. Chỉ số tổng hợp không thay đổi theo bộ lọc bảng.")}
+        </p>
         <StyleDivider wrapperClassName="col-span-12" />
         <Section
           className="finance-ledger"
@@ -298,7 +306,7 @@ export function TransactionsPage() {
                 </Button>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">Đang lọc <NumberTicker value={filtered.length} />/{data.transactions.filter(t=>inFinancePeriod(t.date,period)).length} dòng trong kỳ. Chỉ số và CSV dùng cùng tập dữ liệu, bao gồm mọi trang của bảng.</p>
+            <p className="text-sm text-muted-foreground">Đang lọc <NumberTicker value={filtered.length} />/{allTransactions.filter(t=>inFinancePeriod(t.date,period)).length} dòng trong kỳ. CSV dùng cùng tập dữ liệu với bảng, bao gồm giao dịch dự kiến và mọi trang.</p>
             <div className="overflow-x-auto">
               <Tabs value={kind} onValueChange={(v) => setKind(String(v))}>
                 <TabsList

@@ -26,6 +26,7 @@ import {
   parseFinanceCsv,
   importDuplicates,
 } from "@/lib/finance/csv";
+import { ledgerTransactions } from "@/lib/finance/model";
 import { FeatureDataTable } from "@/app/components/tables/feature-data-table";
 import { NoResults } from "./shared";
 
@@ -42,7 +43,7 @@ export function ImportDialog({ onClose }: { onClose: () => void }) {
   const [filename, setFilename] = useState("");
   const [reading, setReading] = useState(false);
   const rows = useMemo(() => {
-    const duplicates = importDuplicates(parsed.map(p=>p.row),data!.transactions);
+    const duplicates = importDuplicates(parsed.map(p=>p.row),ledgerTransactions(data!));
     return parsed.map((p,i)=>({...p,duplicate:!p.error&&duplicates[i]}));
   }, [parsed, data]);
   const valid = rows.filter((r) => !r.error && !r.duplicate);

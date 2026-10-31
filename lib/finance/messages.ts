@@ -1,5 +1,17 @@
 // Finance UI copy. Keys stay separate from account/category IDs and user-entered content.
 export const financeEnglish: Record<string, string> = {
+  "Chi cao bất thường": "Unusually high expense",
+  "Số dư · {0}": "Balance · {0}",
+  "Tính từ mốc đầu kỳ đến hôm nay; chưa gồm giao dịch dự kiến": "From the opening balance through today; planned entries excluded",
+  "Cần khai báo mốc số dư đầu kỳ trong quản lý tài khoản": "Set an opening balance date in account management",
+  "Chi vượt hạn mức": "Spending over budget",
+  "Tổng phần vượt của các danh mục trong kỳ đang chọn": "Sum of category overspending in the selected period",
+  "Giao dịch cần xem lại": "Expenses to review",
+  "Chi hơn 2 lần trung vị danh mục trong 30 ngày trước; cần ít nhất 5 giao dịch": "Over twice the category median in the preceding 30 days; requires at least 5 entries",
+  "Số dư là số tính từ sổ, chưa đối chiếu trực tiếp với ngân hàng. Chỉ số tổng hợp không thay đổi theo bộ lọc bảng.": "Balances are calculated from your ledger and are not live bank balances. Summary figures are independent of table filters.",
+  "Giao dịch dự kiến: được lưu trước và chỉ tính vào số dư, thu chi thực tế khi đến ngày ghi nhận. Nếu chưa nhận hoặc chưa chi đúng hẹn, hãy sửa ngày giao dịch.": "Planned entry: saved now and included in balances and actual reports on its date. Update the date if payment does not occur as planned.",
+  "Đã lưu giao dịch dự kiến. Chưa cộng vào số dư hiện tại.": "Planned entry saved. Current balances are unchanged.",
+
   "Chi tiêu từng ngày": "Daily spending",
   "Chi thực tế": "Actual spending",
   "Mức được phép chi": "Daily allowance",

@@ -72,6 +72,7 @@ export type FinanceData = {
   asOf: string;
   startsOn: string;
   transactions: Transaction[];
+  scheduledTransactions?: Transaction[];
   accounts: Account[];
   budgets: Budget[];
   goals: Goal[];
@@ -137,6 +138,34 @@ export function monthlyTotals(transactions: Transaction[], period: FinancePeriod
     net: income - expenses + refunds,
   };
 }
+/** Keep planned rows visible in the ledger, outside all actual reports. */
+export function splitTransactions(rows: Transaction[], asOf: string) {
+  return {
+    transactions: rows.filter(row => row.date <= asOf),
+    scheduledTransactions: rows.filter(row => row.date > asOf),
+  };
+}
+export function ledgerTransactions(data: FinanceData) {
+  return [...data.transactions, ...(data.scheduledTransactions ?? [])];
+}
+/** A review hint: more than twice the median of at least five earlier expenses
+ * in the same category during the preceding 30 days. No automatic adjustment. */
+export function unusualExpenses(data: FinanceData, period: FinancePeriod) {
+  const actual = data.transactions.filter(t => t.date <= data.asOf && reportingEffect(t).expense > 0);
+  return actual.filter(t => {
+    if (!inFinancePeriod(t.date, period)) return false;
+    const start = new Date(`${t.date}T00:00:00Z`);
+    start.setUTCDate(start.getUTCDate() - 30);
+    const from = start.toISOString().slice(0, 10);
+    const previous = actual.filter(p => p.category === t.category && p.date >= from && p.date < t.date)
+      .map(p => reportingEffect(p).expense).sort((a, b) => a - b);
+    if (previous.length < 5) return false;
+    const middle = Math.floor(previous.length / 2);
+    const median = previous.length % 2 ? previous[middle] : (previous[middle - 1] + previous[middle]) / 2;
+    return reportingEffect(t).expense > median * 2;
+  });
+}
+
 /** Calendar-day comparison; a missing budget is unknown, not a zero allowance. */
 export function dailySpendingComparison(data: FinanceData, period: FinancePeriod) {
   const totals = new Map<string, number>();

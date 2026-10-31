@@ -106,8 +106,7 @@ export function parseFinanceCsv(text: string, data: FinanceData) {
       cells.length !== (audited ? auditHeader.length : header.length) ||
       !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
       !Number.isFinite(Date.parse(date)) ||
-      new Date(date).toISOString().slice(0, 10) !== date ||
-      date > data.asOf
+      new Date(date).toISOString().slice(0, 10) !== date
     )
       error = "Ngày hoặc số cột không hợp lệ";
     else if (

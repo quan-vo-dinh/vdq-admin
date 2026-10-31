@@ -23,6 +23,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useFinance } from "@/app/context/finance-context";
 import {
   kindLabels,
+  ledgerTransactions,
   type Transaction,
   type TransactionKind,
 } from "@/lib/finance/model";
@@ -37,7 +38,7 @@ export function TransactionEditor({
   onClose: () => void;
 }) {
   const { text } = useFinanceLocale();
-  const { data, action, busy, notify } = useFinance();
+  const { data, action, busy, notify, setMonth, setPeriodMode } = useFinance();
   const [createId] = useState(() => crypto.randomUUID());
   const [kind, setKind] = useState<TransactionKind>(initial?.kind ?? "expense");
   const [description, setDescription] = useState(initial?.description ?? "");
@@ -70,11 +71,10 @@ export function TransactionEditor({
       !Number.isSafeInteger(amount) ||
       amount <= 0 ||
       !date ||
-      date > data!.asOf ||
       (kind === "transfer" && account === destination)
     ) {
       setError(
-        "Nhập nội dung, số tiền dương, ngày không sau hôm nay và hai tài khoản khác nhau khi chuyển tiền.",
+        "Nhập nội dung, số tiền dương, ngày hợp lệ và hai tài khoản khác nhau khi chuyển tiền.",
       );
       return;
     }
@@ -100,7 +100,14 @@ export function TransactionEditor({
         source: initial?.source==='csv'?'csv':'manual', reference:reference.trim()||null, occurred_at:timestamp, reporting_role:role,report_group:group.trim()||null,cash_account_id:role==='cash_withdrawal'?cashAccount:null,cash_received:role==='cash_withdrawal'?cashReceived:0,funding_transaction_id:role==='prepaid_cash'?funding:null,
       });
     } catch (e) { setError(e instanceof Error ? e.message : 'Không lưu được.'); return; }
+    if (date > data!.asOf) {
+      setMonth(date.slice(0, 7));
+      setPeriodMode("calendar");
+    }
     notify(
+      date > data!.asOf
+        ? "Đã lưu giao dịch dự kiến. Chưa cộng vào số dư hiện tại."
+        :
       initial
         ? "Đã cập nhật giao dịch."
         : "Đã thêm giao dịch. Tổng quan và ngân sách đã cập nhật.",
@@ -138,6 +145,9 @@ export function TransactionEditor({
           }}
           className="flex flex-col gap-5"
         >
+          {date > data.asOf && (
+            <Alert><AlertDescription>{text("Giao dịch dự kiến: được lưu trước và chỉ tính vào số dư, thu chi thực tế khi đến ngày ghi nhận. Nếu chưa nhận hoặc chưa chi đúng hẹn, hãy sửa ngày giao dịch.")}</AlertDescription></Alert>
+          )}
           <FieldGroup>
             <Field>
               <FieldLabel>{text("Loại giao dịch")}</FieldLabel>
@@ -178,7 +188,6 @@ export function TransactionEditor({
                 label="Ngày ghi nhận"
                 value={date}
                 onChange={setDate}
-                max={data.asOf}
               />
             </FieldGroup>
             <SelectField
@@ -221,7 +230,7 @@ export function TransactionEditor({
             <Field><FieldLabel htmlFor="tx-group">Nhóm liên quan (ví dụ: lương tháng, chuyến đi)</FieldLabel><Input id="tx-group" maxLength={80} value={group} onChange={e=>setGroup(e.target.value)}/></Field>
             {kind==="expense"&&<SelectField id="tx-reporting-role" label="Cách tính báo cáo" value={role??"standard"} onChange={v=>setRole(v as Transaction["reportingRole"])} options={[{value:"standard",label:"Chi tiêu thông thường"},{value:"support_return",label:"Trả lại tiền hỗ trợ (giảm thu nhập)"},{value:"cash_withdrawal",label:"Rút ATM tính vào ngân sách, còn nhận tiền mặt"},{value:"prepaid_cash",label:"Chi tiền mặt đã tính vào ngân sách tại ATM"}]}/>}
             {role==="cash_withdrawal"&&<><SelectField id="tx-cash-account" label="Nhận về tài khoản tiền mặt" value={cashAccount} onChange={setCashAccount} options={accounts.filter(a=>a.value!==account)}/><MoneyInput id="tx-cash-received" label="Tiền mặt thực nhận (VND)" value={cashReceived} onChange={setCashReceived} min={0}/><p className="text-sm text-muted-foreground">Toàn bộ tiền trừ ngân hàng tính chi theo danh mục đã chọn. Tiền mặt nhận về vẫn nằm trong tài sản; chi từ khoản này cần liên kết nguồn ATM để không tính ngân sách lần hai.</p></>}
-            {role==="prepaid_cash"&&<><SelectField id="tx-funding" label="Khoản ATM đã tính ngân sách" value={funding} onChange={setFunding} options={data.transactions.filter(t=>t.reportingRole==="cash_withdrawal"&&t.cashAccount===account&&t.date<=date).map(t=>({value:t.id,label:`${t.date} · ${t.description}`}))}/><p className="text-sm text-muted-foreground">Chỉ giảm tiền mặt còn giữ. Không cộng chi ngân sách lần nữa. Chỉ chọn khi đã xác nhận tiền này thuộc khoản ATM đã chọn.</p></>}
+            {role==="prepaid_cash"&&<><SelectField id="tx-funding" label="Khoản ATM đã tính ngân sách" value={funding} onChange={setFunding} options={ledgerTransactions(data).filter(t=>t.reportingRole==="cash_withdrawal"&&t.cashAccount===account&&t.date<=date).map(t=>({value:t.id,label:`${t.date} · ${t.description}`}))}/><p className="text-sm text-muted-foreground">Chỉ giảm tiền mặt còn giữ. Không cộng chi ngân sách lần nữa. Chỉ chọn khi đã xác nhận tiền này thuộc khoản ATM đã chọn.</p></>}
             {error && <FieldError>{text(error)}</FieldError>}
           </FieldGroup>
           <DialogFooter>
