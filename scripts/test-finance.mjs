@@ -28,6 +28,31 @@ try {
     { stdio: "inherit" },
   );
   const require = createRequire(import.meta.url);
+  const { dailySpendingComparison } = require(join(temporary, "finance/model.js"));
+  test("daily spending compares calendar days to their monthly budget without future actuals", () => {
+    const data = {
+      asOf: "2024-02-02",
+      budgets: [{ id: "food", limit: 3100, monthlyLimits: { "2024-02": 2900 } }],
+      transactions: [
+        { date: "2024-02-01", amount: 150, kind: "expense" },
+        { date: "2024-02-01", amount: 20, kind: "refund" },
+        { date: "2024-02-01", amount: 900, kind: "transfer" },
+        { date: "2024-02-01", amount: 800, kind: "income" },
+        { date: "2024-02-03", amount: 1000, kind: "expense" },
+      ],
+    };
+    const rows = dailySpendingComparison(data, "2024-02");
+    assert.equal(rows.length, 29);
+    assert.deepEqual(rows[0], { date: "2024-02-01", spent: 130, allowance: 100, count: 2, difference: -30 });
+    assert.equal(rows[1].spent, 0);
+    assert.equal(rows[2].spent, null);
+    assert.equal(rows[2].difference, null);
+    assert.equal(dailySpendingComparison({ ...data, budgets: [] }, "2024-02")[0].allowance, null);
+    assert.equal(dailySpendingComparison({ ...data, asOf: "2025-12-31" }, "2025-02").length, 28);
+    assert.equal(dailySpendingComparison(data, "2024-04").length, 30);
+    assert.equal(dailySpendingComparison(data, "2024-01").length, 31);
+    assert.deepEqual(dailySpendingComparison(data, { from: "2024-01-31", to: "2024-02-01" }).map(row => row.allowance), [100, 100]);
+  });
   const {
     overview,
     monthlyTotals,

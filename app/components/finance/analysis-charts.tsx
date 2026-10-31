@@ -2,11 +2,10 @@
 import { NumberTicker } from "@/components/ui/number-ticker";
 
 
-import { periodDays, periodRange } from "@/lib/finance/period";
+import { periodRange } from "@/lib/finance/period";
 import { useState } from "react";
 import {
-  Line,
-  ComposedChart,
+  Cell,
   Bar,
   BarChart,
   XAxis,
@@ -14,17 +13,17 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { ChartLine, SlidersHorizontal } from "lucide-react";
+import { ChartColumn, SlidersHorizontal } from "lucide-react";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
 import { useFinance } from "@/app/context/finance-context";
 import {
-  monthlyTotals,
+  dailySpendingComparison,
   budgetLimit,
   categorySpent,
   type Budget,
 } from "@/lib/finance/model";
-import { Section, Choice } from "./shared";
+import { Section } from "./shared";
 import { ChartHelp, FinanceChartTooltip, SeriesControl } from "./chart-tools";
 import { useFinanceLocale } from "./locale";
 
@@ -32,167 +31,80 @@ export function IncomeSpendingChart() {
   const { data: loaded, period } = useFinance();
   const data = loaded!;
   const { text, money, date, compactMoney, number } = useFinanceLocale();
-  const [mode, setMode] = useState("cumulative");
-  const [visible, setVisible] = useState(["income", "expenses"]);
-  const range=periodRange(period);
-  const days=periodDays(period,data.asOf);
-  const chart = days.map(day => {
-    const daily = data.transactions.filter((t) => t.date === day);
-    const stats = monthlyTotals(
-      mode === "daily" ? daily : data.transactions.filter((t) => t.date <= day),
-      period,
-    );
-    return {
-      date: day,
-      income: stats.income,
-      expenses: stats.expenses,
-      net: stats.net,
-      count: daily.length,
-    };
-  });
+  const [visible, setVisible] = useState(["spent", "allowance"]);
+  const range = periodRange(period);
+  const chart = dailySpendingComparison(data, period);
+  const spent = chart.reduce((total, day) => total + (day.spent ?? 0), 0);
+  const overDays = chart.filter(day => day.difference !== null && day.difference < 0).length;
   const series = [
-    { key: "income", label: text("Thu nhập"), color: "var(--chart-2)" },
-    {
-      key: "expenses",
-      label: text("Chi tiêu ròng"),
-      color: "var(--chart-1)",
-      dashed: true,
-    },
+    { key: "spent", label: text("Chi thực tế"), color: "var(--chart-1)" },
+    { key: "allowance", label: text("Mức được phép chi"), color: "var(--muted-foreground)" },
   ];
   return (
     <Section
       className="finance-income-panel"
-      title="Nhịp thu chi trong kỳ"
-      icon={ChartLine}
-      description={text("Dữ liệu ghi nhận · {0} đến {1}", [
-        date(range.from),
-        date(days.at(-1) ?? range.to),
-      ])}
+      title="Chi tiêu từng ngày"
+      icon={ChartColumn}
+      description={text("Chi thực tế và mức được phép chi · {0} đến {1}", [date(range.from), date(range.to)])}
       action={
         <ChartHelp>
-          {text(
-            "Lũy kế cộng dồn từ đầu kỳ. Theo ngày chỉ tính giao dịch tại ngày đó; hoàn tiền có thể làm chi ròng âm. Bấm chú giải để ẩn hoặc hiện chuỗi.",
-          )}
+          {text("Mức được phép chi mỗi ngày = tổng hạn mức danh mục của tháng chia số ngày trong tháng. Chi thực tế là chi ròng sau hoàn tiền, không gồm chuyển khoản. Cột đỏ là ngày vượt mức. Ngày chưa tới chưa có chi thực tế.")}
         </ChartHelp>
       }
     >
       <div className="finance-chart-headline">
         <div>
-          <p className="text-sm">{text("Chênh lệch trong kỳ")}</p>
-          <p
-            className="finance-hero-value"
-            data-finance-value
-            data-finance-tone={
-              monthlyTotals(data.transactions, period).net < 0
-                ? "danger"
-                : "balance"
-            }
-          >
-            <NumberTicker value={money(monthlyTotals(data.transactions, period).net)} />
+          <p className="text-sm">{text("Tổng chi ròng trong kỳ")}</p>
+          <p className="finance-hero-value" data-finance-value data-finance-tone="expense">
+            <NumberTicker value={money(spent)} />
           </p>
         </div>
-        <Choice
-          label="Cách xem thu chi"
-          value={mode}
-          onChange={setMode}
-          options={[
-            { value: "cumulative", label: "Lũy kế" },
-            { value: "daily", label: "Theo ngày" },
-          ]}
-        />
+        <p className="text-sm text-muted-foreground">
+          {data.budgets.length
+            ? text("{0} ngày vượt mức chi", [overDays])
+            : text("Chưa có hạn mức để so sánh")}
+        </p>
       </div>
       <ChartContainer
-        config={Object.fromEntries(
-          series.map((s) => [s.key, { label: s.label, color: s.color }]),
-        )}
+        config={Object.fromEntries(series.map(s => [s.key, { label: s.label, color: s.color }]))}
         className="finance-income-chart"
       >
-        <ComposedChart
-          accessibilityLayer
-          data={chart}
-          margin={{ left: 0, right: 8, top: 12 }}
-        >
+        <BarChart accessibilityLayer data={chart} margin={{ left: 0, right: 8, top: 12 }} barGap={2}>
           <CartesianGrid vertical={false} strokeDasharray="4 4" />
-          <XAxis
-            dataKey="date"
-            tickFormatter={(v: string) => typeof period === "string" ? v.slice(8) : `${v.slice(8)}/${v.slice(5,7)}`}
-            axisLine={false}
-            tickLine={false}
-            minTickGap={25}
-          />
-          <YAxis
-            tickFormatter={compactMoney}
-            width={55}
-            axisLine={false}
-            tickLine={false}
-            includeHidden
-          />
+          <XAxis dataKey="date"
+            tickFormatter={(v: string) => typeof period === "string" ? v.slice(8) : `${v.slice(8)}/${v.slice(5, 7)}`}
+            axisLine={false} tickLine={false} minTickGap={18} />
+          <YAxis tickFormatter={compactMoney} width={55} axisLine={false} tickLine={false} includeHidden />
           <ReferenceLine y={0} stroke="var(--border)" />
-          <ChartTooltip
-            cursor={{
-              stroke: "var(--muted-foreground)",
-              strokeDasharray: "4 4",
-            }}
+          <ChartTooltip cursor={{ fill: "var(--muted)", fillOpacity: 0.4 }}
             content={
-              <FinanceChartTooltip
-                series={series}
-                labelFormatter={(v) => date(String(v))}
-                details={(r) => [
+              <FinanceChartTooltip series={series} labelFormatter={v => date(String(v))}
+                details={row => [
                   {
-                    label: text(
-                      mode === "daily"
-                        ? "Chênh lệch trong ngày"
-                        : "Chênh lệch lũy kế",
-                    ),
-                    value: money(Number(r.net)),
-                    tone: Number(r.net) < 0 ? "danger" : "income",
+                    label: text(row.spent === null ? "Chi thực tế" : "Giao dịch chi / hoàn tiền"),
+                    value: row.spent === null ? text("Chưa tới ngày") : number(Number(row.count)),
                   },
-                  {
-                    label: text("Giao dịch tại ngày này"),
-                    value: number(Number(r.count)),
-                  },
-                ]}
-              />
-            }
-          />
-          {series.map((s) =>
-            mode === "daily" ? (
-              <Bar
-                key={s.key}
-                dataKey={s.key}
-                fill={s.color}
-                hide={!visible.includes(s.key)}
-                radius={[3, 3, 0, 0]}
-                isAnimationActive={false}
-              />
-            ) : (
-              <Line
-                key={s.key}
-                dataKey={s.key}
-                type="linear"
-                stroke={s.color}
-                dot={false}
-                strokeDasharray={s.dashed ? "4 4" : undefined}
-                strokeWidth={1.5}
-                activeDot={{
-                  r: 4,
-                  stroke: "var(--background)",
-                  strokeWidth: 2,
-                }}
-                hide={!visible.includes(s.key)}
-                isAnimationActive={false}
-              />
-            ),
-          )}
-        </ComposedChart>
+                  ...(row.difference === null ? [] : [{
+                    label: text(Number(row.difference) < 0 ? "Vượt mức trong ngày" : "Còn trong mức ngày"),
+                    value: money(Math.abs(Number(row.difference))),
+                    tone: Number(row.difference) < 0 ? "danger" as const : "income" as const,
+                  }]),
+                ]} />
+            } />
+          <Bar dataKey="spent" fill={series[0].color} hide={!visible.includes("spent")}
+            radius={[3, 3, 0, 0]} maxBarSize={18} isAnimationActive={false}>
+            {chart.map(day => <Cell key={day.date} fill={day.difference !== null && day.difference < 0 ? "var(--destructive)" : series[0].color} />)}
+          </Bar>
+          <Bar dataKey="allowance" fill={series[1].color} fillOpacity={0.35}
+            hide={!visible.includes("allowance")} radius={[3, 3, 0, 0]} maxBarSize={18} isAnimationActive={false} />
+        </BarChart>
       </ChartContainer>
       <div className="finance-chart-legend">
-        <SeriesControl
-          series={series}
-          visible={visible}
-          onChange={setVisible}
-        />
+        <SeriesControl series={series} visible={visible} onChange={setVisible} />
       </div>
+      <p className="mt-2 text-xs text-muted-foreground">
+        {text("Mức ngày được chia đều từ hạn mức tháng; phần chưa dùng không tự cộng sang ngày sau.")}
+      </p>
     </Section>
   );
 }

@@ -1,5 +1,18 @@
 // Finance UI copy. Keys stay separate from account/category IDs and user-entered content.
 export const financeEnglish: Record<string, string> = {
+  "Chi tiêu từng ngày": "Daily spending",
+  "Chi thực tế": "Actual spending",
+  "Mức được phép chi": "Daily allowance",
+  "Chi thực tế và mức được phép chi · {0} đến {1}": "Actual spending and daily allowance · {0} to {1}",
+  "Mức được phép chi mỗi ngày = tổng hạn mức danh mục của tháng chia số ngày trong tháng. Chi thực tế là chi ròng sau hoàn tiền, không gồm chuyển khoản. Cột đỏ là ngày vượt mức. Ngày chưa tới chưa có chi thực tế.": "Daily allowance is the total monthly category budget divided by the number of days in that month. Actual spending is net of refunds and excludes transfers. Red bars indicate days over the allowance. Future days have no actual spending yet.",
+  "Tổng chi ròng trong kỳ": "Total net spending in the period",
+  "{0} ngày vượt mức chi": "{0} days over the allowance",
+  "Chưa có hạn mức để so sánh": "No budget set for comparison",
+  "Giao dịch chi / hoàn tiền": "Expense / refund transactions",
+  "Chưa tới ngày": "Future day",
+  "Vượt mức trong ngày": "Over the daily allowance",
+  "Còn trong mức ngày": "Remaining daily allowance",
+  "Mức ngày được chia đều từ hạn mức tháng; phần chưa dùng không tự cộng sang ngày sau.": "The monthly budget is spread evenly across days; unused amounts do not roll over to the next day.",
   "Kế hoạch tiết kiệm theo kỳ lương": "Savings plan by payday",
   "Lương nhận cuối tháng → giữ tiền chi cho tháng kế tiếp → phần còn lại mới là tiết kiệm. Mỗi kỳ có thể có lương và mức chi khác nhau.": "Month-end salary → reserve next month’s spending → save the remainder. Salary and spending can differ each cycle.",
   "Ngày nhận lương": "Payday",

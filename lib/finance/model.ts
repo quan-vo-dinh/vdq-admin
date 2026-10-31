@@ -1,4 +1,4 @@
-import { inFinancePeriod, periodMonthShares, type FinancePeriod } from "./period";
+import { calendarMonthRange, periodDays, inFinancePeriod, periodMonthShares, type FinancePeriod } from "./period";
 export type TransactionKind = "expense" | "income" | "transfer" | "refund";
 export type Transaction = {
   id: string;
@@ -137,6 +137,28 @@ export function monthlyTotals(transactions: Transaction[], period: FinancePeriod
     net: income - expenses + refunds,
   };
 }
+/** Calendar-day comparison; a missing budget is unknown, not a zero allowance. */
+export function dailySpendingComparison(data: FinanceData, period: FinancePeriod) {
+  const totals = new Map<string, number>();
+  const counts = new Map<string, number>();
+  for (const transaction of data.transactions) {
+    if (transaction.date > data.asOf || !inFinancePeriod(transaction.date, period)) continue;
+    const effect = reportingEffect(transaction);
+    totals.set(transaction.date, (totals.get(transaction.date) ?? 0) + effect.expense - effect.refund);
+    if (effect.expense || effect.refund) counts.set(transaction.date, (counts.get(transaction.date) ?? 0) + 1);
+  }
+  return periodDays(period).map(date => {
+    const month = date.slice(0, 7);
+    const daysInMonth = Number(calendarMonthRange(month).to.slice(8));
+    const allowance = data.budgets.length
+      ? data.budgets.reduce((total, budget) => total + budgetLimit(budget, month), 0) / daysInMonth
+      : null;
+    const spent = date > data.asOf ? null : totals.get(date) ?? 0;
+    return { date, spent, allowance, count: counts.get(date) ?? 0,
+      difference: spent !== null && allowance !== null ? allowance - spent : null };
+  });
+}
+
 export function accountBalance(account: Account, transactions: Transaction[], asOf = "9999-12-31") {
   // A baseline dated after the requested cutoff is not part of that historical position.
   if (account.openingOn && account.openingOn > asOf) return 0;
