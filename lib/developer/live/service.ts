@@ -1,4 +1,5 @@
 import "server-only";
+import { historyStep, historyTotals } from "./history";
 import { readCodex } from "../codex/server";
 import { codexSource, type CodexAccountView } from "../codex/analytics";
 import type { QuotaWindow } from "../codex/model";
@@ -99,6 +100,9 @@ export async function connectionRequest(request: Request) {
     await deleteDocument("connection", id);
     await deleteDocument("sync", id);
     await deleteDocument("snapshot", id);
+    await deleteDocument("history", id);
+    const db = await serverSupabase();
+    dbError((await db.from("github_history_events").delete().eq("source_id", id)).error);
     return Response.json({ ok: true });
   }
   if (request.method === "PATCH" && old && typeof body.paused === "boolean") {
@@ -153,6 +157,9 @@ export async function connectionRequest(request: Request) {
     await deleteDocument("sync", id);
     if (JSON.stringify(old.repositories) !== JSON.stringify(repos))
       await deleteDocument("snapshot", id);
+    // Inbox selection never changes historical scope. A replacement credential
+    // can expose older repositories, so restart its traversal and retain facts.
+    if (body.token) await deleteDocument("history", id);
   }
   const now = new Date().toISOString();
   const c: LiveConnection = {
@@ -221,6 +228,7 @@ export async function liveData(): Promise<LiveSnapshot> {
       coverage.push(...visible.coverage);
     }
   }
+  data.githubTotals = await historyTotals(list, data.snapshot);
   const codex = await readCodex();
   data.codexAccounts = codex.accounts.map((account) => ({
     id: account.id,
@@ -311,6 +319,12 @@ export async function syncRequest(request: Request) {
   dbError(error);
   if (!data?.length) return Response.json({ done: false, retryAfter: 5 });
   try {
+    if (body.mode === "history") {
+      const c = (await connections()).find(c => c.id === body.id);
+      if (!c) throw new AccessError(404, "connection_missing");
+      if (c.paused) throw new AccessError(409, "connection_paused");
+      return await historyStep(c);
+    }
     return await syncStep(request);
   } finally {
     await db

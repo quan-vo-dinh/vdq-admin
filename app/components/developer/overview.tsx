@@ -23,7 +23,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useDeveloper } from "@/app/context/developer-context";
-import { startDate, selectSessions, selectContributions, codeChanges } from "@/lib/developer/model";
+import { selectSessions } from "@/lib/developer/model";
+import { aggregateTotals } from "@/lib/developer/live/history-model";
 import { modelName } from "@/lib/developer/models";
 import { Choice, NoResults, useDeveloperLocale } from "./shared";
 import { usageRows, usageTotal } from "@/lib/developer/codex/analytics";
@@ -74,45 +75,25 @@ function ActivitySection() {
 }
 export function Overview() {
   const { data, days, setDays } = useDeveloper();
-  const { text, number } = useDeveloperLocale();
+  const { text } = useDeveloperLocale();
   const [provider, setProvider] = useState("all");
   const [source, setSource] = useState("all");
   const [model, setModel] = useState("all");
   const accounts = data.sources.filter(s => s.provider !== "GitHub" && (provider === "all" || s.provider === provider));
   const models = [...new Set(selectSessions(data, days, source, provider).map(s => s.model))];
-  const contributions = selectContributions(data, days);
-  const changes = codeChanges(data, 30);
   const totalTokens = provider !== "Claude Code" && model === "all" ? usageTotal(usageRows(data, days, source)) : null;
+  const githubIds = data.sources.filter(s => s.provider === "GitHub").map(s => s.id);
+  const periods = [
+    { id: "all" as const, label: text("Từ trước đến nay", "All time") },
+    { id: "year" as const, label: text("1 năm", "1 year") },
+    { id: "month" as const, label: text("30 ngày", "30 days") },
+  ].map(period => ({ ...period, totals: aggregateTotals(data.githubTotals ?? [], period.id, githubIds) }));
   const metrics = [
-    {
-      title: "Contributions",
-      value: (data.githubCalendar ?? contributions).filter(row => row.date >= startDate(days, data.snapshot) && row.date <= data.snapshot).reduce((n, row) => n + row.count, 0),
-      sub: `${days} ${text("ngày", "days")}`,
-      badge: `${days} ${text("ngày", "days")}`,
-      tinted: true,
-      icon: Activity,
-    },
-    {
-      title: text("Pull requests đã mở", "Pull requests opened"),
-      value: contributions.reduce((n, r) => n + r.prs, 0),
-      sub: `${days} ${text("ngày · không đồng nghĩa đã merge", "days · does not imply merged")}`,
-      badge: `${days} ${text("ngày", "days")}`,
-      tinted: false,
-      icon: GitPullRequest,
-    },
-    {
-      title: text("Dòng code thay đổi", "Lines changed"),
-      value: changes.total,
-      sub: text(
-        "Số dòng thêm và xóa trong 30 ngày qua",
-        "Lines added and deleted over the past 30 days",
-      ),
-      badge: text("30 ngày", "30 days"),
-      changes,
-      tinted: true,
-      icon: FileDiff,
-    },
+    { title: text("Dòng code thay đổi", "Lines changed"), key: "lines" as const, icon: FileDiff },
+    { title: "Contributions", key: "contributions" as const, icon: Activity },
+    { title: text("Pull requests đã mở", "Pull requests opened"), key: "prs" as const, icon: GitPullRequest },
   ];
+  const fullNumber = (value: number) => new Intl.NumberFormat("vi-VN").format(value);
   return (
     <StyleAwareWrapper
       lyraClassName="developer-board grid grid-cols-12 gap-px bg-border p-px"
@@ -187,73 +168,45 @@ export function Overview() {
         </DashboardCard>
       </div>
       <StyleDivider wrapperClassName="col-span-12" />
+      <div className="col-span-12 grid min-w-0 grid-cols-6 gap-px bg-border">
       {metrics.map((m) => (
-        <div key={m.title} className="col-span-12 lg:col-span-4">
-          <DashboardCard className="py-6">
-            <CardContent className="flex flex-row justify-between px-6">
-              <div className="flex w-full flex-col items-start gap-4">
-                <div className="flex w-full items-center justify-between">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-normal text-foreground">
-                        {m.title}
-                      </p>
-                      {"changes" in m && (
-                        <Badge variant="outline">{m.badge}</Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2" title={m.sub}>
-                      <h3 className="text-2xl font-semibold tabular-nums">
-                        <NumberTicker value={number(m.value)} />
-                      </h3>
-                      {!("changes" in m) && (
-                        <Badge
-                          variant={m.tinted ? "default" : "outline"}
-                          className={
-                            m.tinted
-                              ? "bg-chart-2/10! text-chart-2!"
-                              : undefined
-                          }
-                        >
-                          {m.badge}
-                        </Badge>
-                      )}
-                      {"changes" in m && m.changes && (
-                        <span className="inline-flex shrink-0 items-center gap-2 text-sm font-medium tabular-nums">
-                          <span
-                            className="text-success-foreground"
-                            aria-label={text(
-                              `${number(m.changes.additions)} dòng thêm`,
-                              `${number(m.changes.additions)} lines added`,
-                            )}
-                          >
-                            +
-                            <NumberTicker value={number(m.changes.additions)} />
-                          </span>
-                          <span
-                            className="text-destructive"
-                            aria-label={text(
-                              `${number(m.changes.deletions)} dòng xóa`,
-                              `${number(m.changes.deletions)} lines deleted`,
-                            )}
-                          >
-                            −
-                            <NumberTicker value={number(m.changes.deletions)} />
-                          </span>
-                        </span>
-                      )}
-                      <span className="sr-only">{m.sub}</span>
-                    </div>
-                  </div>
-                  <div className="w-fit rounded-md border border-border p-2.5">
-                    <m.icon size={16} />
-                  </div>
-                </div>
+        <div key={m.key} className="col-span-6 min-w-0 lg:col-span-2">
+          <DashboardCard className="h-full py-6">
+            <CardContent className="flex flex-col gap-4 px-5">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm">{m.title}</p>
+                <div className="w-fit rounded-md border border-border p-2.5"><m.icon size={16} /></div>
               </div>
+              <div className="divide-y">
+                {periods.map(({ id, label, totals }) => {
+                  const value = m.key === "lines" ? totals.additions + totals.deletions : totals[m.key];
+                  const complete = totals.complete[m.key];
+                  return (
+                    <div key={id} className="grid min-h-20 min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] items-center gap-3 py-3 first:pt-0 last:pb-0">
+                      <Badge variant="outline" className={m.key !== "prs" ? "max-w-full whitespace-normal bg-chart-2/10! text-chart-2!" : "max-w-full whitespace-normal"}>{label}</Badge>
+                      <div className="min-w-0 text-right tabular-nums" title={!complete ? text("Đang đồng bộ lịch sử, số hiện tại chưa đầy đủ", "History sync in progress; current count is incomplete") : undefined}>
+                        <span className="break-words text-2xl font-semibold">{!complete && value > 0 ? "≥ " : ""}{complete || value > 0 ? fullNumber(value) : "—"}</span>
+                        {m.key === "lines" && (complete || value > 0) && (
+                          <div className="mt-1 flex flex-wrap justify-end gap-x-2 text-sm">
+                            <span className="text-success-foreground">+{fullNumber(totals.additions)}</span>
+                            <span className="text-destructive">−{fullNumber(totals.deletions)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {githubIds.length} {text("tài khoản GitHub", "GitHub accounts")}
+                {!periods.every(p => p.totals.complete[m.key]) && ` · ${text("Đang đồng bộ", "Syncing")}`}
+                {m.key === "prs" && ` · ${text("Không đồng nghĩa đã merge", "Does not imply merged")}`}
+              </p>
             </CardContent>
           </DashboardCard>
         </div>
       ))}
+      </div>
       <StyleDivider wrapperClassName="col-span-12" />
       <div
         id="activity"

@@ -393,6 +393,23 @@
           }
         }
       ]
+    },
+    {
+      "name": "Sync GitHub history next step",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer/sync",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{connection_id}}\",\n  \"mode\": \"history\"\n}"
+        }
+      }
     }
   ]
 }

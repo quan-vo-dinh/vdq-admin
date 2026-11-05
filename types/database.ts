@@ -5,6 +5,13 @@ export type Database = {
 
   "public": {
           Tables: {
+      github_history_events: {
+        Row: { owner_id: string; source_id: string; event_key: string; day: string; kind: string; count: number; additions: number; deletions: number };
+        Insert: { owner_id?: string; source_id: string; event_key: string; day: string; kind: string; count?: number; additions?: number; deletions?: number };
+        Update: { day?: string; count?: number; additions?: number; deletions?: number };
+        Relationships: [];
+      },
+
 developer_documents: {
         Row: {
           owner_id: string;
@@ -949,6 +956,11 @@ isOneToOne: false
                 }
           }
           Functions: {
+      github_history_totals: {
+        Args: { p_today?: string };
+        Returns: { source_id: string; period: string; contributions: number; prs: number; additions: number; deletions: number }[];
+      },
+
 codex_ingest: {
         Args: { p_batch: Json; p_device: string; p_token_hash: string };
         Returns: Json;

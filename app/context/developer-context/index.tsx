@@ -60,17 +60,25 @@ export function DeveloperProvider({
           "/api/developer/connections",
           { signal },
         )) as { id: string; paused: boolean }[];
-        for (const c of connections) {
-          if (c.paused) continue;
-          for (let step = 0; step < 10000 && !signal?.aborted; step++) {
-            const result = await developerFetch("/api/developer/sync", {
-              method: "POST",
-              body: JSON.stringify({ id: c.id }),
-              signal,
-            });
-            if (result.done || result.retryAfter) break;
+        const results = await Promise.allSettled(connections.filter(c => !c.paused).map(async c => {
+          let activityDone = false, historyDone = false;
+          for (let step = 0; step < 10000 && !signal?.aborted && (!activityDone || !historyDone); step++) {
+            if (!historyDone) {
+              const result = await developerFetch("/api/developer/sync", {
+                method: "POST", body: JSON.stringify({ id: c.id, mode: "history" }), signal,
+              });
+              historyDone = !!(result.done || result.retryAfter);
+            }
+            if (!activityDone) {
+              const result = await developerFetch("/api/developer/sync", {
+                method: "POST", body: JSON.stringify({ id: c.id }), signal,
+              });
+              activityDone = !!(result.done || result.retryAfter);
+            }
           }
-        }
+        }));
+        const failed = results.find(r => r.status === "rejected");
+        if (failed?.status === "rejected") throw failed.reason;
       } catch (cause) {
         if (!signal?.aborted)
           toast.add({
@@ -92,6 +100,10 @@ export function DeveloperProvider({
       controller.abort();
     };
   }, [sync]);
+  useEffect(() => {
+    const timer = setInterval(() => { if (!syncing) void sync(); }, 60000);
+    return () => clearInterval(timer);
+  }, [sync, syncing]);
   const current = data?.data ?? initialData;
   return (
     <Context.Provider

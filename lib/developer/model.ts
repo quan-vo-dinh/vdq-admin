@@ -51,6 +51,7 @@ export type Notification = {
   body: string;
 };
 export type DeveloperData = {
+  githubTotals?: import("./live/history-model").GitHubTotals[];
   snapshot: string;
   sources: Source[];
   sessions: Session[];

@@ -60,3 +60,17 @@ Unit checks kiểm tra biên ngày, giao bộ lọc, tổng model/provider, thô
 ## Cập nhật cô đọng giao diện — 17/10/2026
 
 Gom sáu màn hình về hai trang và hai dialog, dựa trên source và giao diện thật của `/`. Bỏ phần mô tả dài trên shell, các chart/gallery lặp thông tin và bốn mục sidebar. Dữ liệu/công thức/nguồn model giữ nguyên mốc 16/10. Kiểm tra lại build, lint phạm vi Developer, bảy unit checks; lint toàn repo vẫn báo lỗi ngoài module. Đã kiểm tra trực tiếp logo màu, layout 7–5/ba KPI, tab Inbox, dialog nguồn/báo cáo và AI Usage trên Safari.
+
+### Tổng GitHub theo ba mốc
+
+Lưới sáu cột có ba nhóm, mỗi nhóm chiếm hai cột theo thứ tự trái sang phải: dòng code thay đổi, Contributions, PR đã mở. Trong từng nhóm, nhãn và số liệu có hai cột với ba mốc: từ trước đến nay, 1 năm (365 ngày gồm hôm nay), 30 ngày (gồm hôm nay). Cả ba nhóm cộng tất cả tài khoản GitHub đã kết nối; bộ lọc thời gian của chart AI không đổi các mốc này.
+
+`POST /api/developer/sync` với `{ "id": "<connection_id>", "mode": "history" }` chạy một bước lịch sử dưới cùng khóa kết nối với Inbox. `GET /api/developer` trả `data.githubTotals`: mỗi tài khoản có các period `all`, `year`, `month`, số liệu Contributions/PR/additions/deletions, cờ `complete` cho từng chỉ số và thời điểm cập nhật. Khi chưa quét xong, số đã thu thập là giới hạn dưới, hiển thị `≥` và trạng thái đồng bộ; không coi chưa thu thập là số 0 đã xác nhận.
+
+- Contributions lấy lịch GitHub từng năm kể từ năm tạo tài khoản; giữ ngày theo lịch GitHub và số contribution mà token được phép xem.
+- PR lấy toàn bộ PR do tài khoản mở, phân trang theo ngày tạo; không phải số PR đã merge.
+- Dòng code lấy additions/deletions của commit tác giả được GitHub gắn với tài khoản, trên tất cả repo/nhánh token truy cập được, gồm fork. SHA chỉ tính một lần trong mỗi tài khoản, kể cả xuất hiện trên nhiều nhánh/fork. Đây là tổng thay đổi qua commit, không phải số dòng hiện còn trong codebase. Ngày PR/commit theo Việt Nam. Không khôi phục được nhánh đã xóa, repo không truy cập được hoặc commit không được GitHub nhận diện tác giả.
+
+Facts lưu trong `github_history_events`; cursor hàng đợi nằm ở collection `history` của `developer_documents`. Upsert tuyệt đối theo account/SHA hoặc PR ID/ngày lịch tránh cộng lại khi retry. Tài khoản lỗi không chặn tài khoản khác. Trình duyệt tiếp tục theo cursor và thử lại định kỳ khi trang mở. Sau 10 phút, lần đồng bộ mới kiểm tra lịch/PR/repo và chỉ quét lại lịch sử các nhánh đổi SHA đầu nhánh.
+
+Kiểm tra hồi quy: `node scripts/developer/test-history.mjs` (mốc ngày, cộng nhiều tài khoản, chống trùng SHA, quyền owner, giới hạn ảnh 5 MB).

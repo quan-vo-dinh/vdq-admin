@@ -53,3 +53,18 @@ export type Repository = {
 export async function verifyToken(token: string) {
   return github<GitHubUser>(token, "/user");
 }
+
+export async function githubGraphQL<T>(token: string, query: string, variables: Record<string, unknown> = {}): Promise<T> {
+  const response = await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables }),
+    cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15000),
+  });
+  const result = await response.json();
+  if (!response.ok || result.errors?.length || !result.data) {
+    const type = result.errors?.[0]?.type;
+    throw new GitHubError(response.status === 401 ? "credential_expired" : response.status === 429 || type === "RATE_LIMITED" ? "rate_limited" : type === "NOT_FOUND" ? "repository_unavailable" : "upstream_unavailable");
+  }
+  return result.data as T;
+}
