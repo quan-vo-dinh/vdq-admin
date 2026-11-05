@@ -63,7 +63,7 @@ Gom sáu màn hình về hai trang và hai dialog, dựa trên source và giao d
 
 ### Tổng GitHub theo ba mốc
 
-Lưới sáu cột có ba nhóm, mỗi nhóm chiếm hai cột theo thứ tự trái sang phải: dòng code thay đổi, Contributions, PR đã mở. Trong từng nhóm, nhãn và số liệu có hai cột với ba mốc: từ trước đến nay, 1 năm (365 ngày gồm hôm nay), 30 ngày (gồm hôm nay). Cả ba nhóm cộng tất cả tài khoản GitHub đã kết nối; bộ lọc thời gian của chart AI không đổi các mốc này.
+Lưới sáu cột trên cùng một hàng có hai nhóm, mỗi nhóm chiếm ba cột theo thứ tự trái sang phải: dòng code thay đổi, Contributions. PR đã mở không hiển thị trên dashboard. Mỗi nhóm có ba cột thời gian: từ trước đến nay, 1 năm (365 ngày gồm hôm nay), 30 ngày (gồm hôm nay). Cả ba nhóm cộng tất cả tài khoản GitHub đã kết nối; bộ lọc thời gian của chart AI không đổi các mốc này.
 
 `POST /api/developer/sync` với `{ "id": "<connection_id>", "mode": "history" }` chạy một bước lịch sử dưới cùng khóa kết nối với Inbox. `GET /api/developer` trả `data.githubTotals`: mỗi tài khoản có các period `all`, `year`, `month`, số liệu Contributions/PR/additions/deletions, cờ `complete` cho từng chỉ số và thời điểm cập nhật. Khi chưa quét xong, số đã thu thập là giới hạn dưới, hiển thị `≥` và trạng thái đồng bộ; không coi chưa thu thập là số 0 đã xác nhận.
 

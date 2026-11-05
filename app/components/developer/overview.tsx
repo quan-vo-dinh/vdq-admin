@@ -5,7 +5,6 @@ import { useState } from "react";
 import Link from "@/lib/platform/link";
 import {
   ArrowRight,
-  GitPullRequest,
   Inbox,
   Activity,
   Sparkles,
@@ -91,7 +90,6 @@ export function Overview() {
   const metrics = [
     { title: text("Dòng code thay đổi", "Lines changed"), key: "lines" as const, icon: FileDiff },
     { title: "Contributions", key: "contributions" as const, icon: Activity },
-    { title: text("Pull requests đã mở", "Pull requests opened"), key: "prs" as const, icon: GitPullRequest },
   ];
   const fullNumber = (value: number) => new Intl.NumberFormat("vi-VN").format(value);
   return (
@@ -170,24 +168,24 @@ export function Overview() {
       <StyleDivider wrapperClassName="col-span-12" />
       <div className="col-span-12 grid min-w-0 grid-cols-6 gap-px bg-border">
       {metrics.map((m) => (
-        <div key={m.key} className="col-span-6 min-w-0 lg:col-span-2">
+        <div key={m.key} className="col-span-6 min-w-0 lg:col-span-3">
           <DashboardCard className="h-full py-6">
             <CardContent className="flex flex-col gap-4 px-5">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm">{m.title}</p>
                 <div className="w-fit rounded-md border border-border p-2.5"><m.icon size={16} /></div>
               </div>
-              <div className="divide-y">
+              <div className="grid grid-cols-3 gap-3 divide-x">
                 {periods.map(({ id, label, totals }) => {
                   const value = m.key === "lines" ? totals.additions + totals.deletions : totals[m.key];
                   const complete = totals.complete[m.key];
                   return (
-                    <div key={id} className="grid min-h-20 min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] items-center gap-3 py-3 first:pt-0 last:pb-0">
-                      <Badge variant="outline" className={m.key !== "prs" ? "max-w-full whitespace-normal bg-chart-2/10! text-chart-2!" : "max-w-full whitespace-normal"}>{label}</Badge>
-                      <div className="min-w-0 text-right tabular-nums" title={!complete ? text("Đang đồng bộ lịch sử, số hiện tại chưa đầy đủ", "History sync in progress; current count is incomplete") : undefined}>
-                        <span className="break-words text-2xl font-semibold">{!complete && value > 0 ? "≥ " : ""}{complete || value > 0 ? fullNumber(value) : "—"}</span>
+                    <div key={id} className="flex min-w-0 flex-col items-start gap-2 pr-3 last:pr-0">
+                      <Badge variant="outline" className="max-w-full whitespace-normal bg-chart-2/10! text-chart-2!">{label}</Badge>
+                      <div className="min-w-0 tabular-nums" title={!complete ? text("Đang đồng bộ lịch sử, số hiện tại chưa đầy đủ", "History sync in progress; current count is incomplete") : undefined}>
+                        <span className="break-words text-xl font-semibold 2xl:text-2xl">{!complete && value > 0 ? "≥ " : ""}{complete || value > 0 ? fullNumber(value) : "—"}</span>
                         {m.key === "lines" && (complete || value > 0) && (
-                          <div className="mt-1 flex flex-wrap justify-end gap-x-2 text-sm">
+                          <div className="mt-1 flex flex-wrap gap-x-2 text-sm">
                             <span className="text-success-foreground">+{fullNumber(totals.additions)}</span>
                             <span className="text-destructive">−{fullNumber(totals.deletions)}</span>
                           </div>
@@ -200,7 +198,6 @@ export function Overview() {
               <p className="text-xs text-muted-foreground">
                 {githubIds.length} {text("tài khoản GitHub", "GitHub accounts")}
                 {!periods.every(p => p.totals.complete[m.key]) && ` · ${text("Đang đồng bộ", "Syncing")}`}
-                {m.key === "prs" && ` · ${text("Không đồng nghĩa đã merge", "Does not imply merged")}`}
               </p>
             </CardContent>
           </DashboardCard>
