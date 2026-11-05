@@ -5,7 +5,6 @@ import { useState } from "react";
 import Link from "@/lib/platform/link";
 import {
   ArrowRight,
-  Inbox,
   Activity,
   Sparkles,
   FileDiff,
@@ -31,12 +30,10 @@ import { CodexTrend } from "./codex-usage";
 import { BrandIcon } from "./brand-icon";
 import { GitHubAnalytics } from "./github";
 import { DeveloperInbox } from "./inbox";
-import { GitHubActivityDialog } from "./github-activity";
 import { UsageAllowances } from "./usage-allowances";
 function ActivitySection() {
   const { text } = useDeveloperLocale();
   const { data, githubAccount, setGithubAccount } = useDeveloper();
-  const unread = data.notifications.filter((n) => !n.read).length;
   return (
     <div className="grid min-w-0 grid-cols-1 divide-y divide-border xl:grid-cols-2 xl:divide-x xl:divide-y-0">
       <section className="min-w-0" aria-labelledby="contributions-heading">
@@ -66,15 +63,6 @@ function ActivitySection() {
         className="min-w-0 scroll-mt-20"
         aria-labelledby="inbox-heading"
       >
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 pt-5">
-          <h2
-            id="inbox-heading"
-            className="flex items-center gap-2 font-semibold"
-          >
-            <Inbox /> Inbox <Badge variant="secondary">{unread}</Badge>
-          </h2>
-          <GitHubActivityDialog />
-        </div>
         <DeveloperInbox />
       </section>
     </div>

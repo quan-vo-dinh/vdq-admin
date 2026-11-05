@@ -1,13 +1,12 @@
 "use client";
 import { useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ExternalLink, CheckCheck, RotateCcw } from "lucide-react";
+import { ExternalLink, CheckCheck, RotateCcw, Inbox } from "lucide-react";
 import { useDeveloper } from "@/app/context/developer-context";
 import type { Notification } from "@/lib/developer/model";
 import { FeatureDataTable } from "@/app/components/tables/feature-data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, FieldLabel } from "@/components/ui/field";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -17,7 +16,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { GitHubActivityDialog } from "./github-activity";
 import { Choice, NoResults, useDeveloperLocale } from "./shared";
 import { ProviderTitle } from "./brand-icon";
 export function DeveloperInbox() {
@@ -26,13 +25,11 @@ export function DeveloperInbox() {
   const [query, setQuery] = useState("");
   const [account, setAccount] = useState("all");
   const [kind, setKind] = useState("all");
-  const [status, setStatus] = useState("unread");
   const [selected, setSelected] = useState<Notification | null>(null);
   const rows = data.notifications.filter(
     (n) =>
       (account === "all" || n.sourceId === account) &&
       (kind === "all" || n.kind === kind) &&
-      (status === "all" || !n.read) &&
       `${n.title} ${n.repo}`.toLowerCase().includes(query.toLowerCase()),
   );
   const current = data.notifications.find((n) => n.id === selected?.id);
@@ -98,32 +95,20 @@ export function DeveloperInbox() {
     },
   ];
   return (
-    <div className="flex flex-col gap-4 p-6">
-      <div className="flex flex-wrap items-end gap-3">
-        <Field className="w-full sm:max-w-64">
-          <FieldLabel htmlFor="developer-search">
-            {text("Tìm thông báo", "Search inbox")}
-          </FieldLabel>
-          <Input
-            id="developer-search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="review, chart, next.js…"
-          />
-        </Field>
-        <ToggleGroup
-          variant="outline"
-          value={[status]}
-          onValueChange={(v) => {
-            if (v[0]) setStatus(v[0]);
-          }}
-          aria-label={text("Trạng thái đọc", "Read status")}
-        >
-          <ToggleGroupItem value="unread">
-            {text("Chưa đọc", "Unread")}
-          </ToggleGroupItem>
-          <ToggleGroupItem value="all">{text("Tất cả", "All")}</ToggleGroupItem>
-        </ToggleGroup>
+    <div className="flex min-w-0 flex-col gap-3 px-6 py-3">
+      <div className="flex min-w-0 items-center gap-2 overflow-x-auto pb-1 [&_[data-slot=select-trigger]]:h-8 [&_[data-slot=select-trigger]]:max-w-36 [&_[data-slot=select-trigger]]:shrink-0 [&_[data-slot=select-trigger]]:text-xs">
+        <h2 id="inbox-heading" className="mr-auto flex shrink-0 items-center gap-2 font-semibold">
+          <Inbox className="size-4" /> Inbox
+          <Badge variant="secondary">{data.notifications.filter(n => !n.read).length}</Badge>
+        </h2>
+        <Input
+          id="developer-search"
+          aria-label={text("Tìm thông báo", "Search inbox")}
+          className="h-8! w-32! shrink-0 text-xs"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={text("Tìm thông báo…", "Search inbox…")}
+        />
         <Choice
           label={text("Nguồn GitHub", "GitHub source")}
           value={account}
@@ -147,6 +132,7 @@ export function DeveloperInbox() {
             })),
           ]}
         />
+        <div className="shrink-0"><GitHubActivityDialog /></div>
       </div>
       <div className="[&_[data-slot=table-container]]:h-64 [&_[data-slot=table-container]]:overflow-y-scroll [&_[data-slot=table-container]]:[scrollbar-gutter:stable] [&_thead]:sticky [&_thead]:top-0 [&_thead]:bg-background [&_thead_tr]:h-10 [&_tbody_tr]:h-18">
       <FeatureDataTable

@@ -151,14 +151,13 @@ function DeveloperHeader() {
   );
 }
 export function DeveloperShell({ children }: { children: ReactNode }) {
-  const { error, syncProgress } = useDeveloper();
+  const { error } = useDeveloper();
   const { text } = useDeveloperLocale();
   return (
     <div className="developer-workspace flex min-w-0 flex-col gap-4">
       <Suspense fallback={null}>
         <DeveloperHeader />
       </Suspense>
-      {syncProgress.length>0 && <p role="status" className="px-1 text-xs text-muted-foreground">{text("Đang đồng bộ GitHub", "GitHub synchronization in progress")} · {syncProgress.reduce((sum,s)=>sum+s.activities,0)} {text("hoạt động đã thu thập", "activities collected")} · {syncProgress.reduce((sum,s)=>sum+s.remaining,0)} {text("bước còn lại", "steps remaining")}</p>}
       {error && (
         <Alert variant="destructive">
           <AlertDescription>

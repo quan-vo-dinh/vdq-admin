@@ -31,7 +31,7 @@ export function GitHubActivityDialog() {
     <Dialog open={snapshot !== null} onOpenChange={(value)=>{ if(value) setToday(vietnamDate()); setOpen(value); }}>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>
         <Activity data-icon="inline-start" />
-        {text("Hoạt động GitHub · 7 ngày", "GitHub activity · 7 days")}
+        {text("Hoạt động · 7 ngày", "Activity · 7 days")}
       </DialogTrigger>
       <DialogContent size="lg" className="max-h-[85dvh] gap-5 sm:p-6" closeLabel={text("Đóng", "Close")}>
         {snapshot && <ActivityContent snapshot={snapshot} />}
