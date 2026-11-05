@@ -122,8 +122,8 @@ try {
       notifications: data.notifications.map((n) => ({ ...n, read: true })),
     };
     assert.match(reportText(read, 1, "en"), /0 unread/);
-    assert.match(reportText(data, 30, "en"), /fictional/);
-    assert.match(reportText(data, 30, "vi"), /Không cộng quota/);
+    assert.match(reportText(data, 30, "en"), /GitHub accounts/);
+    assert.ok(data.sources.every(source => reportText(data, 30, "vi").includes(source.name)));
   });
 } finally {
   rmSync(temporary, { recursive: true, force: true });

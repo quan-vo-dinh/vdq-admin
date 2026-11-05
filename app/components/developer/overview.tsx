@@ -23,15 +23,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useDeveloper } from "@/app/context/developer-context";
-import {
-  selectSessions,
-  selectContributions,
-  codeChanges,
-  tokens,
-} from "@/lib/developer/model";
-import { Choice, useDeveloperLocale } from "./shared";
+import { startDate, selectSessions, selectContributions, codeChanges } from "@/lib/developer/model";
 import { modelName } from "@/lib/developer/models";
-import { UsageTrend } from "./charts";
+import { Choice, NoResults, useDeveloperLocale } from "./shared";
+import { usageRows, usageTotal } from "@/lib/developer/codex/analytics";
+import { CodexTrend } from "./codex-usage";
 import { BrandIcon } from "./brand-icon";
 import { GitHubAnalytics } from "./github";
 import { DeveloperInbox } from "./inbox";
@@ -45,7 +41,10 @@ function ActivitySection() {
     <div className="grid min-w-0 grid-cols-1 divide-y divide-border xl:grid-cols-2 xl:divide-x xl:divide-y-0">
       <section className="min-w-0" aria-labelledby="contributions-heading">
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 pt-5">
-          <h2 id="contributions-heading" className="flex items-center gap-2 font-semibold">
+          <h2
+            id="contributions-heading"
+            className="flex items-center gap-2 font-semibold"
+          >
             <BrandIcon brand="github" /> Contributions
           </h2>
           <span className="text-xs text-muted-foreground">
@@ -54,9 +53,16 @@ function ActivitySection() {
         </div>
         <GitHubAnalytics />
       </section>
-      <section id="inbox" className="min-w-0 scroll-mt-20" aria-labelledby="inbox-heading">
+      <section
+        id="inbox"
+        className="min-w-0 scroll-mt-20"
+        aria-labelledby="inbox-heading"
+      >
         <div className="flex flex-wrap items-center justify-between gap-3 px-6 pt-5">
-          <h2 id="inbox-heading" className="flex items-center gap-2 font-semibold">
+          <h2
+            id="inbox-heading"
+            className="flex items-center gap-2 font-semibold"
+          >
             <Inbox /> Inbox <Badge variant="secondary">{unread}</Badge>
           </h2>
           <GitHubActivityDialog />
@@ -74,14 +80,14 @@ export function Overview() {
   const [model, setModel] = useState("all");
   const accounts = data.sources.filter(s => s.provider !== "GitHub" && (provider === "all" || s.provider === provider));
   const models = [...new Set(selectSessions(data, days, source, provider).map(s => s.model))];
-  const sessions = selectSessions(data, days, source, provider, model);
   const contributions = selectContributions(data, days);
   const changes = codeChanges(data, 30);
+  const totalTokens = provider !== "Claude Code" && model === "all" ? usageTotal(usageRows(data, days, source)) : null;
   const metrics = [
     {
       title: "Contributions",
-      value: contributions.reduce((n, r) => n + r.count, 0),
-      sub: `${days} ${text("ngày · hai tài khoản", "days · two accounts")}`,
+      value: (data.githubCalendar ?? contributions).filter(row => row.date >= startDate(days, data.snapshot) && row.date <= data.snapshot).reduce((n, row) => n + row.count, 0),
+      sub: `${days} ${text("ngày", "days")}`,
       badge: `${days} ${text("ngày", "days")}`,
       tinted: true,
       icon: Activity,
@@ -97,7 +103,10 @@ export function Overview() {
     {
       title: text("Dòng code thay đổi", "Lines changed"),
       value: changes.total,
-      sub: text("Số dòng thêm và xóa trong 30 ngày qua", "Lines added and deleted over the past 30 days"),
+      sub: text(
+        "Số dòng thêm và xóa trong 30 ngày qua",
+        "Lines added and deleted over the past 30 days",
+      ),
       badge: text("30 ngày", "30 days"),
       changes,
       tinted: true,
@@ -150,21 +159,27 @@ export function Overview() {
               </span>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-2xl font-semibold leading-8 tracking-[-0.3px] tabular-nums">
-                  <NumberTicker value={number(tokens(sessions))} />
+                  {totalTokens !== null ? (
+                    <NumberTicker value={totalTokens} />
+                  ) : (
+                    "—"
+                  )}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   tokens · {days} {text("ngày", "days")}
                 </span>
               </div>
             </div>
-            <UsageTrend rows={sessions} salesStyle />
+            {provider !== "Claude Code" && model === "all" ? <CodexTrend source={source} days={days} /> : <NoResults />}
           </CardContent>
         </DashboardCard>
       </div>
       <div className="col-span-12 lg:col-span-5">
         <DashboardCard className="gap-0 pt-0! pb-0">
           <CardHeader className="flex h-12 flex-row items-center border-b px-4 py-1!">
-            <CardTitle>{text("Hạn mức sử dụng AI", "AI usage allowances")}</CardTitle>
+            <CardTitle>
+              {text("Hạn mức sử dụng AI", "AI usage allowances")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="px-0">
             <UsageAllowances />
@@ -180,28 +195,55 @@ export function Overview() {
                 <div className="flex w-full items-center justify-between">
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-normal text-foreground">{m.title}</p>
-                      {"changes" in m && <Badge variant="outline">{m.badge}</Badge>}
+                      <p className="text-sm font-normal text-foreground">
+                        {m.title}
+                      </p>
+                      {"changes" in m && (
+                        <Badge variant="outline">{m.badge}</Badge>
+                      )}
                     </div>
                     <div className="flex items-center gap-2" title={m.sub}>
                       <h3 className="text-2xl font-semibold tabular-nums">
                         <NumberTicker value={number(m.value)} />
                       </h3>
-                      {!("changes" in m) && <Badge
-                        variant={m.tinted ? "default" : "outline"}
-                        className={m.tinted ? "bg-chart-2/10! text-chart-2!" : undefined}
-                      >
-                        {m.badge}
-                      </Badge>}
-                    {"changes" in m && m.changes && (
-                      <span className="inline-flex shrink-0 items-center gap-2 text-sm font-medium tabular-nums">
-                        <span className="text-success-foreground" aria-label={text(`${number(m.changes.additions)} dòng thêm`, `${number(m.changes.additions)} lines added`)}>+<NumberTicker value={number(m.changes.additions)} /></span>
-                        <span className="text-destructive" aria-label={text(`${number(m.changes.deletions)} dòng xóa`, `${number(m.changes.deletions)} lines deleted`)}>−<NumberTicker value={number(m.changes.deletions)} /></span>
-                      </span>
-                    )}
+                      {!("changes" in m) && (
+                        <Badge
+                          variant={m.tinted ? "default" : "outline"}
+                          className={
+                            m.tinted
+                              ? "bg-chart-2/10! text-chart-2!"
+                              : undefined
+                          }
+                        >
+                          {m.badge}
+                        </Badge>
+                      )}
+                      {"changes" in m && m.changes && (
+                        <span className="inline-flex shrink-0 items-center gap-2 text-sm font-medium tabular-nums">
+                          <span
+                            className="text-success-foreground"
+                            aria-label={text(
+                              `${number(m.changes.additions)} dòng thêm`,
+                              `${number(m.changes.additions)} lines added`,
+                            )}
+                          >
+                            +
+                            <NumberTicker value={number(m.changes.additions)} />
+                          </span>
+                          <span
+                            className="text-destructive"
+                            aria-label={text(
+                              `${number(m.changes.deletions)} dòng xóa`,
+                              `${number(m.changes.deletions)} lines deleted`,
+                            )}
+                          >
+                            −
+                            <NumberTicker value={number(m.changes.deletions)} />
+                          </span>
+                        </span>
+                      )}
                       <span className="sr-only">{m.sub}</span>
                     </div>
-
                   </div>
                   <div className="w-fit rounded-md border border-border p-2.5">
                     <m.icon size={16} />

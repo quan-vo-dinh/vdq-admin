@@ -16,7 +16,7 @@ import {
 import { useDeveloper } from "@/app/context/developer-context";
 import { Choice, downloadText, useDeveloperLocale } from "./shared";
 import { DeveloperConnections } from "./connections";
-import { reportText, SNAPSHOT } from "@/lib/developer/model";
+import { reportText } from "@/lib/developer/model";
 import { PersonalizedIntro } from "@/app/components/shared/personalized-intro";
 import { cn } from "@/lib/utils";
 function QuickTools() {
@@ -112,8 +112,8 @@ function QuickTools() {
             </DialogTitle>
             <DialogDescription>
               {text(
-                activePanel === "sources" ? "Quản lý thiết lập và quyền truy cập từng nguồn." : "16/10/2026, 09:00 GMT+7",
-                activePanel === "sources" ? "Manage setup and access for each source." : "16 October 2026, 09:00 GMT+7",
+                activePanel === "sources" ? "Quản lý thiết lập và quyền truy cập từng nguồn." : data.snapshot,
+                activePanel === "sources" ? "Manage setup and access for each source." : data.snapshot,
               )}
             </DialogDescription>
           </DialogHeader>
@@ -125,7 +125,7 @@ function QuickTools() {
                   onClick={() =>
                     downloadText(
                       content,
-                      `developer-report-${SNAPSHOT}-${days}d.txt`,
+                      `developer-report-${data.snapshot}-${days}d.txt`,
                     )
                   }
                 >
@@ -151,13 +151,14 @@ function DeveloperHeader() {
   );
 }
 export function DeveloperShell({ children }: { children: ReactNode }) {
-  const { error } = useDeveloper();
+  const { error, syncProgress } = useDeveloper();
   const { text } = useDeveloperLocale();
   return (
     <div className="developer-workspace flex min-w-0 flex-col gap-4">
       <Suspense fallback={null}>
         <DeveloperHeader />
       </Suspense>
+      {syncProgress.length>0 && <p role="status" className="px-1 text-xs text-muted-foreground">{text("Đang đồng bộ GitHub", "GitHub synchronization in progress")} · {syncProgress.reduce((sum,s)=>sum+s.activities,0)} {text("hoạt động đã thu thập", "activities collected")} · {syncProgress.reduce((sum,s)=>sum+s.remaining,0)} {text("bước còn lại", "steps remaining")}</p>}
       {error && (
         <Alert variant="destructive">
           <AlertDescription>

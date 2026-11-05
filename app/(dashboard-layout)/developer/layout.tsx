@@ -1,14 +1,13 @@
+import { connection } from "next/server";
 import type { ReactNode } from "react";
 import { DeveloperProvider } from "@/app/context/developer-context";
 import { DeveloperShell } from "@/app/components/developer/shell";
-import { DeveloperConnectionsProvider } from "@/app/context/developer-connections-context";
-import { developerDemo } from "@/lib/developer/demo";
-export default function Layout({ children }: { children: ReactNode }) {
+import { emptyDeveloperData } from "@/lib/developer/live/types";
+export default async function Layout({ children }: { children: ReactNode }) {
+  await connection();
   return (
-    <DeveloperProvider initialData={developerDemo()}>
-      <DeveloperConnectionsProvider>
+    <DeveloperProvider initialData={emptyDeveloperData()}>
         <DeveloperShell>{children}</DeveloperShell>
-      </DeveloperConnectionsProvider>
     </DeveloperProvider>
   );
 }

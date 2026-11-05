@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { useDeveloper } from "@/app/context/developer-context";
 import { selectSessions } from "@/lib/developer/model";
+import { usageRows, usageTotal } from "@/lib/developer/codex/analytics";
 import { modelName } from "@/lib/developer/models";
 import { ModelUsage } from "./model-usage";
 import { Choice, useDeveloperLocale } from "./shared";
@@ -25,6 +26,12 @@ export function AIUsage() {
     ),
   ];
   const rows = selectSessions(data, days, source, provider, model);
+  const accountRows = provider !== "Claude Code" && model === "all"
+    ? (data.codexAccounts ?? []).filter(account => source === "all" || account.id === source).map(account => ({
+      id:account.id, name:account.name, identity:account.identityLabel,
+      total:usageTotal(usageRows(data,days,account.id)),
+    })) : [];
+  const total = usageTotal(usageRows(data, days, source));
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -68,11 +75,10 @@ export function AIUsage() {
           ]}
         />
         <Badge variant="outline">
-          <NumberTicker value={rows.length} /> {text("phiên", "sessions")} · {days}{" "}
-          {text("ngày", "days")}
+          {accountRows.length ? <><NumberTicker value={accountRows.length} /> {text("tài khoản", "accounts")} · {total === null ? "—" : <NumberTicker value={total} />} tokens</> : <><NumberTicker value={rows.length} /> {text("phiên", "sessions")}</>} · {days} {text("ngày", "days")}
         </Badge>
       </div>
-      <ModelUsage rows={rows} />
+      <ModelUsage rows={rows} accounts={accountRows} />
     </div>
   );
 }

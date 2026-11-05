@@ -41,7 +41,11 @@
     "test:mobile-api": "node scripts/mobile/test-api-local.mjs",
     "mobile:preview:build": "pnpm mobile:typecheck && vite build --config mobile/vite.config.ts --mode development --outDir preview",
     "mobile:preview": "vite preview --config mobile/vite.config.ts --mode development --outDir preview --host localhost --port 5173 --strictPort",
-    "test:portfolio": "node --test scripts/backend/portfolio-model.test.mjs && node scripts/backend/test-portfolio-local.mjs"
+    "test:portfolio": "node --test scripts/backend/portfolio-model.test.mjs && node scripts/backend/test-portfolio-local.mjs",
+    "test:developer:live": "node scripts/developer/test-live.mjs",
+    "developer:companion": "node scripts/developer/companion.mjs",
+    "test:developer:codex": "node scripts/developer/test-codex.mjs",
+    "test:developer:codex:api": "node scripts/developer/test-codex-api.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",

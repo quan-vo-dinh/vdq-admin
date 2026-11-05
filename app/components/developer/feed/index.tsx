@@ -2,7 +2,7 @@
 import { NumberTicker } from "@/components/ui/number-ticker";
 
 
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import Image from "@/lib/platform/image";
 import {
   ArrowUp,
@@ -50,31 +50,13 @@ import {
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeed } from "@/app/context/developer-feed-context";
+import useSWR from "swr";
+import { developerFetch } from "@/app/context/developer-context";
 import { readBookmarks } from "@/lib/developer/feed/bookmarks";
 import { cn } from "@/lib/utils";
 import { DashboardCard } from "@/app/components/shared/dashboard-card";
 import StyleAwareWrapper from "@/app/components/shared/StyleAwareWrapper";
 
-const STORAGE_KEY = "developer-feed-saved-v2";
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback);
-  window.addEventListener("developer-feed-saved", callback);
-  return () => {
-    window.removeEventListener("storage", callback);
-    window.removeEventListener("developer-feed-saved", callback);
-  };
-}
-function snapshot() {
-  try {
-    return (
-      localStorage.getItem(STORAGE_KEY) ??
-      localStorage.getItem("developer-feed-saved-v1") ??
-      "[]"
-    );
-  } catch {
-    return "[]";
-  }
-}
 function Cover({ post, large = false }: { post: FeedPost; large?: boolean }) {
   const [failed, setFailed] = useState(false);
   return (
@@ -120,8 +102,8 @@ export function DeveloperFeed() {
   const [tab, setTab] = useState("discover");
   const [selected, setSelected] = useState<FeedPost | null>(null);
   const [storageError, setStorageError] = useState(false);
-  const raw = useSyncExternalStore(subscribe, snapshot, () => "[]");
-  const savedPosts = readBookmarks(raw, feedPosts);
+  const {data:bookmarkData=[],mutate:mutateBookmarks}=useSWR<FeedPost[]>("/api/developer/bookmarks",developerFetch);
+  const savedPosts = readBookmarks(JSON.stringify(bookmarkData), []);
   const saved = savedPosts.map((post) => post.id);
   const posts = selectPosts(
     tab === "saved" ? savedPosts : availablePosts,
@@ -137,21 +119,8 @@ export function DeveloperFeed() {
     ),
   ).sort();
   function toggleSave(post: FeedPost) {
-    const current = readBookmarks(snapshot(), feedPosts);
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(
-          current.some((value) => value.id === post.id)
-            ? current.filter((value) => value.id !== post.id)
-            : [post, ...current].slice(0, 200),
-        ),
-      );
-      window.dispatchEvent(new Event("developer-feed-saved"));
-      setStorageError(false);
-    } catch {
-      setStorageError(true);
-    }
+    const next=savedPosts.some(value=>value.id===post.id)?savedPosts.filter(value=>value.id!==post.id):[post,...savedPosts].slice(0,200);
+    void developerFetch("/api/developer/bookmarks",{method:"PUT",body:JSON.stringify({posts:next})}).then(posts=>{void mutateBookmarks(posts,false);setStorageError(false);}).catch(()=>setStorageError(true));
   }
   function saveButton(post: FeedPost) {
     const active = saved.includes(post.id);
@@ -191,18 +160,6 @@ export function DeveloperFeed() {
                   {text("Đã lưu", "Saved")} (<NumberTicker value={saved.length} />)
                 </TabsTrigger>
               </TabsList>
-              <Choice
-                label={text("Chế độ dữ liệu", "Data mode")}
-                value={feed.demo ? "demo" : "daily"}
-                onChange={(value) => {
-                  feed.setDemo(value === "demo");
-                  setTopic("all");
-                }}
-                items={[
-                  { value: "daily", label: "daily.dev" },
-                  { value: "demo", label: text("Dữ liệu mẫu", "Demo data") },
-                ]}
-              />
               {!feed.demo && (
                 <>
                   <Choice

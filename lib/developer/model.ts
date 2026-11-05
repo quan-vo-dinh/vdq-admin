@@ -1,3 +1,5 @@
+import { usageRows, usageTotal } from "./codex/analytics";
+import type { CodexAccountView } from "./codex/analytics";
 export type Provider = "Codex" | "Claude Code" | "GitHub";
 export type Source = {
   id: string;
@@ -43,7 +45,7 @@ export type Notification = {
   sourceId: string;
   repo: string;
   title: string;
-  kind: "review" | "mention" | "assigned";
+  kind: string;
   read: boolean;
   url: string;
   body: string;
@@ -54,10 +56,20 @@ export type DeveloperData = {
   sessions: Session[];
   contributions: Contribution[];
   notifications: Notification[];
+  githubCalendar?: { sourceId: string; date: string; count: number }[];
+  codexAccounts?: CodexAccountView[];
+  accountUsage?: {
+    sourceId: string;
+    date: string;
+    tokens: number;
+    collectedAt?: string;
+  }[];
 };
 export const SNAPSHOT = "2026-10-16";
-export function startDate(days: number) {
-  return new Date(Date.parse(`${SNAPSHOT}T00:00:00Z`) - (days - 1) * 86400000)
+export function startDate(days: number, snapshot = SNAPSHOT) {
+  return new Date(
+    Date.parse(`${snapshot.slice(0, 10)}T00:00:00Z`) - (days - 1) * 86400000,
+  )
     .toISOString()
     .slice(0, 10);
 }
@@ -70,8 +82,8 @@ export function selectSessions(
 ) {
   return data.sessions.filter(
     (s) =>
-      s.date >= startDate(days) &&
-      s.date <= SNAPSHOT &&
+      s.date >= startDate(days, data.snapshot) &&
+      s.date <= data.snapshot.slice(0, 10) &&
       (source === "all" || s.sourceId === source) &&
       (provider === "all" ||
         data.sources.find((a) => a.id === s.sourceId)?.provider === provider) &&
@@ -85,8 +97,8 @@ export function selectContributions(
 ) {
   return data.contributions.filter(
     (d) =>
-      d.date >= startDate(days) &&
-      d.date <= SNAPSHOT &&
+      d.date >= startDate(days, data.snapshot) &&
+      d.date <= data.snapshot.slice(0, 10) &&
       (source === "all" || d.sourceId === source),
   );
 }
@@ -120,13 +132,19 @@ export function reportText(
   days: number,
   locale: "vi" | "en",
 ) {
-  const sessions = selectSessions(data, days);
+  const aiRows = usageRows(data, days);
+  const observedTokens = usageTotal(aiRows);
+  const aiDays = new Set(aiRows.map((row) => row.date)).size;
   const contributions = selectContributions(data, days);
   const count = contributions.reduce((n, d) => n + d.count, 0);
   const unread = data.notifications.filter((n) => !n.read).length;
+  const accounts = data.sources.filter((s) => s.provider === "GitHub").length;
+  const coverage = data.sources
+    .map((s) => `${s.name}: ${s.observedAt ?? "—"} (${s.status})`)
+    .join("\n");
   return locale === "vi"
-    ? `BÁO CÁO HOẠT ĐỘNG · ${startDate(days)} → ${SNAPSHOT}\n\nĐã ghi nhận ${count} contributions từ 2 tài khoản GitHub.\n${sessions.length} phiên AI, ${tokens(sessions).toLocaleString("vi-VN")} token quan sát (input + output + cache, không chồng lặp).\nInbox hiện tại: ${unread} thông báo chưa đọc.\n\nPhạm vi: Codex cá nhân/công việc; một nguồn Claude Code, tài khoản chưa xác nhận. Claude chat chưa có dữ liệu. Dữ liệu AI chỉ gồm phiên quan sát trên một máy.\n\nKhông cộng quota giữa các nguồn, không quy token thành chi phí hay năng suất. Contributions được cộng theo ngày và tài khoản; có thể trùng hoạt động giữa hai danh tính. Không suy ra công việc đã hoàn thành.\n\nTổng hợp bằng quy tắc, không gọi AI. Mốc dữ liệu: 16/10/2026 09:00 GMT+7.`
-    : `ACTIVITY REPORT · ${startDate(days)} → ${SNAPSHOT}\n\n${count} contributions across 2 GitHub accounts.\n${sessions.length} AI sessions, ${tokens(sessions).toLocaleString("en-GB")} observed tokens (input + output + cache, mutually exclusive in these totals).\nCurrent inbox: ${unread} unread notifications.\n\nCoverage: personal/work Codex; one Claude Code source, actual accounts unconfirmed. Claude chat unavailable. AI observations cover one device only.\n\nQuotas are independent. Tokens do not measure cost or productivity. Contributions are summed by date and account; activity across identities may overlap. No completion of work is inferred.\n\nRule-based summary; no AI call. Snapshot: 16 October 2026, 09:00 GMT+7.`;
+    ? `BÁO CÁO HOẠT ĐỘNG · ${startDate(days, data.snapshot)} → ${data.snapshot}\n\n${count} hoạt động · ${accounts} tài khoản GitHub.\n${aiDays} ngày có dữ liệu Codex · ${observedTokens === null ? "—" : observedTokens.toLocaleString("vi-VN")} token đã ghi nhận.\nInbox: ${unread} chưa đọc.\n\n${coverage}`
+    : `ACTIVITY REPORT · ${startDate(days, data.snapshot)} → ${data.snapshot}\n\n${count} activities · ${accounts} GitHub accounts.\n${aiDays} days with Codex data · ${observedTokens === null ? "—" : observedTokens.toLocaleString("en-GB")} recorded tokens.\nInbox: ${unread} unread.\n\n${coverage}`;
 }
 
 export function modelUsage(rows: Session[]) {
@@ -176,4 +194,26 @@ export function modelUsage(rows: Session[]) {
       throughput: g.seconds > 0 ? g.timedOutput / g.seconds : null,
     }))
     .sort((a, b) => b.total - a.total);
+}
+
+export function accountTokens(
+  data: DeveloperData,
+  days: number,
+  source = "all",
+) {
+  const daily = (data.accountUsage ?? []).filter(
+    (row) =>
+      row.date >= startDate(days, data.snapshot) &&
+      row.date <= data.snapshot &&
+      (source === "all" || row.sourceId === source),
+  );
+  const observedSources = new Set(daily.map((row) => row.sourceId));
+  return (
+    daily.reduce((sum, row) => sum + row.tokens, 0) +
+    tokens(
+      selectSessions(data, days, source).filter(
+        (row) => !observedSources.has(row.sourceId),
+      ),
+    )
+  );
 }

@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { githubActivityDemo, type GitHubActivity, type GitHubActivityKind } from "@/lib/developer/github-activity-demo";
+import { type GitHubActivityKind } from "@/lib/developer/github-activity-demo";
+import { vietnamDate, type Activity as GitHubActivity } from "@/lib/developer/live/types";
 import { cn } from "@/lib/utils";
 import { Choice, NoResults, useDeveloperLocale } from "./shared";
 
@@ -21,9 +22,13 @@ const eventStyles = {
 
 export function GitHubActivityDialog() {
   const { text } = useDeveloperLocale();
-  const [snapshot, setSnapshot] = useState<ReturnType<typeof githubActivityDemo> | null>(null);
+  const { activities } = useDeveloper();
+  const [open, setOpen] = useState(false);
+  const [today, setToday] = useState("2000-01-01");
+  const days = Array.from({length:7},(_,index)=>new Date(Date.parse(`${today}T12:00:00Z`)-index*86400000).toISOString().slice(0,10));
+  const snapshot = open ? { days, events: activities.filter(event=>event.date>=days[6]&&event.date<=days[0]) } : null;
   return (
-    <Dialog open={snapshot !== null} onOpenChange={(open) => setSnapshot(open ? githubActivityDemo(new Date()) : null)}>
+    <Dialog open={snapshot !== null} onOpenChange={(value)=>{ if(value) setToday(vietnamDate()); setOpen(value); }}>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>
         <Activity data-icon="inline-start" />
         {text("Hoạt động GitHub · 7 ngày", "GitHub activity · 7 days")}
@@ -35,7 +40,7 @@ export function GitHubActivityDialog() {
   );
 }
 
-function ActivityContent({ snapshot }: { snapshot: ReturnType<typeof githubActivityDemo> }) {
+function ActivityContent({ snapshot }: { snapshot: { days: string[]; events: GitHubActivity[] } }) {
   const { data } = useDeveloper();
   const { text, language } = useDeveloperLocale();
   const [account, setAccount] = useState("all");
@@ -138,7 +143,7 @@ function ActivityContent({ snapshot }: { snapshot: ReturnType<typeof githubActiv
                   <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-full", color)}><Icon className="size-4" /></span>
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"><span className="font-medium">{labels[event.kind]}</span><time className="text-muted-foreground" dateTime={`${event.date}T${event.time}:00+07:00`}>{event.time}</time></div>
-                    <p className="text-sm font-medium [overflow-wrap:anywhere]">{event.title}</p>
+                    <a href={event.url} target="_blank" rel="noreferrer" className="block text-sm font-medium hover:underline [overflow-wrap:anywhere]">{event.title}</a>
                     <p className="font-mono text-xs text-muted-foreground [overflow-wrap:anywhere]">{detail(event)}</p>
                     <p className="text-xs text-muted-foreground [overflow-wrap:anywhere]">{event.actor} · {accountName(event.sourceId)}</p>
                   </div>

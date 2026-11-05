@@ -8,6 +8,14 @@ export class AccessError extends Error {
 export function checkHostedFeature(pathname: string, method: string) {
   const path = pathname.replace(/\/$/, '');
   if (!/^\/api\/(?:blog|developer|ticket|userprofile|today)(?:\/|$)/.test(path)) return;
+  const developerMethods: Record<string, string[]> = {
+    '/api/developer/connections': ['GET', 'POST', 'PATCH', 'DELETE'],
+    '/api/developer/sync': ['POST'], '/api/developer/inbox': ['PATCH'],
+    '/api/developer/devices': ['GET', 'POST', 'DELETE'],
+    '/api/developer/codex': ['GET', 'POST'],
+    '/api/developer/bookmarks': ['GET', 'PUT'],
+  };
+  if (developerMethods[path]?.includes(method)) return;
   if (['GET', 'HEAD'].includes(method) &&
       ['/api/blog', '/api/developer', '/api/developer/feed'].includes(path)) return;
   throw new AccessError(403, 'feature_not_enabled');

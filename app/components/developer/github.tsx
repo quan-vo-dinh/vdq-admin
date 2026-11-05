@@ -1,12 +1,11 @@
 "use client";
 import { NumberTicker } from "@/components/ui/number-ticker";
 
-import { cloneElement, useState, useSyncExternalStore } from "react";
+import { cloneElement, useState, useSyncExternalStore, useRef, useEffect } from "react";
 import { ActivityCalendar } from "react-activity-calendar";
 import { useTheme } from "next-themes";
 import { ProviderTitle } from "./brand-icon";
 import { useDeveloper } from "@/app/context/developer-context";
-import { selectContributions } from "@/lib/developer/model";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -29,16 +28,30 @@ export function GitHubAnalytics() {
   const { data, days } = useDeveloper();
   const { text, number, language } = useDeveloperLocale();
   const { resolvedTheme } = useTheme();
-  const hydrated = useSyncExternalStore(subscribeHydration, clientSnapshot, serverSnapshot);
+  const hydrated = useSyncExternalStore(
+    subscribeHydration,
+    clientSnapshot,
+    serverSnapshot,
+  );
+  const calendarRef=useRef<HTMLDivElement>(null);
   const [account, setAccount] = useState("all");
+  useEffect(()=>{
+    const container=calendarRef.current?.querySelector<HTMLElement>('.react-activity-calendar__scroll-container');
+    if(container)container.scrollLeft=container.scrollWidth;
+  },[data.githubCalendar?.length, account]);
   const [selected, setSelected] = useState<string | null>(null);
-  const yearRows = data.contributions.filter(
+  const yearRows = (data.githubCalendar ?? data.contributions).filter(
     (r) => account === "all" || r.sourceId === account,
   );
-  const rows = selectContributions(data, days, account);
+  const firstDay=new Date(Date.parse(`${data.snapshot}T12:00:00Z`)-(days-1)*86400000).toISOString().slice(0,10);
+  const rows = yearRows.filter(row=>row.date>=firstDay&&row.date<=data.snapshot);
   const count = rows.reduce((n, d) => n + d.count, 0);
-  const cells = Array.from({ length: 289 }, (_, i) => {
-    const date = new Date(Date.UTC(2026, 0, 1 + i)).toISOString().slice(0, 10);
+  const cells = Array.from({ length: 365 }, (_, i) => {
+    const date = new Date(
+      Date.parse(`${data.snapshot}T12:00:00Z`) - (364 - i) * 86400000,
+    )
+      .toISOString()
+      .slice(0, 10);
     const count = yearRows
       .filter((r) => r.date === date)
       .reduce((n, r) => n + r.count, 0);
@@ -49,7 +62,9 @@ export function GitHubAnalytics() {
         count === 0 ? 0 : count < 10 ? 1 : count < 25 ? 2 : count < 45 ? 3 : 4,
     };
   });
-  const selectedRows = yearRows.filter((r) => r.date === selected);
+  const selectedRows = yearRows.filter(
+    (r) => r.date === selected && (account === "all" || r.sourceId === account),
+  );
   return (
     <div className="flex flex-col gap-4 p-6">
       <div className="flex flex-wrap items-center gap-3">
@@ -58,35 +73,40 @@ export function GitHubAnalytics() {
           value={account}
           onChange={setAccount}
           items={[
-            { value: "all", label: text("Gộp hai tài khoản", "Both accounts") },
+            { value: "all", label: text("Mọi tài khoản", "All accounts") },
             ...data.sources
               .filter((s) => s.provider === "GitHub")
               .map((s) => ({ value: s.id, label: s.name })),
           ]}
         />
         <Badge variant="outline">
-          <NumberTicker value={number(count)} /> contributions / {days} {text("ngày", "days")}
+          <NumberTicker value={number(count)} /> contributions / {days}{" "}
+          {text("ngày", "days")}
         </Badge>
       </div>
       <Panel
         title={
           <ProviderTitle provider="GitHub">
-            {text("Lịch đóng góp · 2026", "Contribution calendar · 2026")}
+            {text(
+              "Lịch đóng góp · 365 ngày",
+              "Contribution calendar · 365 days",
+            )}
           </ProviderTitle>
         }
         description={text(
-          "Năm 2026 đến 16/10 · chọn ngày để xem từng tài khoản.",
-          "2026 through October 16 · select a day for account details.",
+          "Chọn ngày để xem hoạt động đã thu thập theo tài khoản.",
+          "Select a day for collected activity by account.",
         )}
         footer={
           <p className="text-xs text-muted-foreground">
             {text(
-              "Gộp theo ngày, chưa khử trùng giữa hai danh tính; Work thiếu dữ liệu private.",
-              "Summed by day without cross-account deduplication; Work private coverage is partial.",
+              "Lịch đóng góp theo GitHub; chi tiết hoạt động theo repository đã chọn.",
+              "GitHub contribution calendar; activity details cover selected repositories.",
             )}
           </p>
         }
       >
+        <div ref={calendarRef} className="min-w-0">
         <ActivityCalendar
           data={cells}
           className="developer-heatmap"
@@ -120,8 +140,8 @@ export function GitHubAnalytics() {
                 ? ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
                 : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
             totalCount: text(
-              "{{count}} contributions quan sát trong năm {{year}}",
-              "{{count}} observed contributions in {{year}}",
+              "{{count}} contributions trong 365 ngày",
+              "{{count}} contributions in 365 days",
             ),
             legend: { less: text("Ít", "Less"), more: text("Nhiều", "More") },
           }}
@@ -143,6 +163,7 @@ export function GitHubAnalytics() {
             })
           }
         />
+        </div>
       </Panel>
       <Dialog
         open={selected !== null}
@@ -154,16 +175,15 @@ export function GitHubAnalytics() {
           <DialogHeader>
             <DialogTitle>{selected}</DialogTitle>
             <DialogDescription>
-              {text(
-                "Contributions theo nguồn",
-                "Contributions by source",
-              )}
+              {text("Contributions theo nguồn", "Contributions by source")}
             </DialogDescription>
           </DialogHeader>
           {selectedRows.map((r) => (
             <div key={r.sourceId} className="flex justify-between gap-4">
               <span>{data.sources.find((s) => s.id === r.sourceId)?.name}</span>
-              <Badge variant="secondary"><NumberTicker value={r.count} /></Badge>
+              <Badge variant="secondary">
+                <NumberTicker value={r.count} />
+              </Badge>
             </div>
           ))}
         </DialogContent>

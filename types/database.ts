@@ -5,6 +5,280 @@ export type Database = {
 
   "public": {
           Tables: {
+developer_documents: {
+        Row: {
+          owner_id: string;
+          collection: string;
+          id: string;
+          payload: Json;
+          updated_at: string;
+          lease_until: string;
+        };
+        Insert: {
+          owner_id?: string;
+          collection: string;
+          id: string;
+          payload: Json;
+          updated_at?: string;
+          lease_until?: string;
+        };
+        Update: { payload?: Json; updated_at?: string; lease_until?: string };
+        Relationships: [];
+      },
+codex_accounts: {
+        Row: {
+          account_group: string;
+          created_at: string;
+          id: string;
+          identity_key: string | null;
+          identity_label: string | null;
+          name: string;
+          observed_at: string | null;
+          owner_id: string;
+          paused: boolean;
+          plan: string | null;
+          quota_observed_at: string | null;
+          quota_status: string;
+          quota_windows: NonNullable<Json>;
+          summary: Json | null;
+          usage_observed_at: string | null;
+          usage_status: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_group?: string;
+          created_at?: string;
+          id?: string;
+          identity_key?: string | null;
+          identity_label?: string | null;
+          name: string;
+          observed_at?: string | null;
+          owner_id?: string;
+          paused?: boolean;
+          plan?: string | null;
+          quota_observed_at?: string | null;
+          quota_status?: string;
+          quota_windows?: NonNullable<Json>;
+          summary?: Json | null;
+          usage_observed_at?: string | null;
+          usage_status?: string;
+        };
+        Update: {
+          account_group?: string;
+          created_at?: string;
+          id?: string;
+          identity_key?: string | null;
+          identity_label?: string | null;
+          name?: string;
+          observed_at?: string | null;
+          owner_id?: string;
+          paused?: boolean;
+          plan?: string | null;
+          quota_observed_at?: string | null;
+          quota_status?: string;
+          quota_windows?: NonNullable<Json>;
+          summary?: Json | null;
+          usage_observed_at?: string | null;
+          usage_status?: string;
+        };
+        Relationships: [];
+      },
+codex_devices: {
+        Row: {
+          account_id: string;
+          confirmed_identity: string | null;
+          created_at: string;
+          heartbeat_at: string | null;
+          id: string;
+          last_error: string | null;
+          name: string;
+          observed_at: string | null;
+          owner_id: string;
+          paused: boolean;
+          pending_identity: string | null;
+          pending_label: string | null;
+          profile: string | null;
+          revoked_at: string | null;
+          sync_requested_at: string | null;
+          token_hash: string;
+          version: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_id: string;
+          confirmed_identity?: string | null;
+          created_at?: string;
+          heartbeat_at?: string | null;
+          id?: string;
+          last_error?: string | null;
+          name: string;
+          observed_at?: string | null;
+          owner_id?: string;
+          paused?: boolean;
+          pending_identity?: string | null;
+          pending_label?: string | null;
+          profile?: string | null;
+          revoked_at?: string | null;
+          sync_requested_at?: string | null;
+          token_hash: string;
+          version?: string | null;
+        };
+        Update: {
+          account_id?: string;
+          confirmed_identity?: string | null;
+          created_at?: string;
+          heartbeat_at?: string | null;
+          id?: string;
+          last_error?: string | null;
+          name?: string;
+          observed_at?: string | null;
+          owner_id?: string;
+          paused?: boolean;
+          pending_identity?: string | null;
+          pending_label?: string | null;
+          profile?: string | null;
+          revoked_at?: string | null;
+          sync_requested_at?: string | null;
+          token_hash?: string;
+          version?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "codex_devices_owner_id_account_id_fkey";
+            columns: ["owner_id", "account_id"];
+            isOneToOne: false;
+            referencedRelation: "codex_accounts";
+            referencedColumns: ["owner_id", "id"];
+          },
+        ];
+      },
+codex_daily_usage: {
+        Row: {
+          account_id: string;
+          collected_at: string;
+          device_id: string | null;
+          owner_id: string;
+          received_at: string;
+          tokens: number;
+          usage_date: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_id: string;
+          collected_at: string;
+          device_id?: string | null;
+          owner_id?: string;
+          received_at?: string;
+          tokens: number;
+          usage_date: string;
+        };
+        Update: {
+          account_id?: string;
+          collected_at?: string;
+          device_id?: string | null;
+          owner_id?: string;
+          received_at?: string;
+          tokens?: number;
+          usage_date?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "codex_daily_usage_owner_id_account_id_fkey";
+            columns: ["owner_id", "account_id"];
+            isOneToOne: false;
+            referencedRelation: "codex_accounts";
+            referencedColumns: ["owner_id", "id"];
+          },
+        ];
+      },
+codex_observations: {
+        Row: {
+          account_id: string;
+          batch_id: string;
+          collected_at: string;
+          device_id: string;
+          owner_id: string;
+          quota_status: string;
+          quota_windows: Json | null;
+          received_at: string;
+          summary: Json | null;
+          usage_status: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_id: string;
+          batch_id: string;
+          collected_at: string;
+          device_id: string;
+          owner_id?: string;
+          quota_status: string;
+          quota_windows?: Json | null;
+          received_at?: string;
+          summary?: Json | null;
+          usage_status: string;
+        };
+        Update: {
+          account_id?: string;
+          batch_id?: string;
+          collected_at?: string;
+          device_id?: string;
+          owner_id?: string;
+          quota_status?: string;
+          quota_windows?: Json | null;
+          received_at?: string;
+          summary?: Json | null;
+          usage_status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "codex_observations_owner_id_account_id_fkey";
+            columns: ["owner_id", "account_id"];
+            isOneToOne: false;
+            referencedRelation: "codex_accounts";
+            referencedColumns: ["owner_id", "id"];
+          },
+          {
+            foreignKeyName: "codex_observations_owner_id_device_id_fkey";
+            columns: ["owner_id", "device_id"];
+            isOneToOne: false;
+            referencedRelation: "codex_devices";
+            referencedColumns: ["owner_id", "id"];
+          },
+        ];
+      },
+codex_pairings: {
+        Row: {
+          account_id: string;
+          code_hash: string;
+          created_at: string;
+          expires_at: string;
+          owner_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_id: string;
+          code_hash: string;
+          created_at?: string;
+          expires_at: string;
+          owner_id?: string;
+        };
+        Update: {
+          account_id?: string;
+          code_hash?: string;
+          created_at?: string;
+          expires_at?: string;
+          owner_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "codex_pairings_owner_id_account_id_fkey";
+            columns: ["owner_id", "account_id"];
+            isOneToOne: false;
+            referencedRelation: "codex_accounts";
+            referencedColumns: ["owner_id", "id"];
+          },
+        ];
+      },
             "calendar_events": {
                   Row: {
                     "attendees": string,"category": string,"color": string,"created_at": string,"description": string,"ends_at": string | null,"ends_on": string | null,"id": string,"kind": string,"location": string,"owner_id": string,"priority": string,"revision": number,"starts_at": string | null,"starts_on": string | null,"status": string,"title": string,"updated_at": string
@@ -675,6 +949,34 @@ isOneToOne: false
                 }
           }
           Functions: {
+codex_ingest: {
+        Args: { p_batch: Json; p_device: string; p_token_hash: string };
+        Returns: Json;
+      },
+codex_pair_device: {
+        Args: {
+          p_hash: string;
+          p_name: string;
+          p_profile: string;
+          p_token_hash: string;
+        };
+        Returns: Json;
+      },
+codex_confirm_identity: {
+        Args: {
+          p_device: string;
+          p_group?: string;
+          p_identity: string;
+          p_new_name?: string;
+          p_owner: string;
+          p_target?: string;
+        };
+        Returns: Json;
+      },
+codex_delete_history: {
+        Args: { p_account: string; p_owner: string };
+        Returns: Json;
+      },
             "assert_owner":
 { Args: Record<PropertyKey, never>; Returns: {
               "github_user_id": string,"user_id": string

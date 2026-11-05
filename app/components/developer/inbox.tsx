@@ -36,7 +36,7 @@ export function DeveloperInbox() {
       `${n.title} ${n.repo}`.toLowerCase().includes(query.toLowerCase()),
   );
   const current = data.notifications.find((n) => n.id === selected?.id);
-  const kinds = {
+  const kinds: Record<string, string> = {
     review: text("Review", "Review"),
     mention: text("Được nhắc đến", "Mention"),
     assigned: text("Được giao", "Assigned"),
@@ -71,7 +71,7 @@ export function DeveloperInbox() {
       accessorKey: "kind",
       header: text("Loại", "Type"),
       cell: (c) => (
-        <Badge variant="outline">{kinds[c.row.original.kind]}</Badge>
+        <Badge variant="outline">{kinds[c.row.original.kind] ?? c.row.original.kind}</Badge>
       ),
     },
     { accessorKey: "date", header: text("Ngày", "Date") },
@@ -82,6 +82,7 @@ export function DeveloperInbox() {
         <Button
           size="sm"
           variant="outline"
+          disabled={c.row.original.read}
           onClick={() => toggleRead(c.row.original.id)}
         >
           {c.row.original.read ? (
@@ -179,6 +180,7 @@ export function DeveloperInbox() {
           <DialogFooter>
             <Button
               variant="outline"
+              disabled={current?.read}
               onClick={() => {
                 if (selected) toggleRead(selected.id);
               }}

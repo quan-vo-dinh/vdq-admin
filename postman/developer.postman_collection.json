@@ -1,0 +1,398 @@
+{
+  "info": {
+    "name": "Developer live API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Requires an authenticated owner cookie. Companion upload uses a separately paired device bearer token. Do not save real tokens in this file. Snapshot codexAccounts also exposes deviceCount (not revoked), onlineDeviceCount (not paused; heartbeat within 10 minutes), and lastHeartbeatAt. They describe the reporting Mac connection, independently of usage/quota observation timestamps."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "connection_id",
+      "value": ""
+    },
+    {
+      "key": "notification_id",
+      "value": ""
+    },
+    {
+      "key": "account_id",
+      "value": ""
+    },
+    {
+      "key": "device_id",
+      "value": ""
+    },
+    {
+      "key": "pending_identity",
+      "value": ""
+    },
+    {
+      "key": "pair_code",
+      "value": ""
+    },
+    {
+      "key": "device_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Read dashboard",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer"
+      }
+    },
+    {
+      "name": "List connections",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer/connections"
+      }
+    },
+    {
+      "name": "Connect GitHub",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer/connections",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Work\",\n  \"token\": \"{{github_token}}\",\n  \"inboxToken\": \"{{github_inbox_token}}\",\n  \"group\": \"work\",\n  \"repositories\": []\n}"
+        }
+      }
+    },
+    {
+      "name": "Discover repositories",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer/connections?id={{connection_id}}&repositories=1&page=1"
+      }
+    },
+    {
+      "name": "Save repositories",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer/connections",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{connection_id}}\",\n  \"name\": \"Work\",\n  \"group\": \"work\",\n  \"repositories\": [\n    \"owner/repository\"\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Sync next step",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer/sync",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{connection_id}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Mark notification read",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer/inbox",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"{{notification_id}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Read bookmarks",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/api/developer/bookmarks"
+      }
+    },
+    {
+      "name": "Codex v2",
+      "description": "Owner actions require authenticated owner cookie and matching Origin. Device routes use only paired bearer. Pair codes expire in 10 minutes. Device token is returned once; keep it in a local secret variable, never export it. Confirm identity before observations are accepted. Validation failures=400, revoked=401, owner/origin=403, identity conflict=409, throttle=429. RPC retries can return retryAfter seconds with HTTP 200. paused/confirmationRequired mean observation was not persisted.",
+      "item": [
+        {
+          "name": "Accounts and safe device state",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex"
+          }
+        },
+        {
+          "name": "Create Codex account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"create_account\",\n  \"name\": \"Codex c\\u00e1 nh\\u00e2n\",\n  \"group\": \"personal\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create one-use pair code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"pair\",\n  \"accountId\": \"{{account_id}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Exchange code on Mac",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/companion",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schemaVersion\": 2,\n  \"type\": \"pair\",\n  \"code\": \"{{pair_code}}\",\n  \"name\": \"Mac\",\n  \"profile\": \"personal\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Device heartbeat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/companion",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schemaVersion\": 2,\n  \"type\": \"heartbeat\",\n  \"deviceId\": \"{{device_id}}\",\n  \"version\": \"companion/2.0.0\"\n}"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{device_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Confirm reported identity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"confirm_identity\",\n  \"id\": \"{{device_id}}\",\n  \"identity\": \"{{pending_identity}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Request device sync",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"sync\",\n  \"id\": \"{{device_id}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Pause account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"update_account\",\n  \"id\": \"{{account_id}}\",\n  \"paused\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Pause device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"pause_device\",\n  \"id\": \"{{device_id}}\",\n  \"paused\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Revoke device preserving history",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"revoke\",\n  \"id\": \"{{device_id}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete history after pausing account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{base_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/developer/codex",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"delete_history\",\n  \"accountId\": \"{{account_id}}\",\n  \"confirm\": true\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
