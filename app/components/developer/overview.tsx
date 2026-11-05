@@ -35,6 +35,7 @@ import { UsageTrend } from "./charts";
 import { BrandIcon } from "./brand-icon";
 import { GitHubAnalytics } from "./github";
 import { DeveloperInbox } from "./inbox";
+import { GitHubActivityDialog } from "./github-activity";
 import { UsageAllowances } from "./usage-allowances";
 function ActivitySection() {
   const { text } = useDeveloperLocale();
@@ -54,9 +55,12 @@ function ActivitySection() {
         <GitHubAnalytics />
       </section>
       <section id="inbox" className="min-w-0 scroll-mt-20" aria-labelledby="inbox-heading">
-        <h2 id="inbox-heading" className="flex items-center gap-2 px-6 pt-5 font-semibold">
-          <Inbox /> Inbox <Badge variant="secondary">{unread}</Badge>
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-3 px-6 pt-5">
+          <h2 id="inbox-heading" className="flex items-center gap-2 font-semibold">
+            <Inbox /> Inbox <Badge variant="secondary">{unread}</Badge>
+          </h2>
+          <GitHubActivityDialog />
+        </div>
         <DeveloperInbox />
       </section>
     </div>
