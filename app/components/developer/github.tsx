@@ -4,7 +4,6 @@ import { NumberTicker } from "@/components/ui/number-ticker";
 import { cloneElement, useState, useSyncExternalStore, useRef, useEffect } from "react";
 import { ActivityCalendar } from "react-activity-calendar";
 import { useTheme } from "next-themes";
-import { ProviderTitle } from "./brand-icon";
 import { useDeveloper } from "@/app/context/developer-context";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,7 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Panel, useDeveloperLocale } from "./shared";
+import { useDeveloperLocale } from "./shared";
 // GitHub-style contribution levels, from no activity to highest activity.
 const heatmapTheme = {
   light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
@@ -63,29 +62,7 @@ export function GitHubAnalytics() {
   );
   return (
     <div className="flex flex-col gap-3 px-6 py-3">
-      <Panel
-        title={
-          <ProviderTitle provider="GitHub">
-            {text(
-              "Lịch đóng góp · 365 ngày",
-              "Contribution calendar · 365 days",
-            )}
-          </ProviderTitle>
-        }
-        description={text(
-          "Chọn ngày để xem hoạt động đã thu thập theo tài khoản.",
-          "Select a day for collected activity by account.",
-        )}
-        footer={
-          <p className="text-xs text-muted-foreground">
-            {text(
-              "Lịch đóng góp theo GitHub; chi tiết hoạt động theo repository đã chọn.",
-              "GitHub contribution calendar; activity details cover selected repositories.",
-            )}
-          </p>
-        }
-      >
-        <div ref={calendarRef} className="min-w-0">
+        <div ref={calendarRef} className="min-w-0" aria-label={text("Lịch đóng góp 365 ngày", "365-day contribution calendar")}>
         <ActivityCalendar
           data={cells}
           className="developer-heatmap"
@@ -143,7 +120,12 @@ export function GitHubAnalytics() {
           }
         />
         </div>
-      </Panel>
+      <p className="text-xs text-muted-foreground">
+        {text(
+          "Lịch đóng góp theo GitHub; chi tiết hoạt động theo repository đã chọn.",
+          "GitHub contribution calendar; activity details cover selected repositories.",
+        )}
+      </p>
       <Dialog
         open={selected !== null}
         onOpenChange={(open) => {

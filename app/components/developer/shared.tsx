@@ -82,7 +82,7 @@ export function Choice({
       }}
     >
       <SelectTrigger aria-label={label}>
-        <SelectValue />
+        <SelectValue>{items.find(item => item.value === value)?.label ?? value}</SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
