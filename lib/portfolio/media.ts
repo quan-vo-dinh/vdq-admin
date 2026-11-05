@@ -4,8 +4,8 @@ import { requireOwner } from "@/lib/auth/owner";
 import { AccessError } from "@/lib/auth/policy";
 import { dbError, uuid } from "@/lib/backend/mutations";
 import { publicPortfolioClient } from "./public";
-const bucket = "portfolio-media",
-  max = 2 * 1024 * 1024;
+import { PORTFOLIO_IMAGE_MAX_BYTES as max } from "./media-policy";
+const bucket = "portfolio-media";
 export async function uploadMedia(request: Request) {
   const { supabase: db, user } = await requireOwner();
   const reader = request.body?.getReader();

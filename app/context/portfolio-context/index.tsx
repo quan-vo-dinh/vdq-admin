@@ -11,6 +11,7 @@ import {
   type SetStateAction,
 } from "react";
 import useSWR from "swr";
+import { PORTFOLIO_IMAGE_MAX_BYTES, preparePortfolioImage } from "@/lib/portfolio/media-policy";
 import { ZodError } from "zod";
 import { apiFetch } from "@/lib/api/transport";
 import { useLanguage } from "@/app/context/language-context";
@@ -272,8 +273,8 @@ export function PortfolioEditorProvider({ children }: { children: ReactNode }) {
         );
       if (error.status === 413)
         return text(
-          "Ảnh quá lớn. Chọn tệp tối đa 2 MB.",
-          "Image too large. Choose a file up to 2 MB.",
+          "Ảnh quá lớn. Chọn tệp tối đa 5 MB.",
+          "Image too large. Choose a file up to 5 MB.",
         );
       if (error.code === "invalid_image")
         return text(
@@ -470,12 +471,13 @@ export function PortfolioEditorProvider({ children }: { children: ReactNode }) {
   }
   async function upload(file: File) {
     return run("upload", async () => {
-      if (file.size > 2097152) throw new RequestError(413, "image_too_large");
+      if (file.size > PORTFOLIO_IMAGE_MAX_BYTES) throw new RequestError(413, "image_too_large");
       if (!["image/jpeg", "image/png", "image/webp"].includes(file.type))
         throw new RequestError(400, "invalid_image");
+      const image = await preparePortfolioImage(file);
       const result = await fetchJSON<{ media: PortfolioMedia }>(
         "/api/portfolio/media",
-        { method: "POST", headers: { "Content-Type": file.type }, body: file },
+        { method: "POST", headers: { "Content-Type": image.type }, body: image },
       );
       await mediaStore.mutate(
         (previous) => ({

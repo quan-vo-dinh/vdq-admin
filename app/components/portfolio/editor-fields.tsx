@@ -328,8 +328,8 @@ export function ImageField({
         </div>
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent size="lg">
-          <DialogHeader>
+        <DialogContent size="lg" closeLabel={t("Đóng", "Close")} className="flex! max-h-[85dvh] flex-col gap-0! overflow-hidden p-0!">
+          <DialogHeader className="shrink-0 border-b p-5 pr-12">
             <DialogTitle>{t("Chọn ảnh", "Choose image")}</DialogTitle>
             <DialogDescription>
               {t(
@@ -338,6 +338,7 @@ export function ImageField({
               )}
             </DialogDescription>
           </DialogHeader>
+          <div className="min-h-0 overflow-y-auto overscroll-contain p-5">
           <MediaLibrary
             selected={value}
             onSelect={(value) => {
@@ -345,6 +346,7 @@ export function ImageField({
               setOpen(false);
             }}
           />
+          </div>
         </DialogContent>
       </Dialog>
     </Field>
@@ -390,8 +392,8 @@ export function MediaLibrary({
         />
         <FieldDescription>
           {t(
-            "PNG, JPG hoặc WebP · Tối đa 2 MB. Ảnh mới chỉ công khai sau khi xuất bản.",
-            "PNG, JPG or WebP · Up to 2 MB. New images stay private until published.",
+            "PNG, JPG hoặc WebP · Tối đa 5 MB. Ảnh mới chỉ công khai sau khi xuất bản.",
+            "PNG, JPG or WebP · Up to 5 MB. New images stay private until published.",
           )}
         </FieldDescription>
       </Field>
@@ -420,7 +422,7 @@ export function MediaLibrary({
               <Button
                 type="button"
                 variant="outline"
-                className="h-auto w-full flex-col gap-2 p-2"
+                className="h-auto! min-w-0 w-full flex-col gap-2 overflow-hidden p-2"
                 onClick={() => onSelect(option.value)}
                 aria-pressed={selected === option.value}
               >
