@@ -35,21 +35,29 @@ import { GitHubActivityDialog } from "./github-activity";
 import { UsageAllowances } from "./usage-allowances";
 function ActivitySection() {
   const { text } = useDeveloperLocale();
-  const { data } = useDeveloper();
+  const { data, githubAccount, setGithubAccount } = useDeveloper();
   const unread = data.notifications.filter((n) => !n.read).length;
   return (
     <div className="grid min-w-0 grid-cols-1 divide-y divide-border xl:grid-cols-2 xl:divide-x xl:divide-y-0">
       <section className="min-w-0" aria-labelledby="contributions-heading">
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 pt-5">
+        <div className="flex items-center justify-between gap-3 px-6 pt-3">
           <h2
             id="contributions-heading"
-            className="flex items-center gap-2 font-semibold"
+            className="flex shrink-0 items-center gap-2 font-semibold"
           >
             <BrandIcon brand="github" /> Contributions
           </h2>
-          <span className="text-xs text-muted-foreground">
-            {text("GitHub cá nhân & công việc", "Personal & work GitHub")}
-          </span>
+          <div className="min-w-0 max-w-60 [&_[data-slot=select-trigger]]:h-8 [&_[data-slot=select-trigger]]:max-w-full">
+            <Choice
+              label={text("Tài khoản GitHub", "GitHub account")}
+              value={githubAccount}
+              onChange={setGithubAccount}
+              items={[
+                { value: "all", label: text("Mọi tài khoản", "All accounts") },
+                ...data.sources.filter(s => s.provider === "GitHub").map(s => ({ value: s.id, label: s.name })),
+              ]}
+            />
+          </div>
         </div>
         <GitHubAnalytics />
       </section>
@@ -73,7 +81,7 @@ function ActivitySection() {
   );
 }
 export function Overview() {
-  const { data, days, setDays } = useDeveloper();
+  const { data, days, setDays, githubAccount } = useDeveloper();
   const { text } = useDeveloperLocale();
   const [provider, setProvider] = useState("all");
   const [source, setSource] = useState("all");
@@ -81,7 +89,7 @@ export function Overview() {
   const accounts = data.sources.filter(s => s.provider !== "GitHub" && (provider === "all" || s.provider === provider));
   const models = [...new Set(selectSessions(data, days, source, provider).map(s => s.model))];
   const totalTokens = provider !== "Claude Code" && model === "all" ? usageTotal(usageRows(data, days, source)) : null;
-  const githubIds = data.sources.filter(s => s.provider === "GitHub").map(s => s.id);
+  const githubIds = data.sources.filter(s => s.provider === "GitHub" && (githubAccount === "all" || s.id === githubAccount)).map(s => s.id);
   const periods = [
     { id: "all" as const, label: text("Từ trước đến nay", "All time") },
     { id: "year" as const, label: text("1 năm", "1 year") },
@@ -169,11 +177,11 @@ export function Overview() {
       <div className="col-span-12 grid min-w-0 grid-cols-6 gap-px bg-border">
       {metrics.map((m) => (
         <div key={m.key} className="col-span-6 min-w-0 lg:col-span-3">
-          <DashboardCard className="h-full py-6">
-            <CardContent className="flex flex-col gap-4 px-5">
+          <DashboardCard className="h-full gap-0! py-3!">
+            <CardContent className="flex flex-col gap-2 px-5">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm">{m.title}</p>
-                <div className="w-fit rounded-md border border-border p-2.5"><m.icon size={16} /></div>
+                <div className="w-fit rounded-md border border-border p-1.5"><m.icon size={16} /></div>
               </div>
               <div className="grid grid-cols-3 gap-3 divide-x">
                 {periods.map(({ id, label, totals }) => {
@@ -195,10 +203,6 @@ export function Overview() {
                   );
                 })}
               </div>
-              <p className="text-xs text-muted-foreground">
-                {githubIds.length} {text("tài khoản GitHub", "GitHub accounts")}
-                {!periods.every(p => p.totals.complete[m.key]) && ` · ${text("Đang đồng bộ", "Syncing")}`}
-              </p>
             </CardContent>
           </DashboardCard>
         </div>

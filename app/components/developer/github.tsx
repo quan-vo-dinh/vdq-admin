@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Panel, Choice, useDeveloperLocale } from "./shared";
+import { Panel, useDeveloperLocale } from "./shared";
 // GitHub-style contribution levels, from no activity to highest activity.
 const heatmapTheme = {
   light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
@@ -25,8 +25,8 @@ const clientSnapshot = () => true;
 const serverSnapshot = () => false;
 
 export function GitHubAnalytics() {
-  const { data, days } = useDeveloper();
-  const { text, number, language } = useDeveloperLocale();
+  const { data, githubAccount: account } = useDeveloper();
+  const { text, language } = useDeveloperLocale();
   const { resolvedTheme } = useTheme();
   const hydrated = useSyncExternalStore(
     subscribeHydration,
@@ -34,7 +34,6 @@ export function GitHubAnalytics() {
     serverSnapshot,
   );
   const calendarRef=useRef<HTMLDivElement>(null);
-  const [account, setAccount] = useState("all");
   useEffect(()=>{
     const container=calendarRef.current?.querySelector<HTMLElement>('.react-activity-calendar__scroll-container');
     if(container)container.scrollLeft=container.scrollWidth;
@@ -43,9 +42,6 @@ export function GitHubAnalytics() {
   const yearRows = (data.githubCalendar ?? data.contributions).filter(
     (r) => account === "all" || r.sourceId === account,
   );
-  const firstDay=new Date(Date.parse(`${data.snapshot}T12:00:00Z`)-(days-1)*86400000).toISOString().slice(0,10);
-  const rows = yearRows.filter(row=>row.date>=firstDay&&row.date<=data.snapshot);
-  const count = rows.reduce((n, d) => n + d.count, 0);
   const cells = Array.from({ length: 365 }, (_, i) => {
     const date = new Date(
       Date.parse(`${data.snapshot}T12:00:00Z`) - (364 - i) * 86400000,
@@ -66,24 +62,7 @@ export function GitHubAnalytics() {
     (r) => r.date === selected && (account === "all" || r.sourceId === account),
   );
   return (
-    <div className="flex flex-col gap-4 p-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <Choice
-          label={text("Tài khoản GitHub", "GitHub account")}
-          value={account}
-          onChange={setAccount}
-          items={[
-            { value: "all", label: text("Mọi tài khoản", "All accounts") },
-            ...data.sources
-              .filter((s) => s.provider === "GitHub")
-              .map((s) => ({ value: s.id, label: s.name })),
-          ]}
-        />
-        <Badge variant="outline">
-          <NumberTicker value={number(count)} /> contributions / {days}{" "}
-          {text("ngày", "days")}
-        </Badge>
-      </div>
+    <div className="flex flex-col gap-3 px-6 py-3">
       <Panel
         title={
           <ProviderTitle provider="GitHub">

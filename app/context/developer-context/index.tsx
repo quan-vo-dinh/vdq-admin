@@ -29,6 +29,8 @@ const Context = createContext<{
   reload: () => void;
   days: number;
   setDays: (n: number) => void;
+  githubAccount: string;
+  setGithubAccount: (id: string) => void;
   readIds: string[];
   toggleRead: (id: string) => void;
 } | null>(null);
@@ -48,6 +50,7 @@ export function DeveloperProvider({
       refreshInterval: 5000,
     },
   );
+  const [githubAccount, setGithubAccount] = useState("all");
   const [days, setDays] = useState(30),
     [syncing, setSyncing] = useState(false);
   const sync = useCallback(
@@ -115,6 +118,8 @@ export function DeveloperProvider({
         isValidating: isValidating || syncing,
         days,
         setDays,
+        githubAccount,
+        setGithubAccount,
         reload: () => {
           if (!syncing) void sync();
         },
