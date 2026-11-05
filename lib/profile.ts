@@ -3,7 +3,7 @@ export const currentUser = {
   name: "Vo Dinh Quan",
   role: "Full-stack Engineer",
   bio: "Full-stack Engineer working with ASP.NET Core and React, with a foundation in Node.js, Next.js, and NestJS.",
-  avatar: "/images/profile/vo-dinh-quan.jpg",
+  avatar: "/images/profile/vo-dinh-quan.png",
   website: "https://vodinhquan-dev.vercel.app",
   workplace: "i-Soft",
   education: "VNUHCM - University of Information Technology",
